@@ -142,6 +142,7 @@ $lightRed: rgba(147,67,67,1)
 body
   padding: 0
   margin: 0
+  background: $red
   *
     font-family: 'Afacad Flux'
   .fms-prompt
@@ -673,9 +674,36 @@ body
     top: 0
     left: 0
     width: 100vw
+    max-width: 800px
+    right: 0
+    margin: 0 auto
     height: 100vh
     z-index: 999
     background: $red
+    .numpad
+      display: flex
+      flex-wrap: wrap
+      width: 100%
+      gap: 10px
+      margin-top: 10px
+      button
+        cursor: pointer
+        color: #fff
+        flex-basis: calc((100% / 3) - (20px / 3))
+        display: flex
+        background: rgba(#fff, 0.15)
+        border-radius: 7px
+        aspect-ratio: 1/1
+        font-weight: 700
+        text-align: center
+        font-size: 1.5em
+        box-sizing: border-box
+        justify-content: center
+        align-items: center
+        transition: 0.2s
+        border: 1px solid rgba(#fff, 0.4)
+        &:hover
+          background: rgba(#fff, 0.05)
     .auth-sig, .auth-pick-user
       h1
         font-size: 3em
@@ -692,12 +720,12 @@ body
         outline: 0
         background: #f1f1f1
         color: $red
-        font-size: 1.3em
+        font-size: 2.3em
         font-weight: 600
         width: 100%
         border-radius: 5px
         box-sizing: border-box
-        padding: 3px 5px
+        padding: 0px 10px
       select
         border: 0
         outline: 0
@@ -722,13 +750,13 @@ body
         font-size: 1.3em
         color: #f1f1f1
     .auth-pick-user
-      width: 70vw
+      width: 80vw
       position: absolute
       top: 150px
       margin: 0 auto
-      left: 150px
+      left: 0px
       right: 0
-      opacity: 0
+      opacity: 1
       z-index: 50
     .auth-pick-user.fade-in
       animation: fade-in .3s ease-in forwards
@@ -739,11 +767,12 @@ body
     .auth-sig
       opacity: 0
       animation: loadSig .3s ease-in-out 5.5s forwards
-      width: 70vw
+      width: 60vw
       position: absolute
-      top: 150px
+      top: 50px
       margin: 0 auto
       left: 0
+      height: 60vh
       right: 0
       z-index: 100
     .auth-bg

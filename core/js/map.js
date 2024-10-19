@@ -14,18 +14,6 @@ let userLastKnownPos = null
 let flagFromSetView = null
 let watcherId = null
 let isTracking = null
-let userIds = {
-  0: "Ludwig Eriksson",
-  1: "Jenny Östensson",
-  2: "Magnus Edvinsson",
-  3: "Fredrik Östensson",
-  4: "Maja Falk",
-  5: "Rasmus Engqvist",
-  6: "Lukas Larsson",
-  7: "Kim peter",
-  8: "Fredrik Hallen",
-  99: "Besökare"
-}
 let domClasses = [
   "fms-line",
   "fms-blocks",
@@ -1018,20 +1006,18 @@ const initMap = () => {
 window.onload = () => {
   // Window Onload
   initMap()
-  if (userSignedCode() != false && userLoggedIn() != false) {
-      removeRestriction()
-      // Run on load
-      console.log("MultipleGPS Onload Starting...")
 
-      gpsFetchStorage(updateBool = false)
+  // Run on load
+  console.log("MultipleGPS Onload Starting...")
 
-      //Setinterval and run after that
-      console.log("MultipleGPS Interval Starting... (5s)")
-      setInterval(() => {
-        console.log("MultipleGPS Interval Runing")
-        gpsFetchStorage(updateBool = true)
-      }, 10000)
+  gpsFetchStorage(updateBool = false)
 
-  }
+  //Setinterval and run after that
+  console.log("MultipleGPS Interval Starting... (5s)")
+  setInterval(() => {
+    console.log("MultipleGPS Interval Runing")
+    gpsFetchStorage(updateBool = true)
+  }, 10000)
+
 
 }
