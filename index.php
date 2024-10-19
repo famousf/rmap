@@ -11,7 +11,6 @@
       exit;
   endif;
 
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -19,7 +18,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Riksbyggen Snöschema - netle.se</title>
-
   <link rel="apple-touch-icon" sizes="180x180" href="img/favico/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="img/favico/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="img/favico/favicon-16x16.png">
@@ -34,24 +32,12 @@
   <script src="https://unpkg.com/leaflet.gridlayer.googlemutant@latest/dist/Leaflet.GoogleMutant.js"></script>
   <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
   <script src="core/js/dataset.js?v0.96"></script>
-
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-
 </head>
 <body>
 
-  <?php
-    # if !numpadclear
-      # load numpad
-    # if !setuser
-      # load user
-
-    # if numpad && setuser
-      # load map
-
-    //setcookie("isCleared", 0, time() - 3600);
-
+<?php
 
     if (!isset($_COOKIE["isCleared"])):
         include_once "core/extra/login.php";
@@ -61,15 +47,10 @@
 
     endif;
 
-
     if (isset($_COOKIE["isCleared"]) && isset($_COOKIE["loggedUser"])):
         include_once "core/extra/map.php";
     endif;
 
-
-  ?>
-
-
-
+?>
 </body>
 </html>

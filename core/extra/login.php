@@ -1,6 +1,4 @@
 <div class="auth-screen" id="ldle3a">
-
-
   <div class="auth-bg">
     <div class="main-animation">
         <div id="a"></div>
@@ -9,7 +7,6 @@
         <div id="d"></div>
         <div id="e"></div>
     </div>
-
     <div class="auth-logo">
       <img src="img/logo_white.svg" alt="">
     </div>
@@ -18,7 +15,6 @@
       <span>Snökarta - v 0.8.5</span>
     </div>
   </div>
-
   <div class="auth-sig">
     <h1>... Signera</h1>
     <span>För att motverka otillåten åtkomst, ange 'koden'</span>
@@ -38,6 +34,5 @@
         <button value="go-back"><i class="fa-solid fa-delete-left"></i></button>
     </div>
   </div>
-
 </div>
 <script src="core/js/login.js?v0.96"></script>
