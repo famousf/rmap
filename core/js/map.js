@@ -130,6 +130,19 @@ const displayLatLngClick = (e) => {
     mapDOM = document.getElementById('map')
     mapDOM.classList.add('pointer')
 }
+const getLineWeight = (zoomLevel) => {
+    return Math.max(1, zoomLevel - 7); // Grow line weight as zoom level increases
+}
+const calculateDistance = (currentPos, lastPos) => {
+    var currentPoint = L.latLng(currentPos[0], currentPos[1]);
+    var lastPoint = L.latLng(lastPos[0], lastPos[1]);
+    return currentPoint.distanceTo(lastPoint); // Distance in meters
+}
+
+/*
+  EXPERIMENTAL
+    - Functions that should not be shown to the public
+*/
 const devOnClick = (boolean) => {
 
     if (!boolean) {
@@ -171,17 +184,6 @@ const inputDrawBlock = () => {
   mapDOM = document.getElementById('map')
   mapDOM.classList.add('pointer')
 }
-const getLineWeight = (zoomLevel) => {
-    return Math.max(1, zoomLevel - 7); // Grow line weight as zoom level increases
-}
-const calculateDistance = (currentPos, lastPos) => {
-    var currentPoint = L.latLng(currentPos[0], currentPos[1]);
-    var lastPoint = L.latLng(lastPos[0], lastPos[1]);
-    return currentPoint.distanceTo(lastPoint); // Distance in meters
-}
-/*
-  EXPERIMENTAL
-*/
 const drawRouteTest = () => {
 // Define two positions
      var currentPosition = [58.70299, 13.81125]  // Start position
@@ -209,8 +211,7 @@ const drawRouteTest = () => {
   - When a user moves on the map, it will continue to store the latest coordinate to easily-
     keep the user on the same position.
 */
-const rememberPosition = () => {
-}
+
 const localCookies = () => {
   // Store stuff here;
   // . Last picked tilelayer (style)
@@ -256,6 +257,10 @@ const localCookies = () => {
       console.log("updated layer", e.name)
   })
 }
+
+/*
+  Functions are run when determined what element in DOM should be visible or not
+*/
 const hideForZoom = () => {
   // Hide small objects
   for (i = 0; i < domClasses.length; i++) {
@@ -270,7 +275,6 @@ const hideForZoom = () => {
       names[i].classList.remove('fms-hidden')
   }
 }
-
 const showForZoom = (disregard) => {
   // Show smalll objects
   for (i = 0; i < domClasses.length; i++) {
@@ -367,7 +371,7 @@ const drawMultipleUsers = (data) => {
   });
 
 }
-// ========================= //
+/* ======== Multi / Single ======== */
 const drawLines = () => {
   // Loop through points and create polylines for each group
   const colorObj = {
@@ -768,7 +772,6 @@ const navigatorInit = (_boolean) => {
   }
 
 }
-/*                              */
 const trackLocationView = () => {
 
     let buttonIndex = 0
@@ -789,6 +792,7 @@ const trackLocationView = () => {
             buttonIndex++
         })
 }
+
 /*
   Handles "info" button and hamburger menu toggling (on/off)
 */
@@ -822,9 +826,8 @@ const toggleTopMenu = () => {
 
 
 /*
-  Settings
+  Just settings
 */
-
 const initSettings = () => {
 
   // Search for saved settings
@@ -867,7 +870,6 @@ const toggleSetting = (e) => {
     settingsEnableFunctions()
 
 }
-
 const setSettingsDom = () => {
     /* Set settings switches to the correct value */
     const switches = document.getElementsByClassName("switch")
@@ -882,57 +884,10 @@ const setSettingsDom = () => {
     }
 }
 
+
 /*
-  Login functions, pretty straight forward
-  - Saving username and user ID in localStorage
+  Handles updating, fetching and displaying of gps coordinates
 */
-
-const userSignedCode = () => {
-    let signPass = localStorage.getItem("sign")
-    if(!signPass || signPass == null) {
-      return false
-    }
-}
-const userLoggedIn = () => {
-    let userpass = JSON.parse(localStorage.getItem("loggedUser"))
-    if (!userpass) {
-        return false
-    }
-}
-const removeRestriction = () => {
-  document.getElementById("ldle3a").remove()
-}
-
-const verifyMe = (e) => {
-    let string = parseInt(document.getElementById('vme-input').value)
-    if (string.toString().length >= 4) {
-       if (string == 1632) {
-          localStorage.setItem("sign", 1632)
-          document.getElementsByClassName('auth-sig')[0].classList.add('move-away')
-          document.getElementsByClassName('auth-pick-user')[0].classList.add('fade-in')
-       }
-    } else {
-      localStorage.clear("sign")
-    }
-
-}
-const pickUser = (e) => {
-  const selectUser = document.getElementsByClassName('pickUser')[0].value
-  const user = parseInt(selectUser)
-  const username = userIds[user]
-
-  localStorage.setItem("loggedUser", JSON.stringify([user, username]))
-  removeRestriction()
-
-}
-const logout = () => {
-    localStorage.clear("sign")
-    location.reload()
-}
-
-
-
-
 const gpsFetchStorage = async (updateBool) => {
   const { data, error } = await supabase
   .from('route')  // Replace 'users' with your table name
@@ -949,74 +904,58 @@ const gpsFetchStorage = async (updateBool) => {
     }
   }
 }
-
 const gpsInsertStorage = () => {
   let user = JSON.parse(localStorage.getItem("loggedUser"))
   let currentDate = Date.now()
   let coordinate = clientPosition
   console.log(user, currentDate, coordinate)
 }
-/*
-  Initalizes all neccesary and options functions.
-  Optional functions * SCRAPPING THIS IDEA
-    - These can be turned on/off in the settings menu, its all handeled in Initmap onload
-  Dev functions
-    - "devOnClick" makes a click display the current coordinates for easier handling.
-      This is to be improved on in later stages, i.e administrators for an area could-
-      click on the map, then set a perimiter, hazard or draw a new line and give it a description
-*/
-
-
 
 const initMap = () => {
-  initSettings()
-  tileLayers()        // Needs to be 1st to load the right tile
-  localCookies()
+  /*
+    Initalizes all neccesary and options functions.
+    Optional functions * SCRAPPING THIS IDEA
+      - These can be turned on/off in the settings menu, its all handeled in Initmap onload
+    Dev functions
+      - "devOnClick" makes a click display the current coordinates for easier handling.
+        This is to be improved on in later stages, i.e administrators for an area could-
+        click on the map, then set a perimiter, hazard or draw a new line and give it a description
+  */
+  initSettings()                // Sets default values if localStorage is not set
+  tileLayers()                  // Draws the map(tile)
+  localCookies()                // i.e lastknown position, tile settings, zoom
+  setSettingsDom()              // Sets the DOM with the correct switches
 
-  setSettingsDom()
+  drawHazardBlocks()            // Draw dangerous/heads-up areas
+  drawBlocks()                  // Draw polygons to represent larger areas
+  drawLines()                   // Draw lines that represent i.e roads
+  drawWarnings()                // Draws fontawesome icons as warnings or 'heads-up'
+  drawPerimiter()               // Draws resident perimiter
+  drawCompounds()               // Draws the "blocks" with the description
+
+  toggleWorkTypes()             // Handles two states (daytime work / nighttime work)
+  toggleTopMenu()               // Simple js to handle hamburger menu
+
+  settingsEnableFunctions()     // Runs functions based on setting
+
+  trackLocationView()           // Handles clicks on "centering" button
+  navigatorInit()               // Initializes GPS for self
 
 
-
-
-  drawHazardBlocks()
-  drawBlocks()        // Draw polygons to represent larger areas
-  drawLines()         // Draw lines that represent i.e roads
-  drawWarnings()      // Draws fontawesome icons as warnings or 'heads-up'
-  drawPerimiter()
-  drawCompounds()
-
-  rememberPosition()
-  toggleWorkTypes()
-  toggleTopMenu()
-
-
-  settingsEnableFunctions()
-
-
-  trackLocationView()
-  navigatorInit()
-
-
-  //drawRouteTest() // EXPERIMENTAL
-  //inputDrawBlock()  // EXPERIMENTAL
+  //drawRouteTest()             // EXPERIMENTAL
+  inputDrawBlock()            // EXPERIMENTAL
 }
+
+
 /*
   Runs "initMap" which simply runs the functions needed to run the application based on settings
 */
 window.onload = () => {
   // Window Onload
   initMap()
-
-  // Run on load
-  console.log("MultipleGPS Onload Starting...")
-
-  gpsFetchStorage(updateBool = false)
-
-  //Setinterval and run after that
-  console.log("MultipleGPS Interval Starting... (5s)")
+  gpsFetchStorage(updateBool = false)   // Initial Load (i.e create markers instad of updating)
   setInterval(() => {
-    console.log("MultipleGPS Interval Runing")
-    gpsFetchStorage(updateBool = true)
+    gpsFetchStorage(updateBool = true)  // Interval Load (updating existing markers and showing/hiding)
   }, 10000)
 
 

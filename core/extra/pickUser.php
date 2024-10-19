@@ -1,5 +1,4 @@
 <div class="auth-screen" id="ldle3a">
-
   <div class="auth-pick-user">
     <h1>... Välj användare</h1>
     <span>Lorem lipsum</span>
@@ -18,6 +17,5 @@
     </select>
     <button type="submit" onclick="pickUser(this)">Gå vidare</button>
   </div>
-
 </div>
 <script src="core/js/pickuser.js?v0.96"></script>
