@@ -362,9 +362,7 @@ const drawMultipleUsers = (data) => {
         iconSize: [18, 36], // Size of the icon
         className: `GPS-user-tracker ${hideStatus}`,
         popupAnchor: [12, 36] // Position of the popup
-      })
-
-      
+      })      
     }).addTo(map);
 
     // Push onload data to a global object
