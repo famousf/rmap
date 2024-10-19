@@ -190,6 +190,7 @@
 body {
   padding: 0;
   margin: 0;
+  background: #ca5757;
 }
 body * {
   font-family: "Afacad Flux";
@@ -791,9 +792,39 @@ body .auth-screen {
   top: 0;
   left: 0;
   width: 100vw;
+  max-width: 800px;
+  right: 0;
+  margin: 0 auto;
   height: 100vh;
   z-index: 999;
   background: #ca5757;
+}
+body .auth-screen .numpad {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  gap: 10px;
+  margin-top: 10px;
+}
+body .auth-screen .numpad button {
+  cursor: pointer;
+  color: #fff;
+  flex-basis: calc(33.3333333333% - 6.6666666667px);
+  display: flex;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 7px;
+  aspect-ratio: 1/1;
+  font-weight: 700;
+  text-align: center;
+  font-size: 1.5em;
+  box-sizing: border-box;
+  justify-content: center;
+  align-items: center;
+  transition: 0.2s;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+body .auth-screen .numpad button:hover {
+  background: rgba(255, 255, 255, 0.05);
 }
 body .auth-screen .auth-sig h1, body .auth-screen .auth-pick-user h1 {
   font-size: 3em;
@@ -812,12 +843,12 @@ body .auth-screen .auth-sig input, body .auth-screen .auth-pick-user input {
   outline: 0;
   background: #f1f1f1;
   color: #ca5757;
-  font-size: 1.3em;
+  font-size: 2.3em;
   font-weight: 600;
   width: 100%;
   border-radius: 5px;
   box-sizing: border-box;
-  padding: 3px 5px;
+  padding: 0px 10px;
 }
 body .auth-screen .auth-sig select, body .auth-screen .auth-pick-user select {
   border: 0;
@@ -845,13 +876,13 @@ body .auth-screen .auth-sig button, body .auth-screen .auth-pick-user button {
   color: #f1f1f1;
 }
 body .auth-screen .auth-pick-user {
-  width: 70vw;
+  width: 80vw;
   position: absolute;
   top: 150px;
   margin: 0 auto;
-  left: 150px;
+  left: 0px;
   right: 0;
-  opacity: 0;
+  opacity: 1;
   z-index: 50;
 }
 body .auth-screen .auth-pick-user.fade-in {
@@ -865,11 +896,12 @@ body .auth-screen .auth-sig.move-away {
 body .auth-screen .auth-sig {
   opacity: 0;
   animation: loadSig 0.3s ease-in-out 5.5s forwards;
-  width: 70vw;
+  width: 60vw;
   position: absolute;
-  top: 150px;
+  top: 50px;
   margin: 0 auto;
   left: 0;
+  height: 60vh;
   right: 0;
   z-index: 100;
 }
