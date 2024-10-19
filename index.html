@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Riksbyggen Snöschema - netle.se</title>
+
+  <link rel="apple-touch-icon" sizes="180x180" href="img/favico/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="img/favico/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="img/favico/favicon-16x16.png">
+  <link rel="mask-icon" href="img/favico/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="theme-color" content="#ffffff">
+  <link rel="manifest" href="manifest.json" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <link rel="stylesheet" href="styles/core/styles.css?v0.96"/>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.gridlayer.googlemutant@latest/dist/Leaflet.GoogleMutant.js"></script>
+  <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+  <script src="core/dataset.js?v0.96"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+</head>
+<body>
+
+  <div class="auth-screen" id="ldle3a">
+
+    <div class="auth-bg">
+      <div class="main-animation">
+          <div id="a"></div>
+          <div id="b"></div>
+          <div id="c"></div>
+          <div id="d"></div>
+          <div id="e"></div>
+      </div>
+
+      <div class="auth-logo">
+        <img src="img/logo_white.svg" alt="">
+      </div>
+      <div class="auth-slogan">
+        <h1>Riksbyggen</h1>
+        <span>Snökarta - v 0.8.5</span>
+      </div>
+    </div>
+    <div class="auth-sig">
+      <h1>... Signera</h1>
+      <span>För att motverka otillåten åtkomst, ange 'koden'</span>
+      <input type="text" name="" value="" id="vme-input">
+      <button type="submit" name="auth-sig-btn" onclick="verifyMe(this)">Verifiera mig</button>
+    </div>
+
+    <div class="auth-pick-user">
+      <h1>... Välj användare</h1>
+      <span>Lorem lipsum</span>
+      <select class="pickUser">
+        <option value="" default></option>
+        <option value="0">Ludwig Eriksson</option>
+        <option value="1">Jenny Östensson</option>
+        <option value="2">Magnus Edvinsson</option>
+        <option value="3">Fredrik Östensson</option>
+        <option value="4">Maja Falk</option>
+        <option value="5">Rasmus Engqvist</option>
+        <option value="6">Lukas Larsson</option>
+        <option value="7">Kim Peter</option>
+        <option value="8">Fredrik Hallen</option>
+        <option value="99">Besökare</option>
+      </select>
+      <button type="submit" onclick="pickUser(this)">Gå vidare</button>
+    </div>
+
+  </div>
+
+
+
+  <!-- Top left icon & Tooltip -->
+  <div class="fms-top-left" id="top-left-info">
+    <i class="fa-regular fa-circle-question"></i>
+  </div>
+  <div class="fms-icon-tooltip" id="icon-tooltip">
+    <div class="fms-tt-block">
+      <div class="tt-road"><div></div></div>
+      <span>Väg</span>
+    </div>
+    <div class="fms-tt-block">
+      <div class="tt-small-road"><div></div></div>
+      <span>Mindre väg</span>
+    </div>
+    <div class="fms-tt-block">
+      <div class="tt-entrance"><div></div></div>
+      <span>Entréer / Ingångar</span>
+    </div>
+    <div class="fms-tt-block">
+      <div class="tt-parkering"><div></div></div>
+      <span>Parkering / Maskinplogning</span>
+    </div>
+    <div class="fms-tt-block">
+      <div class="tt-area-danger"><div></div></div>
+      <span>Varning</span>
+    </div>
+    <div class="fms-tt-block">
+      <div class="tt-perimiter"><div></div></div>
+      <span>Tomtgräns</span>
+    </div>
+    <div class="fms-tt-block">
+      <div class="tt-icon snow">
+        <i class='fa-regular fa-snowflake'></i>
+      </div>
+      <span>Snöupplag</span>
+    </div>
+    <div class="fms-tt-block">
+      <div class="tt-icon stairs">
+        <i class='fa-solid fa-stairs'></i>
+      </div>
+      <span>Källartrappa</span>
+    </div>
+    <div class="fms-tt-block">
+      <div class="tt-icon warning">
+        <i class='fa-solid fa-triangle-exclamation'></i>
+      </div>
+      <span>Varning (Fara/Vägbomm)</span>
+    </div>
+  </div>
+  <!-- END tooltip -->
+
+  <!-- EXPERIMENTAL Prompt -->
+  <div class="fms-prompt" id="prompt">
+    <h1>Vill du visa körschema för jouren?</h1>
+    <span>Detta visar enbart de rutter och varningar som används på snöberedskapen - Öppna för blåljuspersonal.</span>
+    <div class="prompt-buttons">
+      <div class="button y jsButton" data-prompt="yes">Bekräfta</div>
+      <div class="button n jsButton" data-prompt="no">Avbryt</div>
+    </div>
+  </div>
+  <!-- END Prompt -->
+
+  <!-- Bottom navigation -->
+  <div class="fms-toggle">
+    <div class="fms-toggle-btn" id="worktype">Dagtid</div>
+    <div class="fms-toggle-btn" id="centerGps"><i class="fa-solid fa-location-arrow"></i></div>
+    </div>
+  </div>
+  <!-- END bottom navigation -->
+
+
+  <!-- Hidden menu -->
+  <div class="fms-menu" id="fms-menu">
+    <div class="menu-content">
+        <div class="bar">
+          <h1>Dela Position</h1>
+          <span>Visar dig själv och medarbetare på kartan (TBA)</span>
+          <label class="switch">
+            <input type="checkbox" onchange="toggleSetting(this)" id="sharePosition">
+            <span class="slider round"></span>
+          </label>
+        </div>
+        <div class="bar">
+          <h1>GPS</h1>
+          <span>Spårar din enhet med hjälp av gps (Beta) </span>
+          <label class="switch">
+            <input type="checkbox" onchange="toggleSetting(this)" id="myPosition">
+            <span class="slider round"></span>
+          </label>
+        </div>
+        <div class="bar">
+          <h1>Utvecklare</h1>
+          <span>Tillåter användaren att logga kordinater (Beta)</span>
+          <label class="switch">
+            <input type="checkbox" onchange="toggleSetting(this)" id="enableDev">
+            <span class="slider round"></span>
+          </label>
+        </div>
+        <div class="bar red" onclick="logout()">
+          <h1>Logga ut</h1>
+        </div>
+    </div>
+
+    <!--<button id="reset">Reset</button>-->
+    <div class="bottom-github">
+      <div class="git">
+        <img id="cat" src="img/github/github-cat-white.png" alt="">
+        <img id="text" src="img/github/github-text-white.png" alt="">
+      </div>
+      <span>Made by Ludwig Eriksson<br>opensourced on github.io/netle.se</span>
+    </div>
+  </div>
+  <div class="fms-bars" id="hamb-menu">
+    <i class="fa-solid fa-bars"></i>
+  </div>
+
+  <!-- END hidden menu -->
+
+
+  <div id="map"></div>
+
+
+  <script src="core/map.js?v0.96"></script>
+
+</body>
+</html>

@@ -1,0 +1,22 @@
+{
+  "name": "Snö",
+  "short_name": "Snö",
+  "description": "Custombuilt webapplication for Riksbyggen to use during snowprevention",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#fff",
+  "theme_color": "#ca5757",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "img/favico/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "img/favico/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

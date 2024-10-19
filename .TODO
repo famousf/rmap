@@ -1,0 +1,70 @@
+GPS Share
+onload
+
+share data
+ - if gps is on
+  - post to firebase
+   - localstorage user -> coordinates, current date
+
+get data
+ - if gps is on
+  - get all users and latest gps node
+
+   - if user -> currentdate >= 1 minute
+      - user is disconnected / afk
+
+    - if user -> currentdate >= 5 minutes
+      - dont track user
+        - change ui or remove entierly
+
+
+logic
+ onload
+  - post my data
+  - get everyones data
+  - interval 10 seconds
+  - rinse repeat
+
+ display
+  version 0.1:
+    - if these markers already exists, remove them
+    - create marker for each user and put on map
+    rinse repeat
+
+  version 0.5:
+    - update each users marker dynamicly instead to prevent DOM from overheating
+    how? - put each markerID in an object
+         - loop object after data is updated to refresh coordinates on map
+
+
+
+
+data | markers
+
+loop data
+  if markers[data.username]
+      - finds object for the username we looping
+      if minutespassed > 5 min
+        - remove
+
+      else
+        marker.update-coordinates
+  else
+    * no marker for this new user we dont have in the stack
+    - add new marker and store it
+
+
+
+current gps logic
+- navigatorinit
+  true / false
+  - > updateuserlocation
+
+updated gps logic
+
+- keep navigatorinit
+- get data (gpsFetchStorage)
+- remove myself (if found in object)
+- display data (displayUsersPosition)
+
+F_v$r!W62gvCnPK
