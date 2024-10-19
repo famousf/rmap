@@ -348,6 +348,7 @@ const updateMultipleusers = (data) => {
 }
 const drawMultipleUsers = (data) => {
   let loggedUser = JSON.parse(localStorage.getItem("loggedUser"))[1].toLowerCase()
+  let testUser = "ludwig"
   data.forEach((user, index) => {
     // Loop through new incoming data
     if (user.username != loggedUser) {
@@ -362,7 +363,7 @@ const drawMultipleUsers = (data) => {
         iconSize: [18, 36], // Size of the icon
         className: `GPS-user-tracker ${hideStatus}`,
         popupAnchor: [12, 36] // Position of the popup
-      })      
+      })
     }).addTo(map);
 
     // Push onload data to a global object
