@@ -119,5 +119,7 @@
   <!-- END hidden menu -->
 
 
+  <div id="editor"></div>
   <div id="map"></div>
   <script src="core/js/map.js?<?php echo $VERSION ?>"></script>
+  <script src="core/js/editor.js?<?php echo $VERSION ?>"></script>

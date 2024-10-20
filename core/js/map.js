@@ -884,7 +884,7 @@ const initMap = () => {
   drawBlocks()                  // Draw polygons to represent larger areas
   drawLines()                   // Draw lines that represent i.e roads
   drawWarnings()                // Draws fontawesome icons as warnings or 'heads-up'
-  drawPerimiter()               // Draws resident perimiter
+  //drawPerimiter()               // Draws resident perimiter
   drawCompounds()               // Draws the "blocks" with the description
 
   toggleWorkTypes()             // Handles two states (daytime work / nighttime work)
