@@ -241,7 +241,6 @@ const localCookies = () => {
       if (calculateDistance(coords, userLastKnownPos) > 150) {
           if (!flagFromSetView) {
               userIsFollowing = !userIsFollowing
-              console.log(calculateDistance(coords, userLastKnownPos))
               document.getElementById("centerGps").classList.remove("highlighted")
           }
       }
@@ -254,7 +253,6 @@ const localCookies = () => {
   // Stored last picked tilelayer, and use it if it exists
   map.on('baselayerchange', (e) => {
       localStorage.setItem('layer', e.name)
-      console.log("updated layer", e.name)
   })
 }
 
@@ -316,7 +314,6 @@ const updateMultipleusers = (data) => {
                   // lastupdate = 100
                   // date = 150
                   let dateSub = Math.floor(Date.now() / 1000) - user?.lastUpdated
-                  console.log(dateSub, user.username)
                   if (dateSub < 300) {
                         // Coordinates have updated since last time
                         multipleMarkers[i].coords = user.coords
@@ -396,44 +393,10 @@ const drawLines = () => {
                 weight: 7,//getLineWeight(map.getZoom() * customWidth), // Set initial weight
                 className: `fms-line ${block[1].work_type} ${custClass}`
               }).addTo(map);
-              //polygon.bindPopup("value.hightlight_text");
-              //console.log(data[v].coords)
             });
           }
     })
   });
-
-  // Update line thickness when zoom changes
-  /*
-  map.on('zoomend', function() {
-    console.log("map.on('zoomend')")
-    if (map.getZoom() > 16) {
-
-      jsonData.forEach((item, i) => {
-        compounds = item[1].compounds
-
-        Object.entries(compounds).forEach((data, index) => {
-          blocks = data[1].data_lines
-
-          if (blocks) {
-            Object.entries(blocks).forEach((block, i) => {
-              //let custClass = (map.getZoom() >= 13) ? "fms-hidden" : ""
-              let customWidth = (block[1].type === "small") ? 0.6 : 1
-              const lines = block[1].coords
-              const polyline = L.polyline(lines, {
-                color: colorObj[block[1].type], // Set the color from the group data
-                weight: getLineWeight(map.getZoom() * customWidth), // Set initial weight
-                className: `fms-line ${block[1].work_type}`
-              }).addTo(map);
-              polyline.setStyle({ weight: getLineWeight(map.getZoom() * 1.1) });
-            });
-          }
-        })
-      });
-    }
-  });
-  */
-
 }
 const drawBlocks = () => {
   // Example coordinates for a polygon (5-6 points)
@@ -452,8 +415,6 @@ const drawBlocks = () => {
                 fillOpacity: 0.35,  // Transparency level of the fill
                 className: `fms-blocks ${block[1].work_type} ${custClass}`
               }).addTo(map);
-              //polygon.bindPopup("value.hightlight_text");
-              //console.log(data[v].coords)
             });
           }
     })
@@ -471,15 +432,12 @@ const drawHazardBlocks = () => {
 
           if (blocks) {
             Object.entries(blocks).forEach((block, i) => {
-              //console.log(block[1].coords)
               let custClass = (map.getZoom() < 16) ? "fms-hidden" : ""
               const lines = block[1].coords
               const polygon = L.polygon(lines, {
                 fillOpacity: 0.45,  // Transparency level of the fill
                 className: `fms-hazard-blocks ${custClass}`
               }).addTo(map);
-              //polygon.bindPopup("value.hightlight_text");
-              //console.log(data[v].coords)
             });
           }
     })
@@ -694,7 +652,6 @@ const updateUserLocation = (position) => {
     // Update the map's view to the new location (optional: add smooth transitions)
     // If the marker exists, update its position, otherwise create a new marker
     // Log the updated position to the console
-    console.log(`Updated Position: Latitude: ${lat}, Longitude: ${lng}`);
     if (userMarker) {
         userMarker.setLatLng([lat, lng]);
     } else {
@@ -717,7 +674,6 @@ const updateUserLocation = (position) => {
     // Update supabase Database with new Date.now and coordinates
     const updateSupaDb = async () => {
         let username = JSON.parse(localStorage.getItem("loggedUser"))[1]
-        console.log("Performing update")
         const {data, error} = await supabase
           .from('route')
           .update({
@@ -907,7 +863,6 @@ const gpsInsertStorage = () => {
   let user = JSON.parse(localStorage.getItem("loggedUser"))
   let currentDate = Date.now()
   let coordinate = clientPosition
-  console.log(user, currentDate, coordinate)
 }
 
 const initMap = () => {
