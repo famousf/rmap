@@ -1,4 +1,5 @@
 <?php
+  $VERSION = "1.0.15";
   if(isset($_POST["numpadClear"])):
       setcookie('isCleared', "clear", time() + (86400 * 10), "/");
       echo "isCleared";
@@ -6,8 +7,15 @@
   endif;
 
   if(isset($_POST["setUser"])):
-      setCookie('loggedUser', $_POST["user"], time() + (86400 * 10), "/");
+      setcookie('loggedUser', $_POST["user"], time() + (86400 * 10), "/");
       echo "loggedUser";
+      exit;
+  endif;
+
+  if (isset($_POST["logout"])):
+      setcookie('isCleared', "", 1, "/");
+      setcookie('loggedUser', "", 1, "/");
+      header('Location: ?');
       exit;
   endif;
 
@@ -27,11 +35,11 @@
   <link rel="manifest" href="manifest.json" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-  <link rel="stylesheet" href="styles/core/styles.css?v0.96"/>
+  <link rel="stylesheet" href="styles/core/styles.css?<?php echo $VERSION ?>"/>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet.gridlayer.googlemutant@latest/dist/Leaflet.GoogleMutant.js"></script>
   <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
-  <script src="core/js/dataset.js?v0.96"></script>
+  <script src="core/js/dataset.js?<?php echo $VERSION ?>"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 </head>

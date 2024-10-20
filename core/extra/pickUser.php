@@ -18,4 +18,4 @@
     <button type="submit" onclick="pickUser(this)">Gå vidare</button>
   </div>
 </div>
-<script src="core/js/pickuser.js?v0.96"></script>
+<script src="core/js/pickuser.js?<?php echo $VERSION ?>"></script>

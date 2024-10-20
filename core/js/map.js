@@ -357,7 +357,6 @@ const drawMultipleUsers = (data) => {
         popupAnchor: [12, 36] // Position of the popup
       })
     }).addTo(map);
-
     // Push onload data to a global object
     multipleMarkers.push({
       username: user?.username,
@@ -943,7 +942,7 @@ const initMap = () => {
 
 
   //drawRouteTest()             // EXPERIMENTAL
-  inputDrawBlock()            // EXPERIMENTAL
+  //inputDrawBlock()            // EXPERIMENTAL
 }
 
 

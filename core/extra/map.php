@@ -96,8 +96,10 @@
             <span class="slider round"></span>
           </label>
         </div>
-        <div class="bar red" onclick="logout()">
-          <h1>Logga ut</h1>
+        <div class="bar red">
+          <form method="post">
+            <button type="submit" name="logout">Logga ut</button>
+          </form>
         </div>
     </div>
 
@@ -118,4 +120,4 @@
 
 
   <div id="map"></div>
-  <script src="core/js/map.js?v0.96"></script>
+  <script src="core/js/map.js?<?php echo $VERSION ?>"></script>

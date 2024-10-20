@@ -12,7 +12,7 @@
     </div>
     <div class="auth-slogan">
       <h1>Riksbyggen</h1>
-      <span>Snökarta - v 0.8.5</span>
+      <span>Snökarta - <?php echo $VERSION ?></span>
     </div>
   </div>
   <div class="auth-sig">
@@ -35,4 +35,4 @@
     </div>
   </div>
 </div>
-<script src="core/js/login.js?v0.96"></script>
+<script src="core/js/login.js?<?php echo $VERSION ?>"></script>
