@@ -57,7 +57,14 @@
 
     if (isset($_COOKIE["isCleared"]) && isset($_COOKIE["loggedUser"])):
         include_once "core/extra/map.php";
+
+        if(isset($_GET["m"]) && $_GET["m"] == "editor"):
+            include_once "core/extra/editor.php";
+        endif;
+
+
     endif;
+
 
 ?>
 </body>

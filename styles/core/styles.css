@@ -195,6 +195,51 @@ body {
 body * {
   font-family: "Afacad Flux";
 }
+body #editor {
+  width: 250px;
+  height: auto;
+  cursor: grab;
+  position: absolute;
+  background: rgba(0, 0, 0, 0.8);
+  box-sizing: border-box;
+  padding: 10px;
+  border-radius: 7px;
+  top: 0;
+  color: #fff;
+  z-index: 999;
+}
+body #editor span {
+  color: #fff;
+}
+body #editor .drag-content.show {
+  padding: 5px;
+  display: block;
+}
+body #editor .drag-content {
+  padding: 0;
+  display: none;
+}
+body #editor .drag-content div {
+  display: none;
+}
+body #editor .drag-content div.show {
+  display: block;
+}
+body #editor .drag-header {
+  width: 100%;
+}
+body #editor .drag-header .pick-draw {
+  display: flex;
+  flex-wrap: wrap;
+}
+body #editor .drag-header .pick-draw div {
+  display: flex;
+  flex: 1;
+  padding: 5px;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+}
 body .fms-prompt {
   display: none;
   position: absolute;
@@ -411,6 +456,9 @@ body .fms-icon-tooltip .fms-tt-block .snow i {
   padding: 4px 4px;
   background: #6491cf;
 }
+body .fms-icon-tooltip .fms-tt-block .trash i {
+  background: #ca5757;
+}
 body .fms-icon-tooltip .fms-tt-block .warning i {
   left: 2px;
   padding: 3px 4px;
@@ -512,7 +560,7 @@ body .fms-hazard-blocks {
   stroke-width: 2;
   fill: #ca5757;
 }
-body .fms-obstacle i {
+body .fms-obstacle i, body .fms-trash i {
   background: #ca5757;
   border: 2px solid white;
   border-radius: 50%;
@@ -532,6 +580,9 @@ body .fms-stairs i {
   border-radius: 50%;
   padding: 5px 4px;
   color: white;
+}
+body .fms-trash i {
+  padding: 5px !important;
 }
 body .fms-perimiter {
   z-index: 99;

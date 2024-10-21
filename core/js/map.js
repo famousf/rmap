@@ -21,8 +21,10 @@ let domClasses = [
   "fms-obstacle",
   "fms-stairs",
   "fms-headsup",
-  "fms-snow"
+  "fms-snow",
+  "fms-trash"
 ]
+let GLOBAL_PARAMETER = window.location.search
 let GLOBAL_SETTINGS = null
 const jsonData = Object.entries(points)
 
@@ -33,7 +35,7 @@ const jsonData = Object.entries(points)
 const map = L.map('map')
 const warningType = {
   stairs: {
-    text: "<h1>Handskottning</h1><span>Källartrappa</span>",
+    text: "<h1>Handskottning</h1><span>Trappa</span>",
     icon: "<i class='fa-solid fa-stairs'></i>"
   },
   obstacle: {
@@ -47,6 +49,10 @@ const warningType = {
   snow: {
     text: "<h1>Snöupplag</h1>",
     icon: "<i class='fa-regular fa-snowflake'></i>"//"<i class='fa-solid fa-mountain'></i>"
+  },
+  trash: {
+    text: "<h1>Soprum / Soptunna</h1>",
+    icon: '<i class="fa-regular fa-trash-can"></i>'
   }
 }
 const tileLayers = () => {
@@ -153,36 +159,6 @@ const devOnClick = (boolean) => {
 
     }
 
-}
-const inputDrawBlock = () => {
-  // Array to hold the coordinates of the polygon
-  var polygonCoords = [];
-  var polyline = L.polyline([], { color: 'blue' }).addTo(map); // Realtime polyline
-
-  // Function to print the current polygon coordinates to console
-  function logCoordinates() {
-      console.log('Current Polygon Coordinates:', JSON.stringify(polygonCoords));
-  }
-
-  // Event listener for map click
-  map.on('click', function(e) {
-      var latLng = e.latlng; // Get the latitude and longitude of the click
-      polygonCoords.push([latLng.lat, latLng.lng]); // Add coordinates to array
-      polyline.addLatLng(latLng); // Add new point to the polyline
-
-      logCoordinates(); // Print current coordinates
-  });
-
-  // Reset functionality
-  document.getElementById('reset').addEventListener('click', function() {
-      polygonCoords = []; // Reset coordinates array
-      polyline.setLatLngs([]); // Remove all points from the polyline
-
-      console.log('Polygon reset');
-  });
-
-  mapDOM = document.getElementById('map')
-  mapDOM.classList.add('pointer')
 }
 const drawRouteTest = () => {
 // Define two positions
@@ -393,6 +369,11 @@ const drawLines = () => {
                 weight: 7,//getLineWeight(map.getZoom() * customWidth), // Set initial weight
                 className: `fms-line ${block[1].work_type} ${custClass}`
               }).addTo(map);
+
+              if (GLOBAL_PARAMETER.length > 0 && GLOBAL_PARAMETER == '?m=editor') {
+                  // User is in editor / debugg mode
+                  polyline.bindPopup(`data_line #:${i}`)
+              }
             });
           }
     })
@@ -415,6 +396,11 @@ const drawBlocks = () => {
                 fillOpacity: 0.35,  // Transparency level of the fill
                 className: `fms-blocks ${block[1].work_type} ${custClass}`
               }).addTo(map);
+
+              if (GLOBAL_PARAMETER.length > 0 && GLOBAL_PARAMETER == '?m=editor') {
+                  // User is in editor / debugg mode
+                  polygon.bindPopup(`data_blocks #:${i}`)
+              }
             });
           }
     })
@@ -438,6 +424,10 @@ const drawHazardBlocks = () => {
                 fillOpacity: 0.45,  // Transparency level of the fill
                 className: `fms-hazard-blocks ${custClass}`
               }).addTo(map);
+              if (GLOBAL_PARAMETER.length > 0 && GLOBAL_PARAMETER == '?m=editor') {
+                  // User is in editor / debugg mode
+                  polygon.bindPopup(`data_hazard_blocks #:${i}`)
+              }
             });
           }
     })
@@ -466,7 +456,13 @@ const drawWarnings = () => {
               });
               // Add a marker with the custom icon and a popup
               const marker = L.marker(block[1].coords, { icon: icon }).addTo(map);
-              marker.bindPopup(warningType[typeIndex].text)
+              if (GLOBAL_PARAMETER.length > 0 && GLOBAL_PARAMETER == '?m=editor') {
+                  // User is in editor / debugg mode
+                  marker.bindPopup(warningType[typeIndex].text + ` #${i}`)
+              } else {
+                  marker.bindPopup(warningType[typeIndex].text)
+              }
+
             });
           }
     })
@@ -884,7 +880,7 @@ const initMap = () => {
   drawBlocks()                  // Draw polygons to represent larger areas
   drawLines()                   // Draw lines that represent i.e roads
   drawWarnings()                // Draws fontawesome icons as warnings or 'heads-up'
-  //drawPerimiter()               // Draws resident perimiter
+  drawPerimiter()               // Draws resident perimiter
   drawCompounds()               // Draws the "blocks" with the description
 
   toggleWorkTypes()             // Handles two states (daytime work / nighttime work)
