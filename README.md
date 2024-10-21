@@ -7,4 +7,4 @@
 # Features
 > Information about this function goes here
 > </br></br>
-> <img src="https://riksbyggen.netle.se/img/riksbyggen-netle.png" width="41%"></br>
+> <img src="https://riksbyggen.netle.se/img/riksbygget-netle.png" width="41%"></br>
