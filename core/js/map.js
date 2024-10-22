@@ -284,11 +284,8 @@ const updateMultipleusers = (data) => {
         multipleMarkers.forEach((object, i) => {
             // Do not update or modify yourself, you exists in another function
             if (user.username != loggedUser) {
-                // 2 dimensional interation
                 if (user.username == object.username) {
                   // Update these markers with new coordinates
-                  // lastupdate = 100
-                  // date = 150
                   let dateSub = Math.floor(Date.now() / 1000) - user?.lastUpdated
                   if (dateSub < 300) {
                         // Coordinates have updated since last time
@@ -296,8 +293,6 @@ const updateMultipleusers = (data) => {
                         multipleMarkers[i].lastUpdated = Math.floor(Date.now() / 1000)
                         object.marker.setLatLng(user.coords)
                         object.marker._icon.classList?.remove('fms-hidden')
-
-                        // Update db with coordinates and db
                   } else {
                     object.marker._icon.classList.add('fms-hidden')
                   }
@@ -305,11 +300,7 @@ const updateMultipleusers = (data) => {
                 }
             }
         });
-
-
   });
-
-
 }
 const drawMultipleUsers = (data) => {
   let loggedUser = JSON.parse(localStorage.getItem("loggedUser"))[1].toLowerCase()
@@ -422,7 +413,7 @@ const drawHazardBlocks = () => {
               const lines = block[1].coords
               const polygon = L.polygon(lines, {
                 fillOpacity: 0.45,  // Transparency level of the fill
-                className: `fms-hazard-blocks ${custClass}`
+                className: `fms-hazard-blocks ${block[1].work_type} ${custClass}`
               }).addTo(map);
               if (GLOBAL_PARAMETER.length > 0 && GLOBAL_PARAMETER == '?m=editor') {
                   // User is in editor / debugg mode
@@ -601,6 +592,18 @@ const workTypeAuto = (index) => {
               // Show all
               objects[x].classList.remove('fms-type-hidden')
           }
+      }
+  }
+
+  // * Late addition, add stairs too
+  let stairs = document.getElementsByClassName('fms-stairs')
+  for (i = 0; i < stairs.length; i++) {
+      if (index == 0) {
+          // Hide stairs
+          stairs[i].classList.add('fms-type-hidden')
+      }
+      if (index == 1) {
+          stairs[i].classList.remove('fms-type-hidden')
       }
   }
 }
