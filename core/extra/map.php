@@ -72,6 +72,7 @@
   <!-- Hidden menu -->
   <div class="fms-menu" id="fms-menu">
     <div class="menu-content">
+        <!--
         <div class="bar">
           <h1>Dela Position</h1>
           <span>Visar dig själv och medarbetare på kartan (TBA)</span>
@@ -80,6 +81,7 @@
             <span class="slider round"></span>
           </label>
         </div>
+      -->
         <div class="bar">
           <h1>GPS</h1>
           <span>Spårar din enhet med hjälp av gps (Beta) </span>
