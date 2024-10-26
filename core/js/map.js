@@ -230,6 +230,7 @@ const localCookies = () => {
   map.on('baselayerchange', (e) => {
       localStorage.setItem('layer', e.name)
   })
+
 }
 
 /*
@@ -342,6 +343,7 @@ const drawLines = () => {
     "small": "#fe9700",
     "small_2": "#fe9700"
   }
+  const objectGroup = L.layerGroup()
 
   jsonData.forEach((item, i) => {
     compounds = item[1].compounds
@@ -359,7 +361,7 @@ const drawLines = () => {
                 color: colorObj[block[1].type], // Set the color from the group data
                 weight: 7,//getLineWeight(map.getZoom() * customWidth), // Set initial weight
                 className: `fms-line ${block[1].work_type} ${custClass}`
-              }).addTo(map);
+              }).addTo(objectGroup);
 
               if (GLOBAL_PARAMETER.length > 0 && GLOBAL_PARAMETER == '?m=editor') {
                   // User is in editor / debugg mode
@@ -369,10 +371,12 @@ const drawLines = () => {
           }
     })
   });
+  objectGroup.addTo(map)
 }
 const drawBlocks = () => {
   // Example coordinates for a polygon (5-6 points)
   // Loop through points and create polylines for each group
+  const objectGroup = L.layerGroup()
   jsonData.forEach((item, i) => {
     compounds = item[1].compounds
 
@@ -386,7 +390,7 @@ const drawBlocks = () => {
               const polygon = L.polygon(lines, {
                 fillOpacity: 0.35,  // Transparency level of the fill
                 className: `fms-blocks ${block[1].work_type} ${custClass}`
-              }).addTo(map);
+              }).addTo(objectGroup);
 
               if (GLOBAL_PARAMETER.length > 0 && GLOBAL_PARAMETER == '?m=editor') {
                   // User is in editor / debugg mode
@@ -396,11 +400,13 @@ const drawBlocks = () => {
           }
     })
   });
+  objectGroup.addTo(map)
 }
 const drawHazardBlocks = () => {
 
   // Example coordinates for a polygon (5-6 points)
   // Loop through points and create polylines for each group
+  const objectGroup = L.layerGroup()
   jsonData.forEach((item, i) => {
     compounds = item[1].compounds
 
@@ -414,7 +420,7 @@ const drawHazardBlocks = () => {
               const polygon = L.polygon(lines, {
                 fillOpacity: 0.45,  // Transparency level of the fill
                 className: `fms-hazard-blocks ${block[1].work_type} ${custClass}`
-              }).addTo(map);
+              }).addTo(objectGroup);
               if (GLOBAL_PARAMETER.length > 0 && GLOBAL_PARAMETER == '?m=editor') {
                   // User is in editor / debugg mode
                   polygon.bindPopup(`data_hazard_blocks #:${i}`)
@@ -423,12 +429,13 @@ const drawHazardBlocks = () => {
           }
     })
   });
-
+  objectGroup.addTo(map)
 }
 const drawWarnings = () => {
 
   // Here we handle the warnings on the map
   // Could be a gate, no entry, word-in-progress et
+  const objectGroup = L.layerGroup()
   jsonData.forEach((item, i) => {
     compounds = item[1].compounds
 
@@ -446,7 +453,7 @@ const drawWarnings = () => {
                   popupAnchor: [0, -12] // Position of the popup
               });
               // Add a marker with the custom icon and a popup
-              const marker = L.marker(block[1].coords, { icon: icon }).addTo(map);
+              const marker = L.marker(block[1].coords, { icon: icon }).addTo(objectGroup);
               if (GLOBAL_PARAMETER.length > 0 && GLOBAL_PARAMETER == '?m=editor') {
                   // User is in editor / debugg mode
                   marker.bindPopup(warningType[typeIndex].text + ` #${i}`)
@@ -458,12 +465,13 @@ const drawWarnings = () => {
           }
     })
   });
-
+  objectGroup.addTo(map)
 }
 const drawPerimiter = () => {
 
   // Example coordinates for a polygon (5-6 points)
   // Loop through points and create polylines for each group
+  const objectGroup = L.layerGroup()
   jsonData.forEach((item, i) => {
     compounds = item[1].compounds
     Object.entries(compounds).forEach((data, index) => {
@@ -483,24 +491,25 @@ const drawPerimiter = () => {
             let custClass = (map.getZoom() <= 13) ? "fms-hidden" : ""
             const icon = L.divIcon({
               className: "polygon-label",
-              html: `<div class='area-label ${custClass}'>${data[1].desc}</div>`,  // You can also use custom text here
+              html: `<div class='area-label ${custClass}'>${data[1].desc}</div>`,
               iconSize: [150, 150],
               iconAnchor: [40, 15]  // Center the icon
             });
 
             // Add a marker at the centroid using the DivIcon
-            const marker = L.marker(centroid, { icon: icon }).addTo(map);
+            const marker = L.marker(centroid, { icon: icon }).addTo(objectGroup);
             marker.on('click', () => {
                 map.setView(centroid, 18, {animate: true, duration: 1})
             })
           }
     })
   });
-
+  objectGroup.addTo(map)
 }
 const drawCompounds = () => {
 
   // City compounds
+  const objectGroup = L.layerGroup()
   jsonData.forEach((item, i) => {
       let city = item[0]
       let coords = item[1].coords
@@ -514,14 +523,14 @@ const drawCompounds = () => {
         iconAnchor: [5, 5]  // Center the icon
       });
 
-      const marker = L.marker(coords, {icon:icon}).addTo(map)
+      const marker = L.marker(coords, {icon:icon}).addTo(objectGroup)
 
       marker.on('click', () => {
           map.setView(coords, 15, { animate: true, duration: 1 });
       })
 
   });
-
+  objectGroup.addTo(map)
 }
 /*
   This is given a list with classnames to keep an eye on, if the zoom exceed a threshold-
@@ -886,6 +895,7 @@ const initMap = () => {
   drawPerimiter()               // Draws resident perimiter
   drawCompounds()               // Draws the "blocks" with the description
 
+
   toggleWorkTypes()             // Handles two states (daytime work / nighttime work)
   toggleTopMenu()               // Simple js to handle hamburger menu
 
@@ -910,6 +920,9 @@ window.onload = () => {
   setInterval(() => {
     gpsFetchStorage(updateBool = true)  // Interval Load (updating existing markers and showing/hiding)
   }, 10000)
+
+
+
 
 
 }
