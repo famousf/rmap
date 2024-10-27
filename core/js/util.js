@@ -13,6 +13,10 @@ const toggleUI = (e) => {
 
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+  console.log(e.classList, cname)
+>>>>>>> 1b9edfc7a4f80c1441f293a90662630160b1d743
 =======
   console.log(e.classList, cname)
 >>>>>>> 1b9edfc7a4f80c1441f293a90662630160b1d743
@@ -64,7 +68,10 @@ const toggleUI = (e) => {
     }
   }
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> 1b9edfc7a4f80c1441f293a90662630160b1d743
   //if (cname == 1 && names.includes(id)) {}
   /*
 
@@ -100,5 +107,8 @@ const toggleUI = (e) => {
       console.log("Show ")
   }
   */
+<<<<<<< HEAD
+>>>>>>> 1b9edfc7a4f80c1441f293a90662630160b1d743
+=======
 >>>>>>> 1b9edfc7a4f80c1441f293a90662630160b1d743
 }
