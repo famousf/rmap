@@ -905,8 +905,6 @@ const initMap = () => {
   navigatorInit()               // Initializes GPS for self
 
 
-  //drawRouteTest()             // EXPERIMENTAL
-  //inputDrawBlock()            // EXPERIMENTAL
 }
 
 
@@ -918,7 +916,9 @@ window.onload = () => {
   initMap()
   gpsFetchStorage(updateBool = false)   // Initial Load (i.e create markers instad of updating)
   setInterval(() => {
+
     gpsFetchStorage(updateBool = true)  // Interval Load (updating existing markers and showing/hiding)
+    
   }, 10000)
 
 

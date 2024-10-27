@@ -63,8 +63,27 @@
   <!-- Bottom navigation -->
   <div class="fms-toggle">
     <div class="fms-toggle-btn" id="worktype">Dagtid</div>
+    <div class="fms-toggle-btn" id="toggle-layer" id="main-btn" onclick="toggleUI(this)">LAGER</div>
     <div class="fms-toggle-btn" id="centerGps"><i class="fa-solid fa-location-arrow"></i></div>
+    <div class="toggle-layer">
+      <!--
+      <div class="tl-bar" id="show" onclick="toggleUI(this)">
+        <div class="show"><i class="fa-solid fa-arrow-rotate-left"></i></div><span>Visa allt</span>
+      </div>
+    -->
+      <div class="tl-bar" id="lines" onclick="toggleUI(this)">
+        <div class="linjer"></div><span>Linjer</span>
+      </div>
+      <div class="tl-bar" id="icon" onclick="toggleUI(this)">
+        <div class="ikoner"></div><span>Ikoner</span>
+      </div>
+      <div class="tl-bar" id="parking" onclick="toggleUI(this)">
+        <div class="pakering"></div><span>Ytor</span>
+      </div>
     </div>
+  </div>
+
+
   </div>
   <!-- END bottom navigation -->
 
@@ -124,3 +143,4 @@
 
   <div id="map"></div>
   <script src="core/js/map.js?<?php echo $VERSION ?>"></script>
+  <script src="core/js/util.js?<?php echo $VERSION ?>"></script>
