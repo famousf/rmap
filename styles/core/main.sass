@@ -247,9 +247,114 @@ body
         transform: rotate(-45deg)
     div
       border-radius: 10px
+      cursor: pointer
       color: #000
       background: #f1f1f1
       position: absolute
+    .toggle-layer.fms-show-menu
+      width: 30vw
+      min-width: 150px
+      max-width: 250px
+      height: auto
+      bottom: 150px
+      overflow: visible
+    .toggle-layer
+      background: #171c21
+      width: 30vw
+      min-width: 150px
+      max-width: 250px
+      height: 0
+      overflow: hidden
+      bottom: 150px
+      div.fms-show-menu
+         background: #3d2525
+      div
+        color: #fff
+        display: block
+        width: 100%
+        height: 50px
+        padding: 10px 5px
+        box-sizing: border-box
+        position: relative
+        background: none
+        border-bottom: 1px solid rgba(#fff ,0.1)
+        border-radius: 0
+        div
+          width: 35px
+          height: 20px
+          float: left
+          position: relative
+          border: none
+        .show
+          text-align: center
+          i
+            top: 3px
+            position: absolute
+            margin: 0
+            left: 0
+            right: 0
+
+        .pakering
+          &::before
+            content: ''
+            display: block
+            position: absolute
+            left: 0
+            right: 0
+            margin: 0 auto
+            top: 0
+            width: 18px
+            height: 18px
+            border-radius: 5px
+            background: rgba(51, 136, 255, 0.25)
+            border: 3px dashed #6491cf
+        .ikoner
+          &::before
+            content: ''
+            left: 0
+            right: 0
+            margin: 0 auto
+            top: 1px
+            width: 19px
+            height: 19px
+            position: absolute
+            display: block
+            background: $red
+            border: 2px solid #f1f1f1
+            border-radius: 50%
+        .linjer
+          &::before
+            left: 0
+            border-radius: 2px
+            content: ''
+            display: block
+            position: absolute
+            width: 60%
+            left: 0
+            right: 0
+            margin: 0 auto
+            height: 5px
+            background: $red
+    div#toggle-layer.fms-show-menu
+      color: #f1f1f1
+      background: $red
+    div#toggle-layer
+      z-index: 800
+      padding: 10px 5px 20px 5px
+      display: block
+      width: 70px
+      height: 20px
+      border-radius: 5px
+      text-align: center
+      bottom: 85px
+      left: 10px
+      border: 2px solid #f1f1f1
+      box-shadow: 0px 0px 22px -4px rgba(147,67,67,1)
+      font-weight: 600
+      &::before
+        content: 'ÄNDRA'
+        font-size: .7em
+        display: block
     div#worktype
       z-index: 800
       padding: 10px 5px 20px 5px
