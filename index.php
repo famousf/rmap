@@ -9,7 +9,7 @@
   if(isset($_POST["setUser"])):
       setcookie('loggedUser', $_POST["user"], time() + (86400 * 10), "/");
       echo "loggedUser";
-      exit;
+      exit;§
   endif;
 
   if (isset($_POST["logout"])):
@@ -42,7 +42,7 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
   <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
-  <script src="core/js/dataset.js?<?php echo $VERSION ?>"></script>
+  <script src="core/db/dataset.js?<?php echo $VERSION ?>"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 </head>
