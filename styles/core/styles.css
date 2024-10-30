@@ -220,6 +220,25 @@ body #editor .drag-content {
   padding: 0;
   display: none;
 }
+body #editor .drag-content .job-icon {
+  margin-top: 5px;
+  display: flex !important;
+  text-align: center;
+}
+body #editor .drag-content .job-icon i.active.fa-trash-can, body #editor .drag-content .job-icon i.active.fa-triangle-exclamation {
+  background: #ca5757;
+}
+body #editor .drag-content .job-icon i.active.fa-snowflake {
+  background: #6491cf;
+}
+body #editor .drag-content .job-icon i.active.fa-stairs {
+  background: #ff9800;
+}
+body #editor .drag-content .job-icon i {
+  border-radius: 50%;
+  flex: 1;
+  padding: 19px 0;
+}
 body #editor .drag-content div {
   display: none;
 }
