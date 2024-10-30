@@ -39,7 +39,7 @@ const warningType = {
     icon: "<i class='fa-solid fa-stairs'></i>"
   },
   obstacle: {
-    text: "<h1>Vägbomm</h1>",
+    text: "<h1>Hinder alt. Viktig yta</h1>",
     icon: "<i class='fa-solid fa-triangle-exclamation'></i>"
   },
   headsup: {
@@ -918,7 +918,7 @@ window.onload = () => {
   setInterval(() => {
 
     gpsFetchStorage(updateBool = true)  // Interval Load (updating existing markers and showing/hiding)
-    
+
   }, 10000)
 
 

@@ -40,7 +40,10 @@
       <h1>Block</h1>
     </div>
     <div class="job-icon">
-      <h1>Ikon</h1>
+      <i class='fa-solid fa-stairs fms-icon-picker' id="headsup"></i>
+      <i class='fa-solid fa-triangle-exclamation fms-icon-picker' id="obstacle"></i>
+      <i class='fa-regular fa-snowflake fms-icon-picker' id="snow"></i>
+      <i class="fa-regular fa-trash-can fms-icon-picker" id="trash"></i>
     </div>
   </div>
 

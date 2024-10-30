@@ -3,7 +3,10 @@ let workTypeSetting = null
 let blockLineSetting = null
 let polygonCoords = []
 let polyline = null
-
+let setIconType = null
+let iconTypeMarker = null
+let setIconData = []
+let iconData = null
 const fillJobContent = (type) => {
   // Show drag-content first
   let parent = document.getElementsByClassName('drag-content')[0]
@@ -31,6 +34,66 @@ const pickJobEditor = () => {
           polyline.setLatLngs([])
       })
   }
+
+
+  // For Icons
+  let jobIcons = document.getElementsByClassName('fms-icon-picker')
+  for (i = 0; i < jobIcons.length; i++) {
+      jobIcons[i].addEventListener('click', (e) => {
+          // Clear setIconType from previous setting
+          setIconType = null
+          // Remove class if its not the same as target
+          for (i = 0; i < jobIcons.length; i++) {
+              jobIcons[i].classList.remove('active')
+          }
+          e.target.classList.add('active')
+          setIconType = e.target.id
+      })
+
+  }
+
+  map.on('click', (e) => {
+    if (setIconType) {
+      if (iconTypeMarker) {
+        iconTypeMarker.setLatLng([e.latlng.lat, e.latlng.lng])
+        iconTypeMarker.setIcon(L.divIcon({
+          html: warningType[setIconType].icon, // Update FontAwesome icon
+          iconSize: [18, 36], // Size of the icon
+          className: `fms-${setIconType}`,
+          popupAnchor: [0, -12], // Position of the popup
+          iconAnchor: [13, 12]
+        }));
+
+      } else {
+        iconTypeMarker = L.marker([e.latlng.lat, e.latlng.lng], { icon: L.divIcon({
+          html: warningType[setIconType].icon, // FontAwesome icon
+          iconSize: [18, 36], // Size of the icon
+          className: `fms-${setIconType}`,
+          popupAnchor: [0, -12], // Position of the popup
+          iconAnchor: [13, 12]
+        })}).addTo(map)
+      }
+
+      // Add to json
+      let iconData = {
+        type: setIconType,
+        coords: [e.latlng.lat, e.latlng.lng]
+      }
+
+
+      console.log(iconData)
+      // Show "accept" button
+      // if confirmed, push data to php and insert into .json
+      $('.fms-confirm-coords').show()
+      $('.fms-confirm-button').on('click', (e) => {
+          console.log("send this data to server:", iconData)
+      })
+
+
+    }
+
+
+  })
 }
 const inputDrawBlock = () => {
   mapDOM = document.getElementById('map')

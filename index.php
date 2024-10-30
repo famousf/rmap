@@ -9,7 +9,7 @@
   if(isset($_POST["setUser"])):
       setcookie('loggedUser', $_POST["user"], time() + (86400 * 10), "/");
       echo "loggedUser";
-      exit;§
+      exit;
   endif;
 
   if (isset($_POST["logout"])):
