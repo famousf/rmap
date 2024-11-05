@@ -652,30 +652,32 @@ const toggleWorkTypes = () => {
     if so it sends new data to previous function
 */
 const updateUserLocation = (position) => {
-
-    let lat = position.coords.latitude;
-    let lng = position.coords.longitude;
+    let lat = position.coords.latitude
+    let lng = position.coords.longitude
+    let accuracy = position.coords.accuracy
     let newLatLng = L.latLng(lat, lng);
     clientPosition = [lat, lng]
     // Update the map's view to the new location (optional: add smooth transitions)
     // If the marker exists, update its position, otherwise create a new marker
     // Log the updated position to the console
-    if (userMarker) {
-        userMarker.setLatLng([lat, lng]);
-    } else {
-        userMarker = L.marker([lat, lng], { icon: L.divIcon({
+    if (accuracy < 15) {
+        if (userMarker) {
+          userMarker.setLatLng([lat, lng]);
+        } else {
+          userMarker = L.marker([lat, lng], { icon: L.divIcon({
             html: '<i class="fa-regular fa-circle-dot"></i>', // FontAwesome icon
             iconSize: [18, 36], // Size of the icon
             className: "GPS-tracker",
             popupAnchor: [12, 36] // Position of the popup
-        })}).addTo(map);
-    }
-    // Check if following mode is active and update map view accordingly
-    if (userIsFollowing) {
-        map.setView(newLatLng, map.getZoom(), { animate: true, duration: 1 });
-    }
-    if (document.getElementsByClassName('GPS-tracker')[0]) {
-        document.getElementsByClassName('GPS-tracker')[0].classList.remove('gps-hidden')
+          })}).addTo(map);
+        }
+        // Check if following mode is active and update map view accordingly
+        if (userIsFollowing) {
+          map.setView(newLatLng, map.getZoom(), { animate: true, duration: 1 });
+        }
+        if (document.getElementsByClassName('GPS-tracker')[0]) {
+          document.getElementsByClassName('GPS-tracker')[0].classList.remove('gps-hidden')
+        }
     }
 
 
