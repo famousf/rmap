@@ -14,6 +14,7 @@ let userLastKnownPos = null
 let flagFromSetView = null
 let watcherId = null
 let isTracking = null
+let avgPositions = []
 let domClasses = [
   "fms-line",
   "fms-blocks",
@@ -657,14 +658,25 @@ const updateUserLocation = (position) => {
     let accuracy = position.coords.accuracy
     let newLatLng = L.latLng(lat, lng);
     clientPosition = [lat, lng]
+    console.log(accuracy)
     // Update the map's view to the new location (optional: add smooth transitions)
     // If the marker exists, update its position, otherwise create a new marker
     // Log the updated position to the console
-    if (accuracy < 15) {
+    if (accuracy < 20) {
+        // Get avg position from last 5 positions
+        avgPositions.push([lat, lng])
+        if (avgPositions.length > 5) {
+            avgPositions.shift()
+        }
+
+        const avgLat = avgPositions.reduce((sum, pos) => sum + pos[0], 0) / avgPositions.length
+        const avgLng = avgPositions.reduce((sum, pos) => sum + pos[1], 0) / avgPositions.length
+        const smoothPos = [avgLat, avgLng]
+        console.log(smoothPos)
         if (userMarker) {
-          userMarker.setLatLng([lat, lng]);
+          userMarker.setLatLng(smoothPos);
         } else {
-          userMarker = L.marker([lat, lng], { icon: L.divIcon({
+          userMarker = L.marker(smoothPos, { icon: L.divIcon({
             html: '<i class="fa-regular fa-circle-dot"></i>', // FontAwesome icon
             iconSize: [18, 36], // Size of the icon
             className: "GPS-tracker",
@@ -673,7 +685,7 @@ const updateUserLocation = (position) => {
         }
         // Check if following mode is active and update map view accordingly
         if (userIsFollowing) {
-          map.setView(newLatLng, map.getZoom(), { animate: true, duration: 1 });
+          map.panTo(newLatLng, map.getZoom(), { animate: true, duration: 1 });
         }
         if (document.getElementsByClassName('GPS-tracker')[0]) {
           document.getElementsByClassName('GPS-tracker')[0].classList.remove('gps-hidden')
