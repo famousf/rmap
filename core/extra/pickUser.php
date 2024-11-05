@@ -1,7 +1,7 @@
 <div class="auth-screen" id="ldle3a">
   <div class="auth-pick-user">
     <h1>... Välj användare</h1>
-    <span>Lorem lipsum</span>
+    <span></span>
     <select class="pickUser">
       <option value="" default></option>
       <option value="0">Ludwig Eriksson</option>
@@ -17,5 +17,6 @@
     </select>
     <button type="submit" onclick="pickUser(this)">Gå vidare</button>
   </div>
+  <img id="rb_white" src="img/logo.svg" alt="">
 </div>
 <script src="core/js/pickuser.js?<?php echo $VERSION ?>"></script>

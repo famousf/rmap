@@ -662,7 +662,7 @@ const updateUserLocation = (position) => {
     // Update the map's view to the new location (optional: add smooth transitions)
     // If the marker exists, update its position, otherwise create a new marker
     // Log the updated position to the console
-    if (accuracy < 20) {
+    if (accuracy < 299690) {
         // Get avg position from last 5 positions
         avgPositions.push([lat, lng])
         if (avgPositions.length > 5) {
@@ -678,9 +678,9 @@ const updateUserLocation = (position) => {
         } else {
           userMarker = L.marker(smoothPos, { icon: L.divIcon({
             html: '<i class="fa-regular fa-circle-dot"></i>', // FontAwesome icon
-            iconSize: [18, 36], // Size of the icon
+            iconSize: [24, 24], // Size of the icon
             className: "GPS-tracker",
-            popupAnchor: [12, 36] // Position of the popup
+            popupAnchor: [12, 12] // Position of the popup
           })}).addTo(map);
         }
         // Check if following mode is active and update map view accordingly
@@ -738,7 +738,7 @@ const navigatorInit = (_boolean) => {
           {
             enableHighAccuracy: true,  // Ensure the best possible accuracy
             timeout: 5000,             // Wait for 5 seconds before timing out
-            maximumAge: 0              // Disable cache
+            maximumAge: 1000              // Disable cache
           }
         );
         isTracking = true

@@ -2,9 +2,9 @@
 @import url("https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Afacad+Flux:wght@100..1000&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Afacad+Flux:wght@100..1000&family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
-@media screen and (min-width: 1100px) {
+@media screen and (min-width: 600px) {
   .auth-bg, .auth-sig, .auth-pick-user {
-    width: 400px !important;
+    max-width: 300px !important;
   }
 }
 @keyframes gpsPulse {
@@ -1022,7 +1022,8 @@ body .auth-screen .numpad button:hover {
   background: rgba(255, 255, 255, 0.05);
 }
 body .auth-screen .auth-sig h1, body .auth-screen .auth-pick-user h1 {
-  font-size: 3em;
+  text-align: left;
+  font-size: 2.5em;
   color: #f1f1f1;
   padding: 0;
   margin: 0;
@@ -1032,6 +1033,7 @@ body .auth-screen .auth-sig span, body .auth-screen .auth-pick-user span {
   font-weight: 600;
   margin-bottom: 15px;
   display: block;
+  text-align: left;
 }
 body .auth-screen .auth-sig input, body .auth-screen .auth-pick-user input {
   border: 0;
@@ -1081,26 +1083,33 @@ body .auth-screen .auth-pick-user {
   z-index: 50;
 }
 body .auth-screen .auth-pick-user.fade-in {
-  animation: fade-in 0.3s ease-in forwards;
   z-index: 100;
 }
 body .auth-screen .auth-sig.move-away {
   z-index: 50;
-  animation: move-away 0.3s ease-in-out forwards;
 }
 body .auth-screen .auth-sig {
-  opacity: 0;
-  animation: loadSig 0.3s ease-in-out 5.5s forwards;
-  width: 60vw;
+  opacity: 1;
+  width: 65vw;
   position: absolute;
-  top: 50px;
+  top: 20px;
   margin: 0 auto;
   left: 0;
-  height: 60vh;
+  height: auto;
   right: 0;
   z-index: 100;
+  text-align: center;
 }
-body .auth-screen .auth-bg {
+body .auth-screen #rb_white {
+  position: absolute;
+  bottom: 76px;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 65px;
+}
+body .auth-screen .auth-bg-removed {
   position: absolute;
   top: 40vh;
   width: 100%;
@@ -1108,11 +1117,11 @@ body .auth-screen .auth-bg {
   animation: finish-draw 0.8s ease forwards;
   animation-delay: 2s;
 }
-body .auth-screen .auth-bg .main-animation {
+body .auth-screen .auth-bg-removed .main-animation-removed {
   animation: moveLeft 3s ease forwards;
   animation-delay: 4s;
 }
-body .auth-screen .auth-bg .auth-slogan {
+body .auth-screen .auth-bg-removed .auth-slogan {
   opacity: 0;
   left: 0;
   right: 0;
@@ -1120,21 +1129,20 @@ body .auth-screen .auth-bg .auth-slogan {
   top: -420px;
   text-align: center;
   color: #f1f1f1;
-  animation: showLogoText 0.8s ease 2.4s forwards, moveSloganLeft 3.5s ease 4s forwards;
 }
-body .auth-screen .auth-bg .auth-slogan img {
+body .auth-screen .auth-bg-removed .auth-slogan img {
   width: 100px;
 }
-body .auth-screen .auth-bg .auth-slogan h1 {
+body .auth-screen .auth-bg-removed .auth-slogan h1 {
   padding: 0;
   margin: 0;
   font-size: 4.5em;
 }
-body .auth-screen .auth-bg .auth-slogan span {
+body .auth-screen .auth-bg-removed .auth-slogan span {
   display: block;
   opacity: 0.7;
 }
-body .auth-screen .auth-bg .auth-logo {
+body .auth-screen .auth-bg-removed .auth-logo {
   margin: 0 auto;
   left: 0;
   right: 0;
@@ -1144,10 +1152,10 @@ body .auth-screen .auth-bg .auth-logo {
   animation: hideLogo 0.3s ease forwards;
   animation-delay: 2.5s;
 }
-body .auth-screen .auth-bg div {
+body .auth-screen .auth-bg-removed div {
   position: absolute;
 }
-body .auth-screen .auth-bg #a {
+body .auth-screen .auth-bg-removed #a {
   left: 0;
   transform: rotate(5deg);
   width: 100px;
@@ -1155,7 +1163,7 @@ body .auth-screen .auth-bg #a {
   background: #fff;
   animation: auth-draw-a 0.4s ease forwards;
 }
-body .auth-screen .auth-bg #a::after {
+body .auth-screen .auth-bg-removed #a::after {
   display: block;
   position: absolute;
   right: -5px;
@@ -1168,7 +1176,7 @@ body .auth-screen .auth-bg #a::after {
   background: #ca5757;
   border: 3px solid #fff;
 }
-body .auth-screen .auth-bg #b {
+body .auth-screen .auth-bg-removed #b {
   opacity: 0;
   left: 100px;
   transform: rotate(20deg);
@@ -1179,7 +1187,7 @@ body .auth-screen .auth-bg #b {
   animation: auth-draw-b 0.2s ease forwards;
   animation-delay: 0.1s;
 }
-body .auth-screen .auth-bg #b::after {
+body .auth-screen .auth-bg-removed #b::after {
   display: block;
   position: absolute;
   right: -5px;
@@ -1192,7 +1200,7 @@ body .auth-screen .auth-bg #b::after {
   background: #ca5757;
   border: 3px solid #fff;
 }
-body .auth-screen .auth-bg #c {
+body .auth-screen .auth-bg-removed #c {
   opacity: 0;
   left: 177px;
   transform: rotate(-3deg);
@@ -1203,7 +1211,7 @@ body .auth-screen .auth-bg #c {
   animation: auth-draw-c 0.2s ease forwards;
   animation-delay: 0.24s;
 }
-body .auth-screen .auth-bg #c::after {
+body .auth-screen .auth-bg-removed #c::after {
   display: block;
   position: absolute;
   right: -5px;
@@ -1216,7 +1224,7 @@ body .auth-screen .auth-bg #c::after {
   background: #ca5757;
   border: 3px solid #fff;
 }
-body .auth-screen .auth-bg #d {
+body .auth-screen .auth-bg-removed #d {
   opacity: 0;
   left: 280px;
   transform: rotate(29deg);
@@ -1227,7 +1235,7 @@ body .auth-screen .auth-bg #d {
   animation: auth-draw-d 0.2s ease forwards;
   animation-delay: 0.4s;
 }
-body .auth-screen .auth-bg #d::after {
+body .auth-screen .auth-bg-removed #d::after {
   opacity: 0;
   animation: auth-draw-d-after 0.4s ease 0.8s forwards, hidePin 0s 4s forwards;
   right: -3px;
@@ -1240,7 +1248,7 @@ body .auth-screen .auth-bg #d::after {
   font-weight: 700;
   font-size: 2em;
 }
-body .auth-screen .auth-bg #e {
+body .auth-screen .auth-bg-removed #e {
   opacity: 0;
   left: 339px;
   transform: rotate(0deg);
@@ -1251,7 +1259,7 @@ body .auth-screen .auth-bg #e {
   animation: lastPin-move 3.5s ease forwards;
   animation-delay: 4s;
 }
-body .auth-screen .auth-bg #e::after {
+body .auth-screen .auth-bg-removed #e::after {
   opacity: 1;
   right: -8px;
   top: -28px;

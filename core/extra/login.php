@@ -1,4 +1,5 @@
 <div class="auth-screen" id="ldle3a">
+<!--
   <div class="auth-bg">
     <div class="main-animation">
         <div id="a"></div>
@@ -15,6 +16,7 @@
       <span>Snökarta - <?php echo $VERSION ?></span>
     </div>
   </div>
+-->
   <div class="auth-sig">
     <h1>... Signera</h1>
     <span>För att motverka otillåten åtkomst, ange 'koden'</span>
@@ -34,5 +36,6 @@
         <button value="go-back"><i class="fa-solid fa-delete-left"></i></button>
     </div>
   </div>
+  <img id="rb_white" src="img/logo.svg" alt="">
 </div>
 <script src="core/js/login.js?<?php echo $VERSION ?>"></script>
