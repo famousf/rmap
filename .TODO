@@ -291,52 +291,38 @@ data_warning: {
 
 
 
-Riksbyggen
-Riksbyggen123
-Riksbyggen1234
-Bangatan
-Bangatan123
-Bangatan1234
-Bantorget
-Bantorget123
-Bantorget1234
-
-riksbyggen
-riksbyggen123
-riksbyggen1234
-bangatan
-bangatan123
-bangatan1234
-bantorget
-bantorget123
-bantorget1234
-
-
-
-
-
-
-
+{
+  "MHUS 10": {
+    "parkeringar": { // blocks
+      0: {
+        "by": "ludwig eriksson",
+        "task_completed": "21:28
+      }
+    },
+    "vägar": {      // lines
+      by: "lukas larsson",
+      task_completed: "20:00"
+    },
+    "grusning": {
+      0: {
+        "by": "ludwig eriksson",
+        "task_completed": "22:30"
+      },
+      1: {
+        by: "lukas larsson",
+        "task_completed": "23:45"
+      }
+    }
+  }
+}
 
 
 
 
-Riksbyggen
-Riksbyggen123
-Riksbyggen1234
-Bangatan
-Bangatan123
-Bangatan1234
-Bantorget
-Bantorget123
-Bantorget1234
+Parkering         1 / 1
+Handskottning     1 / 1
+Vägar             1 / 1
+Grusning          3 / 3
 
-riksbyggen
-riksbyggen123
-riksbyggen1234
-bangatan
-bangatan123
-bangatan1234
-bantorget
-bantorget123
-bantorget1234
+Mhus 5
+  1 / 6
