@@ -1,5 +1,5 @@
 <?php
-  $VERSION = "1.1.38";
+  $VERSION = "1.1.395";
   if(isset($_POST["numpadClear"])):
       setcookie('isCleared', "clear", time() + (86400 * 10), "/");
       echo "isCleared";

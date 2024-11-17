@@ -23,7 +23,8 @@ let domClasses = [
   "fms-stairs",
   "fms-headsup",
   "fms-snow",
-  "fms-trash"
+  "fms-trash",
+  "fst-holder"
 ]
 let GLOBAL_PARAMETER = window.location.search
 let GLOBAL_SETTINGS = null
@@ -107,6 +108,15 @@ const tileLayers = () => {
     // Add the control to the map to switch between layers
     L.control.layers(baseLayers).addTo(map);
     // Geolocation - Get the user's current location and place a marker
+}
+const findPositionPoint = (coords) => {
+    let leftmostPoint = coords[0]
+    coords.forEach(coord => {
+      if (coord[0] > leftmostPoint[0]) {
+        leftmostPoint = coord
+      }
+    });
+    return leftmostPoint
 }
 const getPolygonCentroid = (latlngs) => {
   let lat = 0;
@@ -489,7 +499,7 @@ const drawPerimiter = () => {
             });
             const centroid = getPolygonCentroid(polygon.getLatLngs()[0]);
             // Create a DivIcon to hold text or an icon
-            let custClass = (map.getZoom() <= 13) ? "fms-hidden" : ""
+            let custClass = (map.getZoom() <= 13 || map.getZoom() >= 16) ? "fms-hidden" : ""
             const icon = L.divIcon({
               className: "polygon-label",
               html: `<div class='area-label ${custClass}'>${data[1].desc}</div>`,
@@ -499,6 +509,40 @@ const drawPerimiter = () => {
 
             // Add a marker at the centroid using the DivIcon
             const marker = L.marker(centroid, { icon: icon }).addTo(objectGroup);
+
+
+            /*
+            ##
+            # Attempt at making a status table that sits outside the perimiter to
+            # simple check wether an action is completed or not - SCRAPPED
+            # (Clunky and/or messy + decreases performance due to rendering)
+            ##
+            */
+
+            if (data[1].notes) {
+                console.log(data[1].notes)
+                const notesContent = data[1]?.notes
+                custClass = (map.getZoom() < 16) ? "fms-hidden" : ""
+                let notesHtml = ""
+                if (notesContent.text) {
+                  for (i = 0; i < notesContent.text.length; i++) {
+                    notesHtml += `<div class="fst-status">${notesContent.text[i]}</div>`
+                  }
+                }
+                const tablePosition = data[1].notes.coords
+                const statusTable = L.divIcon({
+                  className: "fms-statusTable",
+                  html: `<div class="fst-holder ${custClass}" style="background: #fff">${notesHtml}</div>`,
+                })
+
+                console.log(tablePosition)
+                L.marker(tablePosition, {icon:statusTable}).addTo(map)
+
+            }
+
+
+
+
             marker.on('click', () => {
                 map.setView(centroid, 18, {animate: true, duration: 1})
             })
@@ -662,7 +706,7 @@ const updateUserLocation = (position) => {
     // Update the map's view to the new location (optional: add smooth transitions)
     // If the marker exists, update its position, otherwise create a new marker
     // Log the updated position to the console
-    if (accuracy < 299690) {
+    if (accuracy < 20) {
         // Get avg position from last 5 positions
         avgPositions.push([lat, lng])
         if (avgPositions.length > 5) {

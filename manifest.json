@@ -4,7 +4,7 @@
   "description": "Custombuilt webapplication for Riksbyggen to use during snowprevention",
   "start_url": "/index.php",
   "display": "standalone",
-  "background_color": "#fff",
+  "background_color": "#ca5757",
   "theme_color": "#ca5757",
   "orientation": "portrait",
   "icons": [
