@@ -393,14 +393,14 @@ const drawBlocks = () => {
 
     Object.entries(compounds).forEach((data, index) => {
           blocks = data[1].data_blocks
-
           if (blocks) {
             Object.entries(blocks).forEach((block, i) => {
               let custClass = (map.getZoom() < 16) ? "fms-hidden" : ""
               const lines = block[1].coords
+              const sessionClassName = `${data[1].desc.split(' ').join('')}-blocks`
               const polygon = L.polygon(lines, {
                 fillOpacity: 0.35,  // Transparency level of the fill
-                className: `fms-blocks ${block[1].work_type} ${custClass}`
+                className: `fms-blocks ${block[1].work_type} ${custClass} ${sessionClassName}`
               }).addTo(objectGroup);
 
               if (GLOBAL_PARAMETER.length > 0 && GLOBAL_PARAMETER == '?m=editor') {
@@ -520,7 +520,6 @@ const drawPerimiter = () => {
             */
 
             if (data[1].notes) {
-                console.log(data[1].notes)
                 const notesContent = data[1]?.notes
                 custClass = (map.getZoom() < 16) ? "fms-hidden" : ""
                 let notesHtml = ""
@@ -535,7 +534,6 @@ const drawPerimiter = () => {
                   html: `<div class="fst-holder ${custClass}" style="background: #fff">${notesHtml}</div>`,
                 })
 
-                console.log(tablePosition)
                 L.marker(tablePosition, {icon:statusTable}).addTo(map)
 
             }
@@ -702,7 +700,6 @@ const updateUserLocation = (position) => {
     let accuracy = position.coords.accuracy
     let newLatLng = L.latLng(lat, lng);
     clientPosition = [lat, lng]
-    console.log(accuracy)
     // Update the map's view to the new location (optional: add smooth transitions)
     // If the marker exists, update its position, otherwise create a new marker
     // Log the updated position to the console
@@ -716,7 +713,6 @@ const updateUserLocation = (position) => {
         const avgLat = avgPositions.reduce((sum, pos) => sum + pos[0], 0) / avgPositions.length
         const avgLng = avgPositions.reduce((sum, pos) => sum + pos[1], 0) / avgPositions.length
         const smoothPos = [avgLat, avgLng]
-        console.log(smoothPos)
         if (userMarker) {
           userMarker.setLatLng(smoothPos);
         } else {
@@ -750,7 +746,7 @@ const updateUserLocation = (position) => {
         if (error) {
           console.log("Update Error", error)
         } else {
-          console.log("Updated Succesfully, ", username.toLowerCase())
+          //console.log("Updated Succesfully, ", username.toLowerCase())
         }
     }
     updateSupaDb()
@@ -952,7 +948,7 @@ const initMap = () => {
   drawWarnings()                // Draws fontawesome icons as warnings or 'heads-up'
   drawPerimiter()               // Draws resident perimiter
   drawCompounds()               // Draws the "blocks" with the description
-
+  //drawStatus()                  // Draws the option to complete a checklist. If all is completed, mark it as DONE for the session
 
   toggleWorkTypes()             // Handles two states (daytime work / nighttime work)
   toggleTopMenu()               // Simple js to handle hamburger menu

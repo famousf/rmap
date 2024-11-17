@@ -1,5 +1,5 @@
 <?php
-  $VERSION = "1.1.395";
+  $VERSION = "1.1.4";
   if(isset($_POST["numpadClear"])):
       setcookie('isCleared', "clear", time() + (86400 * 10), "/");
       echo "isCleared";
@@ -63,6 +63,10 @@
 
         if(isset($_GET["m"]) && $_GET["m"] == "editor"):
             include_once "core/extra/editor.php";
+
+
+        elseif (isset($_GET["s"])):
+            include_once "core/extra/sessions.php";
         endif;
 
 

@@ -103,7 +103,7 @@
       -->
         <div class="bar">
           <h1>GPS</h1>
-          <span>Spårar din enhet med hjälp av gps (Beta) </span>
+          <span>Spårar din enhet med hjälp av gps</span>
           <label class="switch">
             <input type="checkbox" onchange="toggleSetting(this)" id="myPosition">
             <span class="slider round"></span>
@@ -111,11 +111,15 @@
         </div>
         <div class="bar">
           <h1>Utvecklare</h1>
-          <span>Tillåter användaren att logga kordinater (Beta)</span>
+          <span>Tillåter användaren att logga kordinater</span>
           <label class="switch">
             <input type="checkbox" onchange="toggleSetting(this)" id="enableDev">
             <span class="slider round"></span>
           </label>
+        </div>
+        <div class="bar">
+          <h1>Session</h1>
+          <span>Skapa en ny snösession (KOMMER SNART)</span>
         </div>
         <div class="bar red">
           <form method="post">
@@ -130,7 +134,7 @@
         <img id="cat" src="img/github/github-cat-white.png" alt="">
         <img id="text" src="img/github/github-text-white.png" alt="">
       </div>
-      <span>Made by Ludwig Eriksson<br>opensourced on github.io/netle.se</span>
+      <span>Made by Ludwig Eriksson</span>
     </div>
   </div>
   <div class="fms-bars" id="hamb-menu">
