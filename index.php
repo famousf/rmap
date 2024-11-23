@@ -32,7 +32,7 @@
   <link rel="mask-icon" href="img/favico/safari-pinned-tab.svg" color="#5bbad5">
   <meta name="msapplication-TileColor" content="#ffffff">
   <meta name="theme-color" content="#ffffff">
-  <link rel="manifest" href="manifest.json" />
+  <link rel="manifest" href="manifest.json?<?php echo $VERSION ?>" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
   <link rel="stylesheet" href="styles/core/styles.css?<?php echo $VERSION ?>"/>

@@ -927,6 +927,22 @@ const gpsInsertStorage = () => {
   let coordinate = clientPosition
 }
 
+
+let wakeLock = async () => {
+    try {
+        if ('wakeLock' in navigator) {
+            wakeLock = await navigator.wakeLock.request('screen');
+
+            // Handle the release event
+            wakeLock.addEventListener('release', () => {
+                wakeLock();
+            });
+        }
+    } catch (err) {
+        console.error(`Failed to request Wake Lock: ${err.message}`);
+    }
+}
+
 const initMap = () => {
   /*
     Initalizes all neccesary and options functions.
@@ -968,6 +984,7 @@ const initMap = () => {
 window.onload = () => {
   // Window Onload
   initMap()
+  wakeLock()                            // Prevents Screen from turning off
   gpsFetchStorage(updateBool = false)   // Initial Load (i.e create markers instad of updating)
   setInterval(() => {
 
