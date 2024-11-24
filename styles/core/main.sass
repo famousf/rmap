@@ -10,7 +10,18 @@ $lblue: #6491cf
 $orange: #fe9700
 $darkRed: rgba(111,27,27,1)
 $lightRed: rgba(147,67,67,1)
-
+@keyframes gjWindow
+  0%
+    transform: scale(.7)
+  50%
+    transform: scale(1.15)
+  100%
+    transform: scale(1)
+@keyframes gjBlur
+  from
+    backdrop-filter: blur(0px)
+  to
+    backdrop-filter: blur(4px)
 @keyframes gpsPulse
   0%
     box-shadow: 0px 0px 15px 0px #2597ff
@@ -519,11 +530,87 @@ body
       width: 24px
   .leaflet-control-attribution
     display: none
+  .session-confetti
+    z-index: 999
+    position: fixed
+    width: 100vw
+    height: 100vh
+    top: 0
+    left: 0
+    background: none
+    .sc-blur
+      position: absolute
+      top: 0
+      left: 0
+      width: 100%
+      height: 100%
+      background: transparent
+      backdrop-filter: blur(4px)
+      z-index: 800
+      animation: gjBlur 1s ease forwards
+    .sc-content
+      position: absolute
+      top: 20vh
+      z-index: 999
+      left: 0
+      right: 0
+      max-width: 400px
+      margin: 0 auto
+      width: 85vw
+      height: auto
+      padding: 10px
+      border-radius: 17px
+      background: #fff
+      text-align: center
+      border: 4px solid $red
+      animation: gjWindow .4s ease forwards
+      img
+        width: 50%
+        max-width: 150px
+        margin: 0 auto
+      h1
+        color: $red
+        font-size: 3em
+        font-weight: 700
+        margin: 0
+      p
+        font-size: 1em
+        color: rgba(#000, 0.85)
+      button
+        width: 95%
+        max-width: 350px
+        background: $red
+        color: #fff
+        border-radius: 7px
+        border: 0
+        cursor: pointer
+        outline: 0
+        display: block
+        padding: 10px
+        font-weight: 600
+        font-size: 1.2em
+        margin: 0 auto
+        margin-top: 20px
+        box-shadow: 0px 0px 15px $red
   #map.pointer, .leaflet-interactive
     cursor: crosshair!important
   #map
     height: 100vh
     width: 100%
+    .area-label.session-completed
+      background: green
+      color: white
+      box-shadow: 0px 0px 15px -4px green
+    .fms-obstacle.session-completed, .fms-snow.session-completed, .fms-trash.session-completed
+      display: none
+    .fms-hazard-blocks.session-completed, .fms-blocks.session-completed
+      fill: green
+      stroke: green
+    .fms-line.session-completed
+      stroke: green
+    .fms-stairs.session-completed
+      i
+        background: green
   .fst-holder
     min-width: 145px
     max-width: 170px
@@ -534,6 +621,32 @@ body
     padding: 5px
     font-size: 1.2em
     border: 2px solid rgba($red, 0.5)
+  .fms-statusDiv
+    width: auto!important
+    height: auto!important
+    background: #f1f1f1
+    padding: 0 10px 10px 10px
+    border-radius: 7px
+    color: #171c21
+    button
+      outline: 0
+      border: 0
+      background: $red
+      margin-bottom: 5px
+      border-radius: 3px
+      padding: 3px 10px
+      color: #fff
+    button.completed
+      background: green
+      color: #fff
+    h1
+      margin: 5px 0
+      font-size: 1.3em
+      text-transform: capitalize
+    span
+      display: block
+      text-transform: uppercase
+      font-weight: 600
 
   .fancy-bg
     &::before, &::after
@@ -710,6 +823,36 @@ body
       top: 6vh
       overflow: hidden
       width: 100%
+      .prev-sessionData
+        display: block
+        position: relative
+        float: left
+        width: 100%
+        h1
+          padding: 0
+          color: rgba(241, 241, 241, 0.8)
+          margin: 0
+          font-size: 1.2em
+          padding: 15px
+        a
+          color: rgba(241, 241, 241, 0.8)
+          box-sizing: border-box
+          padding: 15px
+          display: block
+          overflow: auto
+          border-top: 1px solid rgba(241, 241, 241, 0.1)
+          text-decoration: none
+          .session-bar
+            display: flex
+            #sb-date
+              flex: 1
+            #sb-status.done
+              color: green!important
+            #sb-status
+              flex: 1
+            #sb-time
+              flex: 2
+              text-align: center
       .bar.red
         button
           width: 100%

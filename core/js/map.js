@@ -109,6 +109,38 @@ const tileLayers = () => {
     L.control.layers(baseLayers).addTo(map);
     // Geolocation - Get the user's current location and place a marker
 }
+const compareTwoUnixDates = (startTimestamp, endTimestamp) => {
+  // Calculate the difference in seconds
+  const differenceInSeconds = endTimestamp - startTimestamp;
+
+  // Convert the difference to hours and minutes
+  const hours = Math.floor(differenceInSeconds / 3600);
+  const minutes = Math.floor((differenceInSeconds % 3600) / 60);
+  // Construct the result string
+  let result = "";
+  if (hours > 0) result += `${hours}t `;
+  if (minutes > 0) result += `${minutes}m`;
+
+  return result.trim();
+}
+const formatStringDate = (input) => {
+    const day = input.slice(0, 2);
+    const month = input.slice(2, 4);
+    const year = input.slice(4);
+
+    return `${day}-${month}/${year}`;
+}
+const formatUnixToTime = (unixTimestamp) => {
+    // Create a Date object from the Unix timestamp (multiplied by 1000 to convert seconds to milliseconds)
+    const date = new Date(unixTimestamp * 1000);
+
+    // Get hours and minutes, and pad with leading zero if needed
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+
+    // Format as "HH:MM"
+    return `${hours}:${minutes}`;
+}
 const findPositionPoint = (coords) => {
     let leftmostPoint = coords[0]
     coords.forEach(coord => {
@@ -367,11 +399,12 @@ const drawLines = () => {
               let custClass = (map.getZoom() < 16) ? "fms-hidden" : ""
               let customWidth = (block[1].type === "small") ? 0.8 : 1
 
+              const sessionClassName = `${data[1].desc.split(' ').join('')}-line`
               const lines = block[1].coords
               const polyline = L.polyline(lines, {
                 color: colorObj[block[1].type], // Set the color from the group data
                 weight: 7,//getLineWeight(map.getZoom() * customWidth), // Set initial weight
-                className: `fms-line ${block[1].work_type} ${custClass}`
+                className: `fms-line ${block[1].work_type} ${custClass} ${sessionClassName}`
               }).addTo(objectGroup);
 
               if (GLOBAL_PARAMETER.length > 0 && GLOBAL_PARAMETER == '?m=editor') {
@@ -427,10 +460,11 @@ const drawHazardBlocks = () => {
           if (blocks) {
             Object.entries(blocks).forEach((block, i) => {
               let custClass = (map.getZoom() < 16) ? "fms-hidden" : ""
+              const sessionClassName = `${data[1].desc.split(' ').join('')}-hazardblocks`
               const lines = block[1].coords
               const polygon = L.polygon(lines, {
                 fillOpacity: 0.45,  // Transparency level of the fill
-                className: `fms-hazard-blocks ${block[1].work_type} ${custClass}`
+                className: `fms-hazard-blocks ${block[1].work_type} ${custClass} ${sessionClassName}`
               }).addTo(objectGroup);
               if (GLOBAL_PARAMETER.length > 0 && GLOBAL_PARAMETER == '?m=editor') {
                   // User is in editor / debugg mode
@@ -456,11 +490,12 @@ const drawWarnings = () => {
           if (blocks) {
             Object.entries(blocks).forEach((block, i) => {
               let custClass = (map.getZoom() < 16) ? "fms-hidden" : ""
+              const sessionClassName = `${data[1].desc.split(' ').join('')}-stairs`
               const typeIndex = block[1].type
               const icon = L.divIcon({
                   html: warningType[typeIndex].icon, // FontAwesome icon
                   iconSize: [24, 24], // Size of the icon
-                  className: `fms-${typeIndex} ${custClass}`,
+                  className: `fms-${typeIndex} ${custClass} ${sessionClassName}`,
                   popupAnchor: [0, -12] // Position of the popup
               });
               // Add a marker with the custom icon and a popup
@@ -500,9 +535,10 @@ const drawPerimiter = () => {
             const centroid = getPolygonCentroid(polygon.getLatLngs()[0]);
             // Create a DivIcon to hold text or an icon
             let custClass = (map.getZoom() <= 13 || map.getZoom() >= 16) ? "fms-hidden" : ""
+            const sessionClassName = `area-${data[1].desc.split(' ').join('')}`
             const icon = L.divIcon({
               className: "polygon-label",
-              html: `<div class='area-label ${custClass}'>${data[1].desc}</div>`,
+              html: `<div class='area-label ${custClass} ${sessionClassName}'>${data[1].desc}</div>`,
               iconSize: [150, 150],
               iconAnchor: [40, 15]  // Center the icon
             });
@@ -518,7 +554,7 @@ const drawPerimiter = () => {
             # (Clunky and/or messy + decreases performance due to rendering)
             ##
             */
-
+            /*
             if (data[1].notes) {
                 const notesContent = data[1]?.notes
                 custClass = (map.getZoom() < 16) ? "fms-hidden" : ""
@@ -537,7 +573,7 @@ const drawPerimiter = () => {
                 L.marker(tablePosition, {icon:statusTable}).addTo(map)
 
             }
-
+            */
 
 
 
@@ -575,6 +611,15 @@ const drawCompounds = () => {
   });
   objectGroup.addTo(map)
 }
+
+const drawStatusWrapper = () => {
+  jsonData.forEach((item, i) => {
+
+    console.log(item)
+
+  });
+
+}
 /*
   This is given a list with classnames to keep an eye on, if the zoom exceed a threshold-
   i.e 16, certain objects should be hidden.
@@ -593,7 +638,7 @@ map.on('zoomend', () => {
 
   let citylabel = document.getElementsByClassName('city-label')
   let arealabel = document.getElementsByClassName('polygon-label')
-
+  let statusHolders = document.getElementsByClassName('fms-statusDiv')
 
   if (zoom <= 13) {
     // Hide city button
@@ -612,6 +657,17 @@ map.on('zoomend', () => {
       arealabel[i].classList.remove('fms-hidden')
     }
   }
+
+  if (zoom >= 16) {
+    for (i = 0; i < statusHolders.length; i++){
+      statusHolders[i].classList.remove('fms-hidden')
+    }
+  } else {
+    for (i = 0; i < statusHolders.length; i++){
+      statusHolders[i].classList.add('fms-hidden')
+    }
+  }
+
 
 })
 /*
@@ -928,18 +984,415 @@ const gpsInsertStorage = () => {
 }
 
 
-let wakeLock = async () => {
+const screenLock = async () => {
     try {
         if ('wakeLock' in navigator) {
             wakeLock = await navigator.wakeLock.request('screen');
 
             // Handle the release event
             wakeLock.addEventListener('release', () => {
-                wakeLock();
+                screenLock();
             });
         }
     } catch (err) {
         console.error(`Failed to request Wake Lock: ${err.message}`);
+    }
+}
+
+const checkForSesssion = async (interval) => {
+  const searchVariable = parseInt(formatDate())
+  const { data, error } = await supabase
+  .from('sessions')  // Replace 'users' with your table name
+  .select('*')   // Get all columns
+  .eq('session_id', searchVariable)
+
+  console.log(interval)
+  if (error) {
+    console.error("Error fetching users:", error);
+  } else {
+    // Display users in the HTML
+    if (data.length > 0) {
+        console.log(data)
+        let html = `
+        <div class="session-confetti">
+          <div class="sc-content">
+            <h1>Ny Session</h1>
+            <p>En ny session har skapats av: '${data[0].created_by}'.<br>Vänligen gå till den nya sessionen istället.</p><br>
+            <a href="?s=${searchVariable}">
+              <button type="button" name="button">Ta mig dit!</button>
+            </a>
+          </div>
+          <div class="sc-blur"></div>
+        </div>
+        `
+        let holder = document.getElementsByTagName('body')
+        holder[0].insertAdjacentHTML('beforeend', html)
+        clearInterval(interval)
+    }
+  }
+}
+
+const createNewSesssion = async (e) => {
+  // User wants to create a new session
+  // Make sure there is not one already made.
+  const searchVariable = parseInt(formatDate())
+  const { data, error } = await supabase
+  .from('sessions')  // Replace 'users' with your table name
+  .select('*')   // Get all columns
+  .eq('session_id', searchVariable)
+  .limit(1)
+
+  if (data.length > 0) {
+      alert('Det finns redan en session för denna dag.')
+  } else {
+      console.log("No session for this day")
+      let loggedUser = JSON.parse(localStorage.getItem("loggedUser"))[1].toLowerCase()
+      let blankData =   {
+          "MHUS 10": {
+            "parkeringar": {
+              "current": 2,
+              "max": 2
+            },
+            "vägar": {
+              "current": 2,
+              "max": 2
+            },
+            "handskottning": {
+              "current": 2,
+              "max": 2
+            },
+            "statusHolder": [
+              58.70647,
+              13.79765
+            ]
+          },
+          "MHUS 9": {
+            "parkeringar": {
+              "current": 2,
+              "max": 2
+            },
+            "vägar": {
+              "current": 2,
+              "max": 2
+            },
+            "handskottning": {
+              "current": 2,
+              "max": 2
+            },
+            "statusHolder": [
+              58.701,
+              13.80451
+            ]
+          },
+          "Myran": {
+            "vägar": {
+              "current": 2,
+              "max": 2
+            },
+            "handskottning": {
+              "current": 2,
+              "max": 2
+            },
+            "statusHolder": [
+              58.70418,
+              13.80358
+            ]
+          },
+          "HELIX": {
+            "parkeringar": {
+              "current": 2,
+              "max": 2
+            },
+            "vägar": {
+              "current": 2,
+              "max": 2
+            },
+            "handskottning": {
+              "current": 2,
+              "max": 2
+            },
+            "statusHolder": [
+              58.7112,
+              13.82642
+            ]
+          },
+          "MHUS 11": {
+            "parkeringar": {
+              "current": 2,
+              "max": 2
+            },
+            "vägar": {
+              "current": 2,
+              "max": 2
+            },
+            "handskottning": {
+              "current": 2,
+              "max": 2
+            },
+            "statusHolder": [
+              58.70979,
+              13.82931
+            ]
+          },
+          "MHUS 7": {
+            "parkeringar": {
+              "current": 2,
+              "max": 2
+            },
+            "vägar": {
+              "current": 2,
+              "max": 2
+            },
+            "handskottning": {
+              "current": 2,
+              "max": 2
+            },
+            "statusHolder": [
+              58.7087,
+              13.83397
+            ]
+          },
+          "JOHANNESBERG": {
+            "vägar": {
+              "current": 2,
+              "max": 2
+            },
+            "handskottning": {
+              "current": 2,
+              "max": 2
+            },
+            "statusHolder": [
+              58.70731,
+              13.84133
+            ]
+          },
+          "MHUS 1": {
+            "parkeringar": {
+              "current": 2,
+              "max": 2
+            },
+            "vägar": {
+              "current": 2,
+              "max": 2
+            },
+            "handskottning": {
+              "current": 2,
+              "max": 2
+            },
+            "statusHolder": [
+              58.70591,
+              13.81523
+            ]
+          },
+          "MHUS 3": {
+            "parkeringar": {
+              "current": 2,
+              "max": 2
+            },
+            "vägar": {
+              "current": 2,
+              "max": 2
+            },
+            "handskottning": {
+              "current": 2,
+              "max": 2
+            },
+            "statusHolder": [
+              58.70262,
+              13.83892
+            ]
+          },
+          "GRANATEN": {
+            "parkeringar": {
+              "current": 2,
+              "max": 2
+            },
+            "vägar": {
+              "current": 2,
+              "max": 2
+            },
+            "handskottning": {
+              "current": 2,
+              "max": 2
+            },
+            "statusHolder": [
+              58.69589,
+              13.79001
+            ]
+          },
+          "Ekebo": {
+            "parkeringar": {
+              "current": 2,
+              "max": 2
+            },
+            "vägar": {
+              "current": 2,
+              "max": 2
+            },
+            "handskottning": {
+              "current": 2,
+              "max": 2
+            },
+            "statusHolder": [
+              58.70708,
+              13.82731
+            ]
+          },
+          "KISTEGÅRDEN": {
+            "parkeringar": {
+              "current": 2,
+              "max": 2
+            },
+            "vägar": {
+              "current": 2,
+              "max": 2
+            },
+            "handskottning": {
+              "current": 2,
+              "max": 2
+            },
+            "statusHolder": [
+              58.66937,
+              13.84649
+            ]
+          },
+          "FREDSLUND": {
+            "parkeringar": {
+              "current": 2,
+              "max": 2
+            },
+            "vägar": {
+              "current": 2,
+              "max": 2
+            },
+            "handskottning": {
+              "current": 2,
+              "max": 2
+            },
+            "statusHolder": [
+              58.73793,
+              13.92511
+            ]
+          },
+          "MHUS 6": {
+            "parkeringar": {
+              "current": 2,
+              "max": 2
+            },
+            "vägar": {
+              "current": 2,
+              "max": 2
+            },
+            "handskottning": {
+              "current": 2,
+              "max": 2
+            },
+            "hazardblocks": {
+              "current": 2,
+              "max": 2
+            },
+            "statusHolder": [
+              58.70185,
+              13.81877
+            ]
+          },
+          "MHUS 5": {
+            "parkeringar": {
+              "current": 2,
+              "max": 2
+            },
+            "vägar": {
+              "current": 2,
+              "max": 2
+            },
+            "handskottning": {
+              "current": 2,
+              "max": 2
+            },
+            "hazardblocks": {
+              "current": 2,
+              "max": 2
+            },
+            "statusHolder": [
+              58.70455,
+              13.81888
+            ]
+          },
+          "KFORS": {
+            "parkeringar": {
+              "current": 2,
+              "max": 2
+            },
+            "vägar": {
+              "current": 2,
+              "max": 2
+            },
+            "handskottning": {
+              "current": 2,
+              "max": 2
+            },
+            "hazardblocks": {
+              "current": 2,
+              "max": 2
+            },
+            "statusHolder": [
+              58.69687,
+              13.83772
+            ]
+          }
+        }
+
+      const {error} = await supabase
+        .from('sessions')
+        .insert({session_id: searchVariable, data: blankData, created_by: loggedUser, created_date: Math.round(Date.now() / 1000)})
+
+      if (!error) {
+          console.log("Inserted into db.")
+      }
+  }
+
+}
+
+
+const fetchLastSessions = async () => {
+  const {data, error} = await supabase
+    .from('sessions')
+    .select('*')
+    .order('id', {ascending: false})
+    .limit(5)
+
+    if (error) {
+      console.log("Error getting Menu Data")
+    } else {
+      Object.entries(data).forEach((item, i) => {
+        let cstatus = ""
+        let status = ""
+        if (item[1].completed_date != null) {
+            status = "Färdig"
+            cstatus = "done"
+        } else {
+            status = "Pågående"
+            cstatus = ""
+        }
+
+        console.log(item)
+        let startTime = item[1].created_date
+        let totTime = compareTwoUnixDates(item[1].created_date, item[1].completed_date)
+        let endTime = (item[1].completed_date == null) ? "Pågår" : `${formatUnixToTime(item[1].completed_date)} | ${totTime}`
+
+        let html = `
+        <a href="?s=${item[1].session_id}">
+          <div class="session-bar" id="sd-${item[1].session_id}">
+              <div id="sb-date">${formatStringDate(JSON.stringify(item[1].session_id))}</div>
+              <div id="sb-status" class="${cstatus}">${status}</div>
+              <div id="sb-time">${formatUnixToTime(startTime)} - ${endTime}</div>
+          </div>
+        </a>
+        `
+        let parent = document.getElementsByClassName('prev-sessionData')[0]
+        parent.insertAdjacentHTML('beforeend', html)
+      });
+
     }
 }
 
@@ -964,7 +1417,15 @@ const initMap = () => {
   drawWarnings()                // Draws fontawesome icons as warnings or 'heads-up'
   drawPerimiter()               // Draws resident perimiter
   drawCompounds()               // Draws the "blocks" with the description
-  //drawStatus()                  // Draws the option to complete a checklist. If all is completed, mark it as DONE for the session
+
+  //checkForSesssion(null)            // Looks for a new session created
+  if (window.location.search.length < 5) {
+    let sessionInt = setInterval(() => {
+      checkForSesssion(sessionInt)
+    }, 5000)
+  }
+
+  fetchLastSessions()           // Displays last sessions in "menu"
 
   toggleWorkTypes()             // Handles two states (daytime work / nighttime work)
   toggleTopMenu()               // Simple js to handle hamburger menu
@@ -984,7 +1445,7 @@ const initMap = () => {
 window.onload = () => {
   // Window Onload
   initMap()
-  wakeLock()                            // Prevents Screen from turning off
+  screenLock()                            // Prevents Screen from turning off
   gpsFetchStorage(updateBool = false)   // Initial Load (i.e create markers instad of updating)
   setInterval(() => {
 

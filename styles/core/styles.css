@@ -7,6 +7,25 @@
     max-width: 300px !important;
   }
 }
+@keyframes gjWindow {
+  0% {
+    transform: scale(0.7);
+  }
+  50% {
+    transform: scale(1.15);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes gjBlur {
+  from {
+    backdrop-filter: blur(0px);
+  }
+  to {
+    backdrop-filter: blur(4px);
+  }
+}
 @keyframes gpsPulse {
   0% {
     box-shadow: 0px 0px 15px 0px #2597ff;
@@ -618,12 +637,99 @@ body .GPS-tracker i {
 body .leaflet-control-attribution {
   display: none;
 }
+body .session-confetti {
+  z-index: 999;
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  background: none;
+}
+body .session-confetti .sc-blur {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  backdrop-filter: blur(4px);
+  z-index: 800;
+  animation: gjBlur 1s ease forwards;
+}
+body .session-confetti .sc-content {
+  position: absolute;
+  top: 20vh;
+  z-index: 999;
+  left: 0;
+  right: 0;
+  max-width: 400px;
+  margin: 0 auto;
+  width: 85vw;
+  height: auto;
+  padding: 10px;
+  border-radius: 17px;
+  background: #fff;
+  text-align: center;
+  border: 4px solid #ca5757;
+  animation: gjWindow 0.4s ease forwards;
+}
+body .session-confetti .sc-content img {
+  width: 50%;
+  max-width: 150px;
+  margin: 0 auto;
+}
+body .session-confetti .sc-content h1 {
+  color: #ca5757;
+  font-size: 3em;
+  font-weight: 700;
+  margin: 0;
+}
+body .session-confetti .sc-content p {
+  font-size: 1em;
+  color: rgba(0, 0, 0, 0.85);
+}
+body .session-confetti .sc-content button {
+  width: 95%;
+  max-width: 350px;
+  background: #ca5757;
+  color: #fff;
+  border-radius: 7px;
+  border: 0;
+  cursor: pointer;
+  outline: 0;
+  display: block;
+  padding: 10px;
+  font-weight: 600;
+  font-size: 1.2em;
+  margin: 0 auto;
+  margin-top: 20px;
+  box-shadow: 0px 0px 15px #ca5757;
+}
 body #map.pointer, body .leaflet-interactive {
   cursor: crosshair !important;
 }
 body #map {
   height: 100vh;
   width: 100%;
+}
+body #map .area-label.session-completed {
+  background: green;
+  color: white;
+  box-shadow: 0px 0px 15px -4px green;
+}
+body #map .fms-obstacle.session-completed, body #map .fms-snow.session-completed, body #map .fms-trash.session-completed {
+  display: none;
+}
+body #map .fms-hazard-blocks.session-completed, body #map .fms-blocks.session-completed {
+  fill: green;
+  stroke: green;
+}
+body #map .fms-line.session-completed {
+  stroke: green;
+}
+body #map .fms-stairs.session-completed i {
+  background: green;
 }
 body .fst-holder {
   min-width: 145px;
@@ -635,6 +741,37 @@ body .fst-holder {
   padding: 5px;
   font-size: 1.2em;
   border: 2px solid rgba(202, 87, 87, 0.5);
+}
+body .fms-statusDiv {
+  width: auto !important;
+  height: auto !important;
+  background: #f1f1f1;
+  padding: 0 10px 10px 10px;
+  border-radius: 7px;
+  color: #171c21;
+}
+body .fms-statusDiv button {
+  outline: 0;
+  border: 0;
+  background: #ca5757;
+  margin-bottom: 5px;
+  border-radius: 3px;
+  padding: 3px 10px;
+  color: #fff;
+}
+body .fms-statusDiv button.completed {
+  background: green;
+  color: #fff;
+}
+body .fms-statusDiv h1 {
+  margin: 5px 0;
+  font-size: 1.3em;
+  text-transform: capitalize;
+}
+body .fms-statusDiv span {
+  display: block;
+  text-transform: uppercase;
+  font-weight: 600;
 }
 body .fancy-bg::before, body .fancy-bg::after {
   display: block;
@@ -823,6 +960,44 @@ body .fms-menu .menu-content {
   top: 6vh;
   overflow: hidden;
   width: 100%;
+}
+body .fms-menu .menu-content .prev-sessionData {
+  display: block;
+  position: relative;
+  float: left;
+  width: 100%;
+}
+body .fms-menu .menu-content .prev-sessionData h1 {
+  padding: 0;
+  color: rgba(241, 241, 241, 0.8);
+  margin: 0;
+  font-size: 1.2em;
+  padding: 15px;
+}
+body .fms-menu .menu-content .prev-sessionData a {
+  color: rgba(241, 241, 241, 0.8);
+  box-sizing: border-box;
+  padding: 15px;
+  display: block;
+  overflow: auto;
+  border-top: 1px solid rgba(241, 241, 241, 0.1);
+  text-decoration: none;
+}
+body .fms-menu .menu-content .prev-sessionData a .session-bar {
+  display: flex;
+}
+body .fms-menu .menu-content .prev-sessionData a .session-bar #sb-date {
+  flex: 1;
+}
+body .fms-menu .menu-content .prev-sessionData a .session-bar #sb-status.done {
+  color: green !important;
+}
+body .fms-menu .menu-content .prev-sessionData a .session-bar #sb-status {
+  flex: 1;
+}
+body .fms-menu .menu-content .prev-sessionData a .session-bar #sb-time {
+  flex: 2;
+  text-align: center;
 }
 body .fms-menu .menu-content .bar.red button {
   width: 100%;

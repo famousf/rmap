@@ -117,14 +117,18 @@
             <span class="slider round"></span>
           </label>
         </div>
-        <div class="bar">
+        <div class="bar" onclick="createNewSesssion(this)">
           <h1>Session</h1>
-          <span>Skapa en ny snösession (KOMMER SNART)</span>
+          <span>Skapa en ny snösession (Beta - v1.1.65)</span>
         </div>
         <div class="bar red">
           <form method="post">
             <button type="submit" name="logout">Logga ut</button>
           </form>
+        </div>
+
+        <div class="prev-sessionData">
+          <h1>Tidigare sessioner (5)</h1>
         </div>
     </div>
 

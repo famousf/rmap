@@ -440,9 +440,10 @@ const points = {
           [58.70487, 13.80569]
         ],
         notes: {
-          text: ["Skåpen vid entré är jätteviktiga"],
+          text: ["BIGATAN AVSTÄNGD - PLOGA EJ INNAN ASFALTERING"],
           coords: [58.70308, 13.80768],
-        }
+        },
+        statusButton: [58.70125, 13.80674],
       },
       2: {
         desc: "MHUS 7",

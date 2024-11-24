@@ -1,5 +1,5 @@
 <?php
-  $VERSION = "1.1.4";
+  $VERSION = "2.0.0";
   if(isset($_POST["numpadClear"])):
       setcookie('isCleared', "clear", time() + (86400 * 10), "/");
       echo "isCleared";
@@ -66,7 +66,7 @@
 
 
         elseif (isset($_GET["s"])):
-            include_once "core/extra/sessions.php";
+            include_once "core/extra/sessions_imports.php";
         endif;
 
 
