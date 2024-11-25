@@ -1050,15 +1050,15 @@ const createNewSesssion = async (e) => {
       let blankData =   {
           "MHUS 10": {
             "parkeringar": {
-              "current": 2,
+              "current": 0,
               "max": 2
             },
             "vägar": {
-              "current": 2,
+              "current": 0,
               "max": 2
             },
             "handskottning": {
-              "current": 2,
+              "current": 0,
               "max": 2
             },
             "statusHolder": [
@@ -1068,15 +1068,15 @@ const createNewSesssion = async (e) => {
           },
           "MHUS 9": {
             "parkeringar": {
-              "current": 2,
+              "current": 0,
               "max": 2
             },
             "vägar": {
-              "current": 2,
+              "current": 0,
               "max": 2
             },
             "handskottning": {
-              "current": 2,
+              "current": 0,
               "max": 2
             },
             "statusHolder": [
@@ -1086,11 +1086,11 @@ const createNewSesssion = async (e) => {
           },
           "Myran": {
             "vägar": {
-              "current": 2,
+              "current": 0,
               "max": 2
             },
             "handskottning": {
-              "current": 2,
+              "current": 0,
               "max": 2
             },
             "statusHolder": [
@@ -1100,15 +1100,15 @@ const createNewSesssion = async (e) => {
           },
           "HELIX": {
             "parkeringar": {
-              "current": 2,
+              "current": 0,
               "max": 2
             },
             "vägar": {
-              "current": 2,
+              "current": 0,
               "max": 2
             },
             "handskottning": {
-              "current": 2,
+              "current": 0,
               "max": 2
             },
             "statusHolder": [
@@ -1118,15 +1118,15 @@ const createNewSesssion = async (e) => {
           },
           "MHUS 11": {
             "parkeringar": {
-              "current": 2,
+              "current": 0,
               "max": 2
             },
             "vägar": {
-              "current": 2,
+              "current": 0,
               "max": 2
             },
             "handskottning": {
-              "current": 2,
+              "current": 0,
               "max": 2
             },
             "statusHolder": [
@@ -1136,15 +1136,15 @@ const createNewSesssion = async (e) => {
           },
           "MHUS 7": {
             "parkeringar": {
-              "current": 2,
+              "current": 0,
               "max": 2
             },
             "vägar": {
-              "current": 2,
+              "current": 0,
               "max": 2
             },
             "handskottning": {
-              "current": 2,
+              "current": 0,
               "max": 2
             },
             "statusHolder": [
@@ -1154,11 +1154,11 @@ const createNewSesssion = async (e) => {
           },
           "JOHANNESBERG": {
             "vägar": {
-              "current": 2,
+              "current": 0,
               "max": 2
             },
             "handskottning": {
-              "current": 2,
+              "current": 0,
               "max": 2
             },
             "statusHolder": [
@@ -1168,15 +1168,15 @@ const createNewSesssion = async (e) => {
           },
           "MHUS 1": {
             "parkeringar": {
-              "current": 2,
+              "current": 0,
               "max": 2
             },
             "vägar": {
-              "current": 2,
+              "current": 0,
               "max": 2
             },
             "handskottning": {
-              "current": 2,
+              "current": 0,
               "max": 2
             },
             "statusHolder": [
@@ -1186,15 +1186,15 @@ const createNewSesssion = async (e) => {
           },
           "MHUS 3": {
             "parkeringar": {
-              "current": 2,
+              "current": 0,
               "max": 2
             },
             "vägar": {
-              "current": 2,
+              "current": 0,
               "max": 2
             },
             "handskottning": {
-              "current": 2,
+              "current": 0,
               "max": 2
             },
             "statusHolder": [
@@ -1204,15 +1204,15 @@ const createNewSesssion = async (e) => {
           },
           "GRANATEN": {
             "parkeringar": {
-              "current": 2,
+              "current": 0,
               "max": 2
             },
             "vägar": {
-              "current": 2,
+              "current": 0,
               "max": 2
             },
             "handskottning": {
-              "current": 2,
+              "current": 0,
               "max": 2
             },
             "statusHolder": [
@@ -1222,15 +1222,15 @@ const createNewSesssion = async (e) => {
           },
           "Ekebo": {
             "parkeringar": {
-              "current": 2,
+              "current": 0,
               "max": 2
             },
             "vägar": {
-              "current": 2,
+              "current": 0,
               "max": 2
             },
             "handskottning": {
-              "current": 2,
+              "current": 0,
               "max": 2
             },
             "statusHolder": [
@@ -1240,15 +1240,15 @@ const createNewSesssion = async (e) => {
           },
           "KISTEGÅRDEN": {
             "parkeringar": {
-              "current": 2,
+              "current": 0,
               "max": 2
             },
             "vägar": {
-              "current": 2,
+              "current": 0,
               "max": 2
             },
             "handskottning": {
-              "current": 2,
+              "current": 0,
               "max": 2
             },
             "statusHolder": [
@@ -1258,11 +1258,11 @@ const createNewSesssion = async (e) => {
           },
           "FREDSLUND": {
             "parkeringar": {
-              "current": 2,
+              "current": 0,
               "max": 2
             },
             "vägar": {
-              "current": 2,
+              "current": 0,
               "max": 2
             },
             "handskottning": {
@@ -1276,19 +1276,19 @@ const createNewSesssion = async (e) => {
           },
           "MHUS 6": {
             "parkeringar": {
-              "current": 2,
+              "current": 0,
               "max": 2
             },
             "vägar": {
-              "current": 2,
+              "current": 0,
               "max": 2
             },
             "handskottning": {
-              "current": 2,
+              "current": 0,
               "max": 2
             },
             "hazardblocks": {
-              "current": 2,
+              "current": 0,
               "max": 2
             },
             "statusHolder": [
@@ -1298,19 +1298,19 @@ const createNewSesssion = async (e) => {
           },
           "MHUS 5": {
             "parkeringar": {
-              "current": 2,
+              "current": 0,
               "max": 2
             },
             "vägar": {
-              "current": 2,
+              "current": 0,
               "max": 2
             },
             "handskottning": {
-              "current": 2,
+              "current": 0,
               "max": 2
             },
             "hazardblocks": {
-              "current": 2,
+              "current": 0,
               "max": 2
             },
             "statusHolder": [
@@ -1320,19 +1320,19 @@ const createNewSesssion = async (e) => {
           },
           "KFORS": {
             "parkeringar": {
-              "current": 2,
+              "current": 0,
               "max": 2
             },
             "vägar": {
-              "current": 2,
+              "current": 0,
               "max": 2
             },
             "handskottning": {
-              "current": 2,
+              "current": 0,
               "max": 2
             },
             "hazardblocks": {
-              "current": 2,
+              "current": 0,
               "max": 2
             },
             "statusHolder": [
