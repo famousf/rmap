@@ -119,28 +119,9 @@ const inputDrawBlock = () => {
 
       logCoordinates(); // Print current coordinates
   });
-
-  // Reset functionality
-  /*
-  document.getElementById('reset').addEventListener('click', function() {
-      polygonCoords = []; // Reset coordinates array
-      polyline.setLatLngs([]); // Remove all points from the polyline
-      //document.getElementById('dsum').innerText = `Antal punkter: 0`
-      console.log('Polygon reset');
-  });
-  */
 }
 inputDrawBlock()
 pickJobEditor()
-
-
-
-
-
-
-
-
-
 dragElement(document.getElementById("editor"));
 function dragElement(elmnt) {
   var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;

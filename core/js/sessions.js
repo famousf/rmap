@@ -1,9 +1,10 @@
 let SESSIONDATA = null
 let SESSIONSTATS = [0,0]
+let username = null
 const searchVariable = parseInt(window.location.search.substr(3))
 
 const fetchSessions = async () => {
-  const username = JSON.parse(localStorage.getItem('loggedUser'))[1].toLowerCase()
+  username = JSON.parse(localStorage.getItem('loggedUser'))[1].toLowerCase()
 
   const {data, error} = await supabase
     .from('sessions')
@@ -17,9 +18,40 @@ const fetchSessions = async () => {
         SESSIONDATA = data
     }
 }
+const fetchReportData = async (param) => {
+  const {data, error} = await supabase
+    .from('reports')
+    .select('*')
+    .eq('session_id', searchVariable)
+    .limit(1)
+
+    if (error) {
+      console.log("Reports error", error)
+    } else {
+      return data
+    }
+}
 const sessionsMain = async () => {
   await fetchSessions()
   return SESSIONDATA
+}
+const createNewReport = async (data) => {
+
+  const {error} = await supabase
+    .from('reports')
+    .insert({session_id: searchVariable, data:data})
+
+    return {data, error, success: !error}
+
+}
+const updateReport = async (newData) => {
+
+  const {data, error} = await supabase
+    .from('reports')
+    .update({data:newData})
+    .eq('session_id', searchVariable)
+
+    return {data, error, success: !error}
 }
 const updateCompletedDate = async () => {
   const {data, error} = await supabase
@@ -72,13 +104,83 @@ const updateDbCurrent = (e) => {
 
   let type = e.id
   let where = e.parentNode.id
-
+  //let user = JSON.parse(localStorage.getItem('loggedUser'))[1].toLowerCase()
   pureGetData().then(data => {
       // Update the data then send it in. (Pray it not gonna bug out with handshakes)
+      //console.log(data, type, where, username, data[0].data[where][type])
       data[0].data[where][type].current += 1
       updateNewData(data[0].data)
+      // Update userReport db
+      /* Example below
+        "rasmus engqvist": {
+          "mhus10": {
+            "parkeringar": ["plogat", "10:30"],
+            "parkeringar": ["grusat", "12:00"],
 
+        }
+      }
+      */
+      // Fetch reports data
+      // - Parse it and add new data
+      // - Post it to DB
+      fetchReportData(searchVariable).then(reports => {
+            let dataString = ""
+            let dataPoint = data[0].data[where][type].current
+            if (reports.length > 0) {
+                  if (dataPoint == 1) {
+                      // Plogning klart
+                      dataString = "plogning"
+                  }
+                  if (dataPoint == 2) {
+                      // Grusning klart
+                      dataString = "grusning"
+                  }
 
+                  if (dataString.length > 0) {
+                      // We did something, continue.
+                      let baseData = reports[0].data
+                      baseData[username] = baseData[username] || {}
+                      baseData[username][where] = baseData[username][where] || {}
+                      baseData[username][where][type] = baseData[username][where][type] || {}
+
+                      baseData[username][where][type][dataString] = Math.floor(Date.now() / 1000)
+                      updateReport(baseData).then(result => {
+                        if (result.success) {
+                            console.log("updateReport() - True")
+                        }
+                      })
+                  }
+
+            } else {
+              // Insert new row with base-data
+              let baseData = {
+               "ludwig eriksson": {},
+               "jenny östensson": {},
+               "magnus edvinsson": {},
+               "rasmus engqvist": {},
+               "fredrik hallen": {},
+               "fredrik östensson": {},
+               "lukas larsson": {},
+               "maja falk": {},
+               "kim peter": {}
+              }
+              if (dataPoint == 1) {
+                  // Plogning klart
+                  dataString = "plogning"
+              }
+              if (dataPoint == 2) {
+                  // Grusning klart
+                  dataString = "grusning"
+              }
+              // ["plogning", Math.floor(Date.now() / 1000)]
+              baseData[username][where] = {[type]: {[dataString]:Math.floor(Date.now() / 1000)}}
+              createNewReport(baseData).then(data => {
+                  if (data.success) {
+                      console.log("createNewReport() - True")
+                  }
+              })
+            }
+      })
   })
 
 
@@ -88,7 +190,6 @@ const createStatusDOM = (coords, areaName, pureName, status) => {
   let buttons = ""
   Object.entries(status).forEach((item, i) => {
     if (item[0] != "statusHolder") {
-      console.log(item[1])
       if (item[1].current == item[1].max && item[1].current > 0) {
           buttons += `
           <div id="${pureName}">
@@ -188,7 +289,7 @@ const clearCompletedCheck = (e) => {
 const calculateStats = () => {
   let perc = SESSIONSTATS[0] / SESSIONSTATS[1] * 100
   if (perc >= 100) {
-      if (localStorage.getItem(`${searchVariable}`)) {
+      if (!localStorage.getItem(`${searchVariable}`)) {
 
       } else {
           let html = `

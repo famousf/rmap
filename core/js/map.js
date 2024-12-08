@@ -141,7 +141,7 @@ const formatUnixToTime = (unixTimestamp) => {
     // Format as "HH:MM"
     return `${hours}:${minutes}`;
 }
-const findPositionPoint = (coords) => {
+const findPositionPoint = (coords) => {0
     let leftmostPoint = coords[0]
     coords.forEach(coord => {
       if (coord[0] > leftmostPoint[0]) {
@@ -1025,16 +1025,59 @@ const checkForSesssion = async (interval) => {
           <div class="sc-blur"></div>
         </div>
         `
+        toggleLoadingDiv(t = false)
         let holder = document.getElementsByTagName('body')
         holder[0].insertAdjacentHTML('beforeend', html)
         clearInterval(interval)
     }
   }
 }
+const exportReportButton = (e) => {
+  selectReport = document.getElementsByClassName('pickReport')[0].value
+  window.location.search = `?r=${selectReport}`
+}
+const toggleReportWindow = async (e) => {
+  const {data, error} = await supabase
+    .from('reports')
+    .select('*')
+    .order('id', {ascending: false})
 
+  if (error) {console.log("error fetching reports"); return false}
+
+  let htmlData = ""
+
+  console.log(data)
+  for (const [i, row] of Object.entries(data)) {
+    console.log(row)
+    let id = row.session_id.toString()
+    let day = id.slice(0, 2)
+    let month = id.slice(2, 4)
+    let year = id.slice(4, 8)
+    let rowHtml = `<option value="${row.session_id}">${day}/${month}/${year}</option>`
+    htmlData += rowHtml
+  }
+  let html = `
+  <div class="auth-screen reports" id="ldle3a">
+    <div class="auth-pick-user">
+      <h1>... Välj rapport</h1>
+      <span>Välj datumet för rapportern som ska exporteras.</span>
+      <select class="pickReport">
+        <option value="" default></option>
+        ${htmlData}
+      </select>
+      <button type="submit" onclick="exportReportButton(this)">Exportera</button>
+    </div>
+    <img id="rb_white" src="img/logo.svg" alt="">
+  </div>
+  `
+  let body = document.getElementsByTagName('body')[0]
+  body.insertAdjacentHTML('beforeend', html)
+}
 const createNewSesssion = async (e) => {
   // User wants to create a new session
   // Make sure there is not one already made.
+  console.log("click")
+  toggleLoadingDiv(t = true)
   const searchVariable = parseInt(formatDate())
   const { data, error } = await supabase
   .from('sessions')  // Replace 'users' with your table name
@@ -1044,6 +1087,7 @@ const createNewSesssion = async (e) => {
 
   if (data.length > 0) {
       alert('Det finns redan en session för denna dag.')
+      toggleLoadingDiv(t = false)
   } else {
       console.log("No session for this day")
       let loggedUser = JSON.parse(localStorage.getItem("loggedUser"))[1].toLowerCase()
@@ -1375,7 +1419,6 @@ const fetchLastSessions = async () => {
             cstatus = ""
         }
 
-        console.log(item)
         let startTime = item[1].created_date
         let totTime = compareTwoUnixDates(item[1].created_date, item[1].completed_date)
         let endTime = (item[1].completed_date == null) ? "Pågår" : `${formatUnixToTime(item[1].completed_date)} | ${totTime}`
@@ -1422,7 +1465,7 @@ const initMap = () => {
   if (window.location.search.length < 5) {
     let sessionInt = setInterval(() => {
       checkForSesssion(sessionInt)
-    }, 5000)
+    }, 2500)
   }
 
   fetchLastSessions()           // Displays last sessions in "menu"

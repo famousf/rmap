@@ -1,5 +1,5 @@
 <?php
-  $VERSION = "2.0.1";
+  $VERSION = "2.1.0";
   if(isset($_POST["numpadClear"])):
       setcookie('isCleared', "clear", time() + (86400 * 10), "/");
       echo "isCleared";
@@ -47,7 +47,7 @@
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 </head>
 <body>
-
+    <div class="fms-loader"><div class="fl-center"><i class="fa-solid fa-circle-notch"></i><span>Laddar...</span></div></div>
 <?php
 
     if (!isset($_COOKIE["isCleared"])):
@@ -67,6 +67,10 @@
 
         elseif (isset($_GET["s"])):
             include_once "core/extra/sessions_imports.php";
+
+
+        elseif (isset($_GET["r"])):
+            include_once "core/extra/export_report.php";
         endif;
 
 

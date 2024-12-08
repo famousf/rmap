@@ -1,3 +1,15 @@
+const toggleLoadingDiv = (t) => {
+  div = document.getElementsByClassName('fms-loader')[0]
+  if (t == true) {
+      // Start animation
+      div.classList.add('on')
+  }
+
+  if (t == false) {
+      // End animation
+      div.classList.remove('on')
+  }
+}
 const formatDate = () => {
     const date = new Date();
 
@@ -5,7 +17,7 @@ const formatDate = () => {
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const year = date.getFullYear();
     const formattedDate = `${day}${month}${year}`;
-    
+
     return formattedDate
 }
 const toggleUI = (e) => {

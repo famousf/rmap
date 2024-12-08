@@ -121,6 +121,10 @@
           <h1>Session</h1>
           <span>Skapa en ny snösession (Beta - v1.1.65)</span>
         </div>
+        <div class="bar" onclick="toggleReportWindow(this)">
+          <h1>Exportera Rapporter</h1>
+          <span>Ladda ner tidsrapporter i Excellformat (Beta - v2.1.0)</span>
+        </div>
         <div class="bar red">
           <form method="post">
             <button type="submit" name="logout">Logga ut</button>
