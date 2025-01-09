@@ -171,6 +171,18 @@ body
   background: $red
   *
     font-family: 'Afacad Flux'
+  .status-bar
+    background: $red
+    height: 15px
+    width: 0%
+    position: fixed
+    bottom: 0
+    left: 0
+    z-index: 999
+    text-align: center
+    color: #f1f1f1
+    font-weight: 700
+    font-size: .7em
   .fms-loader.on
     animation: loader_bg .3s ease forwards
     display: flex
@@ -539,7 +551,7 @@ body
           position: relative
           color: #f1f1f1
           border-radius: 50%
-      .stairs
+      .stairs, .door
         i
           padding: 4px 3px
           left: 2px
@@ -564,6 +576,7 @@ body
   .GPS-tracker
     display: block
     opacity: 1
+    z-index: 9999
     i
       background: #fff
       animation: gpsPulse 1s infinite forwards
@@ -648,16 +661,27 @@ body
       background: green
       color: white
       box-shadow: 0px 0px 15px -4px green
-    .fms-obstacle.session-completed, .fms-snow.session-completed, .fms-trash.session-completed
+    .fms-obstacle.session-completed, .fms-trash.session-completed
       display: none
     .fms-hazard-blocks.session-completed, .fms-blocks.session-completed
       fill: green
       stroke: green
     .fms-line.session-completed
       stroke: green
-    .fms-stairs.session-completed
+    .fms-stairs.session-completed, .fms-door.session-completed, .fms-snow.session-completed
       i
         background: green
+
+    .fms-obstacle.session-ongoing, .fms-trash.session-ongoing
+      display: #989898
+    .fms-hazard-blocks.session-ongoing, .fms-blocks.session-ongoing
+      fill: #989898
+      stroke: #989898
+    .fms-line.session-ongoing
+      stroke: #989898
+    .fms-stairs.session-ongoing, .fms-door.session-ongoing, .fms-snow.session-ongoing
+      i
+        background: #989898
   .fst-holder
     min-width: 145px
     max-width: 170px
@@ -746,7 +770,7 @@ body
         margin-right: 7px
         // Style lines, blocks, warnings, headsup
 
-  .fms-line, .fms-blocks, .fms-obstacle, .fms-headsup, .fms-snow, .fms-hazard-blocks
+  .fms-line, .fms-blocks, .fms-obstacle, .fms-headsup, .fms-snow, .fms-hazard-blocks, .fms-door
     animation: showicons .2s ease
   .fms-line
   .fms-blocks
@@ -758,6 +782,14 @@ body
     stroke-dasharray: 6
     stroke-width: 2
     fill: #ca5757
+  .fms-barrier
+    i
+      background: #ca5757
+      border: 2px solid white
+      border-radius: 50%
+      padding: 6px 5px
+      color: white
+      font-size: .87em
   .fms-obstacle, .fms-trash
     i
       background: #ca5757
@@ -772,7 +804,7 @@ body
       border-radius: 50%
       padding: 4px 5px
       color: white
-  .fms-stairs
+  .fms-stairs, .fms-door
     i
       background: #ff9800
       border: 2px solid white
@@ -801,6 +833,7 @@ body
       font-size: 2.5em
       box-shadow: 0px 0px 15px -4px $red
       z-index: 950
+      text-transform: capitalize
       h3
         display: block
         font-size: .6em
@@ -808,6 +841,7 @@ body
         color: $darkRed
         margin: 0
         margin-top: -10px
+        text-transform: capitalize
 
 
   .area-label
@@ -816,10 +850,32 @@ body
     background: #fff
     display: inline
     color: $red
-    border-radius: 10px
+    border-radius: 5px
     font-size: 1.5em
     box-shadow: 0px 0px 15px -4px $red
-
+    .indiv_status.hidden
+      display: none
+    .indiv_status.val25
+      background: #ffe64a!important
+      display: block!important
+    .indiv_status.val0
+      display: none
+      background: white
+    .indiv_status.val100
+      background: green!important
+    .indiv_status
+      font-size: 11px
+      position: absolute
+      padding: 0px 7px
+      border-top-left-radius: 5px
+      border-top-right-radius: 5px
+      top: -16px
+      margin: 0 auto
+      display: block
+  .area-label.val25
+    background: #ffe64a
+    box-shadow: 0px 0px 25px -4px #ff924a
+    color: #000
   .menu-username
     position: absolute
     left: 0
@@ -862,14 +918,64 @@ body
     position: absolute
     background: #171c21
     width: 100vw
-    height: 100vh
+    min-height: 100vh
+    overflow: auto
     z-index: 995
     display: none
     .menu-content
       position: absolute
-      top: 6vh
+      top: 1vh
       overflow: hidden
       width: 100%
+      .head-info
+        text-align: center
+        .api-logo
+          margin: 0 auto
+          max-width: 60%
+          max-height: 60px
+        .api-username
+          text-transform: capitalize
+          display: block
+        .api-email
+          margin-bottom: 10px
+          display: block
+        .api-cities
+          display: block
+          margin-top: 20px
+          .tag.brynas
+            background-image: url('https://gallerix.se/gallery/6/8/3/9/43637-800.jpg')
+            background-size: 123%
+            background-position: -7px -15px
+            color: #fff
+            text-shadow: 0px 1px 2px #000
+            box-shadow: 0px 0px 13px -5px yellow
+          .tag.default-admin
+            background: $red
+            box-shadow: 0px 0px 13px $red
+          .tag.newbie
+            background: grey
+          .tag
+            background: $red
+            margin-right: 5px
+            border-radius: 6px
+            color: #f1f1f1
+            font-size: .8em
+            font-weight: 700
+            text-transform: uppercase
+            padding: 3px 6px
+            &:last-child
+              margin-right: 0
+          .city
+            margin-right: 5px
+            background: $red
+            border-radius: 6px
+            color: #f1f1f1
+            font-size: .8em
+            font-weight: 700
+            text-transform: uppercase
+            padding: 3px 6px
+            &:last-child
+              margin-right: 0
       .prev-sessionData
         display: block
         position: relative
@@ -924,7 +1030,7 @@ body
           font-size: 1.1em
           line-height: 0
         span
-          font-size: 11px
+          font-size: .95em
           color: rgba(#f1f1f1, 0.5)
         .switch
           position: absolute
@@ -975,6 +1081,7 @@ body
       bottom: 15px
       left: 0
       right: 0
+      display: none
       margin: 0 auto
       .git
         margin: 0 auto
@@ -1075,7 +1182,19 @@ body
     border: 2px solid #fff
     text-align: center
     padding: 3px
-    z-index: 950!important
+    z-index: 9999!important
+    &::after
+      content: ''
+      position: absolute
+      bottom: -4px
+      left: 12px
+      transform: translateX(-50%)
+      border-left: 10px solid transparent
+      border-right: 10px solid transparent
+      border-top: 10px solid $red
+    .customGpsNode
+      background-size: 100% 100%
+      border-radius: 50%
   .auth-screen.reports
     max-width: initial!important
   .auth-screen
@@ -1089,6 +1208,64 @@ body
     height: 100vh
     z-index: 999
     background: $red
+    .tos.show
+      display: block!important
+    .tos
+      width: 100%
+      background: $red
+      color: #fff
+      height: 100vh
+      left: 0
+      position: absolute
+      z-index: 999
+      display: none
+      h2
+        display: block
+        padding: 5%
+        font-size: 2em
+        margin: 0
+      .scrollable-tos
+        position: relative
+        overflow: scroll
+        max-height: 70vh
+        padding: 5%
+        scrollbar-color: black
+        margin-bottom: 100px
+        h1
+          font-size: 1.4em
+          padding: 0
+          margin: 0
+          margin-top: 30px
+        span
+          display: block
+        .tos_holder
+          max-width: 200px
+          margin: 0 auto
+          text-align: center
+          input[type="checkbox"]
+            transform: scale(1.5)
+            margin-right: 20px
+          button
+            outline: 0
+            border: 0
+            font-weight: 600
+            background: rgba(#fff, 0.15)
+            border: 2px solid rgba(#fff, 0.3)
+            border-radius: 5px
+            margin: 0 auto
+            margin-top: 10px
+            padding: 5px 15px
+            font-size: 1em
+            color: #f1f1f1
+    .auth-form
+      span
+        margin-bottom: 3px!important
+        margin-top: 15px
+      button
+        margin-top: 30px!important
+      input
+        font-size: 1.2em!important
+        padding: 8px!important
     .numpad
       display: flex
       flex-wrap: wrap
@@ -1113,6 +1290,10 @@ body
         border: 1px solid rgba(#fff, 0.4)
         &:hover
           background: rgba(#fff, 0.05)
+    .auth-pick-user.change
+      input
+        font-size: 1.2em!important
+        padding: 8px!important
     .auth-sig, .auth-pick-user
       h1
         text-align: left

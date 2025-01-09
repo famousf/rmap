@@ -63,7 +63,9 @@
   <!-- Bottom navigation -->
   <div class="fms-toggle">
     <div class="fms-toggle-btn" id="worktype">Dagtid</div>
+    <!--
     <div class="fms-toggle-btn" id="toggle-layer" id="main-btn" onclick="toggleUI(this)">LAGER</div>
+    -->
     <div class="fms-toggle-btn" id="centerGps"><i class="fa-solid fa-location-arrow"></i></div>
     <div class="toggle-layer">
       <!--
@@ -71,6 +73,7 @@
         <div class="show"><i class="fa-solid fa-arrow-rotate-left"></i></div><span>Visa allt</span>
       </div>
     -->
+    <!--
       <div class="tl-bar" id="lines" onclick="toggleUI(this)">
         <div class="linjer"></div><span>Linjer</span>
       </div>
@@ -81,6 +84,7 @@
         <div class="pakering"></div><span>Ytor</span>
       </div>
     </div>
+  -->
   </div>
 
 
@@ -91,44 +95,38 @@
   <!-- Hidden menu -->
   <div class="fms-menu" id="fms-menu">
     <div class="menu-content">
+        <div class="bar head-info">
+            <img class="api-logo" src="">
+            <h1 class="api-username"></h1>
+            <span class="api-email"></span>
+            <div class="api-cities"></div>
+        </div>
+
         <!--
         <div class="bar">
-          <h1>Dela Position</h1>
-          <span>Visar dig själv och medarbetare på kartan (TBA)</span>
-          <label class="switch">
-            <input type="checkbox" onchange="toggleSetting(this)" id="sharePosition">
-            <span class="slider round"></span>
-          </label>
-        </div>
-      -->
-        <div class="bar">
           <h1>GPS</h1>
-          <span>Spårar din enhet med hjälp av gps</span>
+          <span>Spårar din enhet med hjälp av GPS</span>
           <label class="switch">
             <input type="checkbox" onchange="toggleSetting(this)" id="myPosition">
             <span class="slider round"></span>
           </label>
         </div>
-        <div class="bar">
-          <h1>Utvecklare</h1>
-          <span>Tillåter användaren att logga kordinater</span>
-          <label class="switch">
-            <input type="checkbox" onchange="toggleSetting(this)" id="enableDev">
-            <span class="slider round"></span>
-          </label>
-        </div>
+        -->
         <div class="bar" onclick="createNewSesssion(this)">
           <h1>Session</h1>
-          <span>Skapa en ny snösession (Beta - v1.1.65)</span>
+          <span>Skapa en ny snösession</span>
         </div>
         <div class="bar" onclick="toggleReportWindow(this)">
           <h1>Exportera Rapporter</h1>
-          <span>Ladda ner tidsrapporter i Excellformat (Beta - v2.1.0)</span>
+          <span>Ladda ner tidsrapporter i Excellformat</span>
+        </div>
+
+        <div class="bar" onclick="toggleUserCredentials(this)">
+          <h1>Ändra Lösenord</h1>
+          <span>Viktigt att byta efter första inloggningen.</span>
         </div>
         <div class="bar red">
-          <form method="post">
-            <button type="submit" name="logout">Logga ut</button>
-          </form>
+          <button type="submit" name="logout" onclick="signOutUser(this)">Logga ut</button>
         </div>
 
         <div class="prev-sessionData">
@@ -154,5 +152,7 @@
 
 
   <div id="map"></div>
+  <div class="status-bar"></div>
   <script src="core/js/map.js?<?php echo $VERSION ?>"></script>
   <script src="core/js/util.js?<?php echo $VERSION ?>"></script>
+  <script src="core/api/_assign.js?<?php echo $VERSION ?>"></script>

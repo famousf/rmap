@@ -1,0 +1,330 @@
+let blankData =   {
+    "MHUS 10": {
+      "parkeringar": {
+        "current": 0,
+        "max": 2
+      },
+      "vägar": {
+        "current": 0,
+        "max": 2
+      },
+      "handskottning": {
+        "current": 0,
+        "max": 2
+      },
+      "statusHolder": [
+        58.70647,
+        13.79765
+      ]
+    },
+    "MHUS 9": {
+      "parkeringar": {
+        "current": 0,
+        "max": 2
+      },
+      "vägar": {
+        "current": 0,
+        "max": 2
+      },
+      "handskottning": {
+        "current": 0,
+        "max": 2
+      },
+      "statusHolder": [
+        58.701,
+        13.80451
+      ]
+    },
+    "Myran": {
+      "vägar": {
+        "current": 0,
+        "max": 2
+      },
+      "handskottning": {
+        "current": 0,
+        "max": 2
+      },
+      "statusHolder": [
+        58.70418,
+        13.80358
+      ]
+    },
+    "HELIX": {
+      "parkeringar": {
+        "current": 0,
+        "max": 2
+      },
+      "vägar": {
+        "current": 0,
+        "max": 2
+      },
+      "handskottning": {
+        "current": 0,
+        "max": 2
+      },
+      "statusHolder": [
+        58.7112,
+        13.82642
+      ]
+    },
+    "MHUS 11": {
+      "parkeringar": {
+        "current": 0,
+        "max": 2
+      },
+      "vägar": {
+        "current": 0,
+        "max": 2
+      },
+      "handskottning": {
+        "current": 0,
+        "max": 2
+      },
+      "statusHolder": [
+        58.70979,
+        13.82931
+      ]
+    },
+    "MHUS 7": {
+      "parkeringar": {
+        "current": 0,
+        "max": 2
+      },
+      "vägar": {
+        "current": 0,
+        "max": 2
+      },
+      "handskottning": {
+        "current": 0,
+        "max": 2
+      },
+      "statusHolder": [
+        58.7087,
+        13.83397
+      ]
+    },
+    "JOHANNESBERG": {
+      "vägar": {
+        "current": 0,
+        "max": 2
+      },
+      "handskottning": {
+        "current": 0,
+        "max": 2
+      },
+      "statusHolder": [
+        58.70731,
+        13.84133
+      ]
+    },
+    "MHUS 1": {
+      "parkeringar": {
+        "current": 0,
+        "max": 2
+      },
+      "vägar": {
+        "current": 0,
+        "max": 2
+      },
+      "handskottning": {
+        "current": 0,
+        "max": 2
+      },
+      "statusHolder": [
+        58.70591,
+        13.81523
+      ]
+    },
+    "MHUS 3": {
+      "parkeringar": {
+        "current": 0,
+        "max": 2
+      },
+      "vägar": {
+        "current": 0,
+        "max": 2
+      },
+      "handskottning": {
+        "current": 0,
+        "max": 2
+      },
+      "statusHolder": [
+        58.70262,
+        13.83892
+      ]
+    },
+    "GRANATEN": {
+      "parkeringar": {
+        "current": 0,
+        "max": 2
+      },
+      "vägar": {
+        "current": 0,
+        "max": 2
+      },
+      "handskottning": {
+        "current": 0,
+        "max": 2
+      },
+      "statusHolder": [
+        58.69589,
+        13.79001
+      ]
+    },
+    "Ekebo": {
+      "parkeringar": {
+        "current": 0,
+        "max": 2
+      },
+      "vägar": {
+        "current": 0,
+        "max": 2
+      },
+      "handskottning": {
+        "current": 0,
+        "max": 2
+      },
+      "statusHolder": [
+        58.70708,
+        13.82731
+      ]
+    },
+    "KISTEGÅRDEN": {
+      "parkeringar": {
+        "current": 0,
+        "max": 2
+      },
+      "vägar": {
+        "current": 0,
+        "max": 2
+      },
+      "handskottning": {
+        "current": 0,
+        "max": 2
+      },
+      "statusHolder": [
+        58.66937,
+        13.84649
+      ]
+    },
+    "FREDSLUND": {
+      "parkeringar": {
+        "current": 0,
+        "max": 2
+      },
+      "vägar": {
+        "current": 0,
+        "max": 2
+      },
+      "handskottning": {
+        "current": 2,
+        "max": 2
+      },
+      "statusHolder": [
+        58.73793,
+        13.92511
+      ]
+    },
+    "MHUS 6": {
+      "parkeringar": {
+        "current": 0,
+        "max": 2
+      },
+      "vägar": {
+        "current": 0,
+        "max": 2
+      },
+      "handskottning": {
+        "current": 0,
+        "max": 2
+      },
+      "hazardblocks": {
+        "current": 0,
+        "max": 2
+      },
+      "statusHolder": [
+        58.70185,
+        13.81877
+      ]
+    },
+    "MHUS 5": {
+      "parkeringar": {
+        "current": 0,
+        "max": 2
+      },
+      "vägar": {
+        "current": 0,
+        "max": 2
+      },
+      "handskottning": {
+        "current": 0,
+        "max": 2
+      },
+      "hazardblocks": {
+        "current": 0,
+        "max": 2
+      },
+      "statusHolder": [
+        58.70455,
+        13.81888
+      ]
+    },
+    "KFORS": {
+      "parkeringar": {
+        "current": 0,
+        "max": 2
+      },
+      "vägar": {
+        "current": 0,
+        "max": 2
+      },
+      "handskottning": {
+        "current": 0,
+        "max": 2
+      },
+      "hazardblocks": {
+        "current": 0,
+        "max": 2
+      },
+      "statusHolder": [
+        58.69687,
+        13.83772
+      ]
+    },
+    "BRÅTEN 1": {
+      "vägar": {
+        "max": 2,
+        "current": 0
+      },
+      "parkeringar": {
+        "max": 2,
+        "current": 0
+      },
+      "statusHolder": [
+        58.69675456222024,
+        13.802797794342043
+      ],
+      "handskottning": {
+        "max": 2,
+        "current": 0
+      }
+    },
+    "BRÅTEN 2": {
+      "vägar": {
+        "max": 2,
+        "current": 0
+      },
+      "parkeringar": {
+        "max": 2,
+        "current": 0
+      },
+      "statusHolder": [
+        58.696676521167824,
+        13.79612445831299
+      ],
+      "handskottning": {
+        "max": 2,
+        "current": 0
+      }
+    }
+  }

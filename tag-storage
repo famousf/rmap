@@ -1,0 +1,9 @@
+{
+  "admin": "default-admin",
+  "slangen": "brynas",
+  "lill valp": "newbie",
+  "fastighetsskötare": "default-worker",
+}
+
+key = text
+value = html class

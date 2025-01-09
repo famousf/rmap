@@ -1,5 +1,5 @@
 <?php
-  $VERSION = "2.1.0";
+  $VERSION = "3.0.05";
   if(isset($_POST["numpadClear"])):
       setcookie('isCleared', "clear", time() + (86400 * 10), "/");
       echo "isCleared";
@@ -42,39 +42,35 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
   <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
-  <script src="core/db/dataset.js?<?php echo $VERSION ?>"></script>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="core/api/_util.js?<?php echo $VERSION ?>"></script>
+  <script src="core/db/_declare.js?<?php echo $VERSION ?>"></script>
+  <script src="core/api/_auth.js?<?php echo $VERSION?>"></script>
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 </head>
 <body>
+    <div id="f_flag" state="false" hidden></div>
     <div class="fms-loader"><div class="fl-center"><i class="fa-solid fa-circle-notch"></i><span>Laddar...</span></div></div>
 <?php
 
-    if (!isset($_COOKIE["isCleared"])):
-        include_once "core/extra/login.php";
+    if (isset($_GET["login"]) && $_GET["login"] == "false") {
+        include_once "core/extra/_signIn.php";
 
-    elseif (!isset($_COOKIE["loggedUser"])):
-        include_once "core/extra/pickUser.php";
+    } else {
 
-    endif;
+      include_once "core/extra/map.php";
 
-    if (isset($_COOKIE["isCleared"]) && isset($_COOKIE["loggedUser"])):
-        include_once "core/extra/map.php";
+      // Load extras
+      if (isset($_GET["s"])) {
+          include_once "core/extra/sessions_imports.php";
+      }
 
-        if(isset($_GET["m"]) && $_GET["m"] == "editor"):
-            include_once "core/extra/editor.php";
+      if (isset($_GET["m"]) && $_GET["m"] == "editor") {
+          include_once "core/extra/editor.php";
+      }
 
-
-        elseif (isset($_GET["s"])):
-            include_once "core/extra/sessions_imports.php";
-
-
-        elseif (isset($_GET["r"])):
-            include_once "core/extra/export_report.php";
-        endif;
-
-
-    endif;
+    }
 
 
 ?>
