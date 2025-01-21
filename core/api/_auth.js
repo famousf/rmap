@@ -2,13 +2,13 @@ const handleLoginErrors = (error) => {
   console.log(error)
   let parent = document.getElementsByClassName('auth-screen')[0]
   let html = `
-    <div class="_loginError">${error.login}</div>
+    <div class="_loginError"><i class="fa-regular fa-circle-xmark"></i><span>${error.login}</span></div>
   `
   parent.insertAdjacentHTML('beforeend', html)
 
   setTimeout(() => {
     parent.lastElementChild.remove()
-  }, 1000)
+  }, 10000)
 
 }
 const registerAuth = async (email, password) => {

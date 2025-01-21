@@ -27,19 +27,6 @@ const fetchSessions = async () => {
         SESSIONCITY = data[0].city
         localStorage.setItem('currentCity', data[0].city)
     }
-  /*
-  const {data, error} = await supabase
-    .from('sessions')
-    .select('*')
-    .eq('session_id', searchVariable)
-    .limit(1)
-
-    if (error) {
-      console.log("Error fetching", error)
-    } else {
-        SESSIONDATA = data
-    }
-    */
 }
 const fetchReportData = async (param) => {
   const {data, error} = await supabase
@@ -109,6 +96,7 @@ const dataCompare = (a, b) => {
   }
 }
 const pureGetData = async () => {
+    console.log("pureGetData")
     let org_number = JSON.parse(localStorage.getItem('affiliation')).org_number
     let maps = USER_INFO?.maps
     const {data, error} = await supabase
@@ -123,6 +111,7 @@ const pureGetData = async () => {
   }
 }
 const updateNewData = async (data, report) => {
+  console.log("updateNewData")
   let org_number = JSON.parse(localStorage.getItem('affiliation')).org_number
   let maps = USER_INFO?.maps
   const {error} = await supabase
@@ -137,7 +126,7 @@ const updateNewData = async (data, report) => {
   }
 }
 const updateDbCurrent = (e) => {
-
+  console.log("updateDbCurrent")
   let type = e.id
   let where = e.parentNode.id
   //let user = JSON.parse(localStorage.getItem('loggedUser'))[1].toLowerCase()
@@ -159,85 +148,87 @@ const updateDbCurrent = (e) => {
       data[0].report[username][where][type] = data[0].report[username][where][type] || {}
       data[0].report[username][where][type][workType] = Math.floor(Date.now() / 1000)
 
-
       updateNewData(data[0].data, data[0].report)
 
-      /*
-      BELLOW IS DEPRICATED
-
-      fetchReportData(searchVariable).then(reports => {
-            console.log("fetchReportData")
-            //location.reload()
-            let dataString = ""
-            let dataPoint = data[0].data[where][type].current
-            if (reports.length > 0) {
-                  if (dataPoint == 1) {
-                      // Plogning klart
-                      dataString = "plogning"
-                  }
-                  if (dataPoint == 2) {
-                      // Grusning klart
-                      dataString = "grusning"
-                  }
-
-                  if (dataString.length > 0) {
-                      // We did something, continue.
-                      let baseData = reports[0].data
-                      baseData[username] = baseData[username] || {}
-                      baseData[username][where] = baseData[username][where] || {}
-                      baseData[username][where][type] = baseData[username][where][type] || {}
-
-                      baseData[username][where][type][dataString] = Math.floor(Date.now() / 1000)
-                      updateReport(baseData).then(result => {
-                        console.log("updateReport")
-                        if (result.success) {
-                            console.log("updateReport() - True")
-                        }
-                      })
-                  }
-
-            }
-      })
-      */
   })
 
 
 }
-const createStatusDOM = (coords, areaName, pureName, status) => {
+const createStatusDOM = (coords, areaName, pureName, status, update) => {
 
-  let buttons = ""
-  Object.entries(status).forEach((item, i) => {
-    if (item[0] != "statusHolder") {
-      if (item[1].current == item[1].max && item[1].current > 0) {
-          buttons += `
-          <div id="${pureName}">
-          <span>${item[0]}</span>
-          <button id="${item[0]}" class="completed">Färdig 2/2</button>
-          </div>
-          `
-      } else {
-          buttons += `
-          <div id="${pureName}">
-          <span>${item[0]}</span>
-          <button id="${item[0]}" onclick="updateDbCurrent(this)">${item[1].current} / ${item[1].max}</button>
-          </div>
-          `
+  if (update) {
+    // only update previous stuff
+    /*
+      Everything lives in 'status'
+      Fetch each element and update the data from 'status' accordinly
+      - This function used to blanket create a new DOm
+    */
+    let parent = document.getElementsByClassName(`obj-${areaName}`)[0]
+    let children = parent.querySelectorAll('div')
+    children.forEach((item, i) => {
+        let title = item.querySelector('span').innerText.toLowerCase()
+        let button = item.querySelector('button')
+        // Replace current DOM with following §
+        let max = status[title].max
+        let current = status[title].current
+
+        // DOM Elements
+
+        if (current == max) {
+            // New DOM should be 'greened' out and remove eventListener
+            button.innerText = `Färdig ${current} / ${max}`
+            button.removeAttribute('onclick')
+            button.classList.add('completed')
+
+        } else {
+            // Just update the progress
+            button.innerText = `${current} / ${max}`
+        }
+
+        console.log(areaName, title, status[title], button)
+    });
+
+
+
+  } else {
+    // Create new drawing of data
+    console.log("createStatusDOM - draw new")
+    let buttons = ""
+    Object.entries(status).forEach((item, i) => {
+      if (item[0] != "statusHolder") {
+        if (item[1].current == item[1].max && item[1].current > 0) {
+            buttons += `
+            <div id="${pureName}">
+            <span>${item[0]}</span>
+            <button id="${item[0]}" class="completed">Färdig 2/2</button>
+            </div>
+            `
+        } else {
+            buttons += `
+            <div id="${pureName}">
+            <span>${item[0]}</span>
+            <button id="${item[0]}" onclick="updateDbCurrent(this)">${item[1].current} / ${item[1].max}</button>
+            </div>
+            `
+        }
+
       }
+    });
 
-    }
-  });
+    let custClass = (map.getZoom() < 16) ? "fms-hidden" : ""
+    const statusDiv = L.divIcon({
+      className: `fms-statusDiv ${custClass}`,
+      html: `<div class="fms-stChild obj-${areaName}">
+              <h1>${pureName}</h1>
+              ${buttons}
+            </div>`,
+      iconAnchor: [100, 0]
+    })
 
-  let custClass = (map.getZoom() < 16) ? "fms-hidden" : ""
-  const statusDiv = L.divIcon({
-    className: `fms-statusDiv ${custClass}`,
-    html: `<div class="fms-stChild obj-${areaName}">
-            <h1>${pureName}</h1>
-            ${buttons}
-          </div>`,
-    iconAnchor: [100, 0]
-  })
+    L.marker(coords, {icon:statusDiv}).addTo(map)
+  }
 
-  L.marker(coords, {icon:statusDiv}).addTo(map)
+
 
 }
 // ------------ //
@@ -284,7 +275,8 @@ const drawPercentageBar = (data) => {
       }
   }
 }
-const reDrawData = async (data) => {
+const reDrawData = async (data, update) => {
+    console.log("reDrawData", update)
     objects = data[0].data
     Object.entries(objects).forEach((item, i) => {
         // Draw status-buttons here
@@ -381,7 +373,7 @@ const reDrawData = async (data) => {
 
         });
         let coords = item[1].statusHolder
-        createStatusDOM(coords, areaName, item[0], item[1])
+        createStatusDOM(coords, areaName, item[0], item[1], update)
         drawVisialChanges([areaName, item[1]])
         if (areaStatus[0] == areaStatus[1] && areaStatus[0] > 0) {
           // Change compound name color
@@ -440,7 +432,7 @@ sessionsMain().then(data => {
       // Data exists, do something with i
       // Make sure an observer has checked the flag as true before executing this
       observeFlagState('f_flag', () => {
-        reDrawData(data)
+        reDrawData(data, update = false)
         calculateStats()
         // Continue to update the data aswell
         setInterval(() => {
@@ -448,7 +440,7 @@ sessionsMain().then(data => {
             sessionsMain().then(newData => {
                 if (dataCompare(data, newData) == false) {
                     // Update reDrawdata() with the new data§
-                    reDrawData(newData)
+                    reDrawData(newData, update = true)
                     calculateStats()
                     SESSIONDATA = newData
                     data = newData

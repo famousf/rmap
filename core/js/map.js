@@ -534,7 +534,7 @@ const drawWarnings = () => {
 
     Object.entries(compounds).forEach((data, index) => {
           blocks = data[1].data_warning
-
+          console.log(data)
           if (blocks) {
             Object.entries(blocks).forEach((block, i) => {
               let custClass = (map.getZoom() < 16) ? "fms-hidden" : ""
@@ -562,67 +562,70 @@ const drawWarnings = () => {
   objectGroup.addTo(map)
 }
 const drawWarnings_opt = () => {
-  const objectGroup = L.layerGroup(); // Layer group for warning markers
-  const mapBounds = map.getBounds(); // Get current map bounds to limit rendering
-  const isEditorMode = GLOBAL_PARAMETER.length > 0 && GLOBAL_PARAMETER === '?m=editor';
+  // Ensure map container exists
+  const container = document.querySelector("#map");
+  if (!container) {
+    console.error("Map container (#map-container) not found.");
+    return;
+  }
 
-  let markersOnMap = []; // To store references to markers that have been added
+  // Clear any previous SVGs or markers
+  if (window.compoundGroups) {
+    window.compoundGroups.clearLayers();
+  }
 
-  // Only add new markers that are within the visible map bounds
+  // Create a layer group to store all compounds' SVGs
+  const compoundGroups = L.layerGroup().addTo(map);
+
+  // Iterate over MAPS_DATA
   MAPS_DATA.forEach((item) => {
-    const key = Object.keys(item)[0];
+    const key = Object.keys(item)[0]; // e.g., "mariestad"
     const compounds = item[key].compounds;
 
-    Object.entries(compounds).forEach((data) => {
-      const blocks = data[1].data_warning;
+    // Iterate over compounds
+    Object.entries(compounds).forEach(([compoundKey, compound]) => {
+      const blocks = compound.data_warning;
 
       if (blocks) {
-        Object.entries(blocks).forEach((block, i) => {
-          const coords = block[1].coords;
+        // Create an SVG layer for this compound (group of shapes)
+        const svgLayer = L.svg();
+        svgLayer.addTo(compoundGroups);
 
-          // Skip rendering if the block is outside current map bounds
-          if (!mapBounds.contains(coords)) return;
+        // Access the SVG container for adding shapes
+        const svg = svgLayer._container;
 
-          // Check if the marker is already on the map to avoid adding duplicate markers
-          if (markersOnMap.some(marker => marker.getLatLng().equals(coords))) return;
+        // Iterate over blocks and add circles (or any shape) to the SVG
+        Object.entries(blocks).forEach(([blockKey, block]) => {
+          const coords = block.coords; // [longitude, latitude]
+          const type = block.type;
 
-          // Create and add the marker if it's not already added
-          const custClass = map.getZoom() < 16 ? "fms-hidden" : "";
-          const sessionClassName = `${data[1].desc.split(' ').join('')}-stairs`;
-          const typeIndex = block[1].type;
+          if (!coords || coords.length !== 2) {
+            console.error("Invalid coordinates for block:", block);
+            return;
+          }
 
-          const icon = L.divIcon({
-            html: warningType[typeIndex].icon, // FontAwesome icon
-            iconSize: [24, 24], // Size of the icon
-            className: `fms-${typeIndex} ${custClass} ${sessionClassName}`,
-            popupAnchor: [0, -12], // Position of the popup
-          });
+          const latLng = L.latLng(coords[1], coords[0]); // [latitude, longitude]
 
-          const marker = L.marker(coords, { icon }).addTo(objectGroup);
+          // Create the circle element using Leaflet's L.circle()
+          const circle = L.circle(latLng, {
+            radius: 5, // Radius in meters (can adjust as needed)
+            color: 'red',
+            fillColor: 'red',
+            fillOpacity: 0.6,
+          }).addTo(compoundGroups);
+          console.log('Circle added at', latLng)
 
-          // Bind a popup depending on editor mode
-          const popupText = isEditorMode
-            ? `${warningType[typeIndex].text} #${i}`
-            : warningType[typeIndex].text;
-          marker.bindPopup(popupText);
-
-          // Store the marker reference
-          markersOnMap.push(marker);
+          // Optionally bind a popup with the description
+          circle.bindPopup(`Warning type: ${type}`);
         });
       }
     });
   });
 
-  objectGroup.addTo(map);
-
-  // Attach debounced update events for viewport filtering
-  const updateWarnings = debounce(() => {
-    objectGroup.clearLayers(); // Clear existing markers
-    drawWarnings(); // Redraw visible markers
-  }, 300); // Debounce to every 300ms
-
-  map.on('zoomend moveend', updateWarnings);
-};
+  // Store the compoundGroups globally so we can clear it on next draw call
+  window.compoundGroups = compoundGroups;
+  compoundGroups.addTo(map)
+}
 const drawPerimiter = () => {
 
   // Example coordinates for a polygon (5-6 points)
