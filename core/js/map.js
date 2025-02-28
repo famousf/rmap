@@ -1313,6 +1313,8 @@ const createNewSesssion = async (e) => {  // Updated - NOT FOR MULTIPLE
                     return
                 }
                 toggleLoadingDiv(t = false)
+                // Reload page to get new session
+                location.reload()
           }
     }
 } // Updated - NOT FOR MULTIPLE

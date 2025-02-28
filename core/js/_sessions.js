@@ -122,7 +122,7 @@ const updateNewData = async (data, report) => {
     .in('city', maps)
 
   if (!error) {
-    //location.reload()
+      location.reload()
   }
 }
 const updateDbCurrent = (e) => {
