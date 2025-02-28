@@ -23,6 +23,7 @@ const drawUserProfile = () => {
   // Populate DOM
   document.getElementsByClassName('api-username')[0].innerText = username
   document.getElementsByClassName('api-logo')[0].src = company_logo
+  document.getElementsByClassName('api-email')[0].innerText = email
 
 
   // handle cities

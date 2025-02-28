@@ -122,7 +122,7 @@ const updateNewData = async (data, report) => {
     .in('city', maps)
 
   if (!error) {
-    location.reload()
+    //location.reload()
   }
 }
 const updateDbCurrent = (e) => {
@@ -131,30 +131,33 @@ const updateDbCurrent = (e) => {
   let where = e.parentNode.id
   //let user = JSON.parse(localStorage.getItem('loggedUser'))[1].toLowerCase()
   pureGetData().then(data => {
-      // Update the data then send it in. (Pray it not gonna bug out with handshakes)
-      //console.log(data, type, where, username, data[0].data[where][type])
-      //console.log("pureGetData")
-      //console.log(data[0].report)
-      // Increment the moment index
-      data[0].data[where][type].current += 1
+      // Create logic to handle double handshakes (where two users click the button simultanisaly)
+
+      if (data[0].data[where][type].current < data[0].data[where][type].max) {
+          // Makes sure that inputs dont go over maximum (i.e 3 / 2)
+          data[0].data[where][type].current += 1
+
+          // Update reports row
+          if (data[0].report == null) { data[0].report = {} }
+          let workType = (data[0].data[where][type].current == 1) ? "plogning" : "grusning"
+
+          data[0].report[username] = data[0].report[username] || {}
+          data[0].report[username][where] = data[0].report[username][where] || {}
+          data[0].report[username][where][type] = data[0].report[username][where][type] || {}
+          data[0].report[username][where][type][workType] = Math.floor(Date.now() / 1000)
 
 
-      // Update reports row
-      if (data[0].report == null) { data[0].report = {} }
-      let workType = (data[0].data[where][type].current == 1) ? "plogning" : "grusning"
+          updateNewData(data[0].data, data[0].report)
+      }
 
-      data[0].report[username] = data[0].report[username] || {}
-      data[0].report[username][where] = data[0].report[username][where] || {}
-      data[0].report[username][where][type] = data[0].report[username][where][type] || {}
-      data[0].report[username][where][type][workType] = Math.floor(Date.now() / 1000)
-
-      updateNewData(data[0].data, data[0].report)
 
   })
 
 
 }
 const createStatusDOM = (coords, areaName, pureName, status, update) => {
+
+
 
   if (update) {
     // only update previous stuff
@@ -185,7 +188,7 @@ const createStatusDOM = (coords, areaName, pureName, status, update) => {
             button.innerText = `${current} / ${max}`
         }
 
-        console.log(areaName, title, status[title], button)
+        //console.log(areaName, title, status[title], button)
     });
 
 
@@ -291,6 +294,7 @@ const reDrawData = async (data, update) => {
 
                 areaStatus[1] += type[1].max
                 areaStatus[0] += type[1].current
+
 
             }
             if (type[1].current % type[1].max == 1) {

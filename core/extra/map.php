@@ -112,6 +112,7 @@
           </label>
         </div>
         -->
+
         <div class="bar" onclick="createNewSesssion(this)">
           <h1>Session</h1>
           <span>Skapa en ny snösession</span>
@@ -124,6 +125,10 @@
         <div class="bar" onclick="toggleUserCredentials(this)">
           <h1>Ändra Lösenord</h1>
           <span>Viktigt att byta efter första inloggningen.</span>
+        </div>
+        <div class="bar" onclick="">
+          <h1>Ladda om</h1>
+          <span>Vid fel, laddar om appen.</span>
         </div>
         <div class="bar red">
           <button type="submit" name="logout" onclick="signOutUser(this)">Logga ut</button>

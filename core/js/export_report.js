@@ -12,15 +12,18 @@ const convertUnixToRegularTime = (unixTimestamp) => {
   return `${hours}:${minutes}`;
 }
 const fetchReportData = async (param) => {
+
+  org_number = JSON.parse(localStorage.getItem('user_info')).org_number
   const {data, error} = await supabase
-    .from('reports')
+    .from('session')
     .select('*')
-    .eq('session_id', searchVariable)
+    .eq('org_number', org_number)
     .limit(1)
 
     if (error) {
       console.log("Reports error", error)
     } else {
+      console.log(data)
       return data
     }
 }

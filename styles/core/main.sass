@@ -1025,6 +1025,7 @@ body
         width: 100%
         border-bottom: 1px solid rgba(#f1f1f1, 0.1)
         position: relative
+        cursor: pointer
         h1
           color: rgba(#f1f1f1, 0.8)
           font-size: 1.1em
@@ -1197,6 +1198,8 @@ body
       border-radius: 50%
   .auth-screen.reports
     max-width: initial!important
+    i
+      cursor: pointer
   .auth-screen
     position: fixed
     top: 0
@@ -1208,6 +1211,12 @@ body
     height: 100vh
     z-index: 999
     background: $red
+    .fa-circle-arrow-left
+      font-size: 1.5em
+      color: #fff
+      position: relative
+      left: 10px
+      top: 10px
     .tos.show
       display: block!important
     .tos
@@ -1360,7 +1369,7 @@ body
       color: #fff
       padding: 15px
       box-sizing: border-box
-      background: rgba(#000, 0.15)
+      background: rgba(#9d4747, 1)
       border-radius: 5px
       border: 2px solid rgba(#000, 0.05)
       transition: all 1s ease
@@ -1376,6 +1385,8 @@ body
         font-size: 1em
         font-weight: 600
         text-transform: capitalize
+        display: block
+        width: calc(100% - 40px)
     .auth-pick-user.fade-in
       //animation: fade-in .3s ease-in forwards
       z-index: 100

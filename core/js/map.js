@@ -1168,22 +1168,40 @@ const exportReportButton = (e) => {
   window.location.search = `?r=${selectReport}`
 }
 const toggleReportWindow = async (e) => {
+  org_number = JSON.parse(localStorage.getItem('user_info')).org_number
   const {data, error} = await supabase
-    .from('reports')
+    .from('session')
     .select('*')
+    .eq('org_number', org_number)
     .order('id', {ascending: false})
 
   if (error) {console.log("error fetching reports"); return false}
-
   let htmlData = ""
+  console.log(data)
+
+  Object.entries(data).forEach((item, i) => {
+      let id = item[1].session_id.toString()
+      let len = id.length
+
+      if (len == 7) { id = `0${id}`}
+
+      let day = id.slice(0, 2)
+      let month = id.slice(2, 4)
+      let year = id.slice(4, 8)
+      let rowHtml = `<option value="${item[1].session_id}">${day}/${month}/${year}</option>`
+      htmlData += rowHtml
+  });
 
   for (const [i, row] of Object.entries(data)) {
+    /*
+    console.log(row)
     let id = row.session_id.toString()
     let day = id.slice(0, 2)
     let month = id.slice(2, 4)
     let year = id.slice(4, 8)
     let rowHtml = `<option value="${row.session_id}">${day}/${month}/${year}</option>`
     htmlData += rowHtml
+    */
   }
   let html = `
   <div class="auth-screen reports" id="ldle3a">
@@ -1205,16 +1223,17 @@ const toggleReportWindow = async (e) => {
 const changePassword = async (e) => {
   let input = document.getElementsByClassName('inputChangePassword')[0].value
   if (input.length <= 6) {
-      handleErrors({login: "För kort lösenord"})
+      handleErrors({msg: ["För kort lösenord..", false]})
   } else {
       const {data, error} = await supabase.auth.updateUser({
         password: input
       })
 
       if (error) {
-        handleErrors(error)
+        handleErrors({msg: [error, false]})
       } else {
         console.log("Updated password!: ", input)
+        handleErrors( {msg: ["Ditt lösenord är ändrat!", true]} )
       }
   }
 }
@@ -1223,10 +1242,11 @@ const toggleUserCredentials = async (e) => {
   // Their first password is a random one
   let html = `
   <div class="auth-screen reports" id="ldle3a">
+    <i class="fa-solid fa-circle-arrow-left" onclick="passwordResetReturn(this)"></i>
     <div class="auth-pick-user change">
       <h1>... Ändra lösenord</h1>
       <span>Var nog att välja ett svårt lösenord</span>
-      <input type="text" class="inputChangePassword" minlength="6">
+      <input type="password" class="inputChangePassword" minlength="6">
       <button type="submit" onclick="changePassword(this)">Verkställ</button>
     </div>
     <img id="rb_white" src="img/logo.svg" alt="">

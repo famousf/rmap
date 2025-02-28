@@ -1206,6 +1206,7 @@ body .fms-menu .menu-content .bar {
   width: 100%;
   border-bottom: 1px solid rgba(241, 241, 241, 0.1);
   position: relative;
+  cursor: pointer;
 }
 body .fms-menu .menu-content .bar h1 {
   color: rgba(241, 241, 241, 0.8);
@@ -1413,6 +1414,9 @@ body .GPS-user-tracker .customGpsNode {
 body .auth-screen.reports {
   max-width: initial !important;
 }
+body .auth-screen.reports i {
+  cursor: pointer;
+}
 body .auth-screen {
   position: fixed;
   top: 0;
@@ -1424,6 +1428,13 @@ body .auth-screen {
   height: 100vh;
   z-index: 999;
   background: #ca5757;
+}
+body .auth-screen .fa-circle-arrow-left {
+  font-size: 1.5em;
+  color: #fff;
+  position: relative;
+  left: 10px;
+  top: 10px;
 }
 body .auth-screen .tos.show {
   display: block !important;
@@ -1596,7 +1607,7 @@ body .auth-screen ._loginError {
   color: #fff;
   padding: 15px;
   box-sizing: border-box;
-  background: rgba(0, 0, 0, 0.15);
+  background: #9d4747;
   border-radius: 5px;
   border: 2px solid rgba(0, 0, 0, 0.05);
   transition: all 1s ease;
@@ -1614,6 +1625,8 @@ body .auth-screen ._loginError span {
   font-size: 1em;
   font-weight: 600;
   text-transform: capitalize;
+  display: block;
+  width: calc(100% - 40px);
 }
 body .auth-screen .auth-pick-user.fade-in {
   z-index: 100;
