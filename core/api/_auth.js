@@ -27,18 +27,39 @@ const registerAuth = async (email, password) => {
 
   }
 }
-const verifyUser = async (userId) => {
+const verifyUser = async (user) => {
   // Check if first time logging in, to 'confirm them'
   const {data, error} = await client
     .from('users')
     .select('*')
-    .eq('id', userId)
+    .eq('id', user.id)
     .single()
 
     if (error) {
-      console.log(error)
-      return null
+      // No user found, update now with user variable, then return data
+      console.log("Syncing user")
+      let inUser = {
+        id: user.id,
+        username: '',
+        org_number: 550,
+        maps: ['mariestad'],
+        email: user.email,
+        accepted_tos: false,
+        last_known: 1,
+        last_coord: [1,1]
+      }
+      const {update, e} = await client
+        .from('users')
+        .insert(inUser)
+
+        localStorage.setItem('affiliation', 550)
+        console.log(inUser)
+        return inUser
+
     } else {
+
+      console.log('******** ', data)
+
       return data
     }
 }
@@ -79,9 +100,11 @@ const syncToken = async (userData) => {
     .from('users')
     .insert({
       id: userData.id,
-      username: "",
-      email: userData.email
-
+      username: '',
+      org_number: 550,
+      maps: ['mariestad'],
+      email: userData.email,
+      accepted_tos: false
     })
 
     if (error) {
@@ -103,11 +126,15 @@ const authAccount = async (email, password, orgNumber) => {
   if (error) {
     handleLoginErrors({login:error.message})
   } else {
-    let isVerified = await verifyUser(data.user.id)
+    let isVerified = await verifyUser(data.user)
+    console.log(isVerified, 'isVerified')
+    /*
     if (!isVerified) {
       syncToken(data.user) // Update auth.user with user
+    }
+    */
 
-    } else if (data.user.id == isVerified.id) {
+    if (data.user.id == isVerified.id) {
       // Check if user is in an org.
       let inOrg = await verifyOrg(data.user.id, orgNumber)
       if (!inOrg) {
@@ -116,7 +143,7 @@ const authAccount = async (email, password, orgNumber) => {
           // Sucessful - Prompt user
 
 
-          if (isVerified.accepted_tos != null || isVerified.accepted_tos) {
+          if (isVerified.accepted_tos) {
               localStorage.setItem('at', JSON.stringify([`${data.user.id}`,`${data.session.access_token}`]))
               localStorage.setItem('user_info', JSON.stringify(isVerified))
               window.location.href = '/rmap/'

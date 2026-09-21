@@ -1,16 +1,30 @@
 # Todo last version
 
 Login
-  - Responsive (Inzoomat läge ser dåligt ut)
-    X Bakgrund för långt upp
-  - Inaktivera org, prefix = 550
-  - Röd knapp (CTA)
+  XX Responsive (Inzoomat läge ser dåligt ut)
+    XX Bakgrund för långt upp
+  XX Inaktivera org, prefix = 550
+  XX Röd knapp (CTA)
+  XX Netle logga i följd efter login, ej pos absolute
+  XX Gör så villkor funkar
 
 Startsida
-  - Alla föreningar ska ladda tillhörande 550 direkt
-  - På localhost fungerar det, felsök varför de inte fungerar live
-    - vid inlogg landar man på /rmap/
+  XX Alla föreningar ska ladda tillhörande 550 direkt
+  XX På localhost fungerar det, felsök varför de inte fungerar live
+    XX vid inlogg landar man på /rmap/
+    - _auth.js:125 <- ta bort redirect från window.location så löser de sig
+
+
+Ladda om
+  XX Funkar ej
+
+Sesssion
+  XX input feedback på 'vägar/storaytor' etc så man ser att man tryckt
+    XX updatedBcurrent session.js
 
 Larm
   - Alla larm hamnar i göteborg just nu, åtgärda efter korrekt position
+    - Borde fungera?? Testa live!
+
   - Rework på larmlistan, som är rätt seg och klumpig:
+    - Funkar just nu, rework senare.

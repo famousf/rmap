@@ -161,6 +161,9 @@ const updateNewData = async (data, report) => {
 }
 const updateDbCurrent = (e) => {
   console.log("updateDbCurrent")
+  // Visual changes for the button itself
+  e.classList.add('async-loader')
+
   e = e.querySelector('button')
   let type = e.id
   let where = e.parentNode.id
@@ -183,6 +186,7 @@ const updateDbCurrent = (e) => {
 
 
           updateNewData(data[0].data, data[0].report)
+          // Cancel button animation
       }
 
 
@@ -497,6 +501,12 @@ const updateElapsedTime = () => {
 }
 const reDrawData = async (data, update) => {
   //console.log("-------", data)
+  // Find all buttons with .async-loader and remove it
+    let buttons = document.querySelectorAll('.async-loader')
+
+    for(i = 0; i < buttons.length; i++) {
+      buttons[i].classList.remove('async-loader')
+    }
 
 
     console.log("reDrawData", update)
@@ -927,52 +937,48 @@ const updateDistressVisuals = async () => {
 
 
     // Handles box data
-    if (data && data.call_for_help?.length > 0) {
+    console.log('***************** add to larm-box')
+    if (data && data.call_for_help.length > 0) {
         let parent = document.querySelector('.fms_alarm')
         let html = ""
-        data.call_for_help.forEach((item) => {
+        data.call_for_help
+          .sort((a, b) => b.cfh_date - a.cfh_date)
+          .forEach((item) => {
             let status = item.completed == false ? "aktiv" : "klar"
             let time = compareTwoUnixDates(item.cfh_date, Date.now())
+
             if (!document.querySelector(`div[data-id="${item.distress_id}"]`)) {
-                html += `
+              html += `
                 <div class="larm_wrap ${status}" data-id="${item.distress_id}" data-cfh="${item.cfh_date}">
-                  <div class="larm_content" ${(status == "aktiv" ? "onclick=distressCamera("+JSON.stringify(item.last_coord)+','+JSON.stringify(item.distress_id)+")" : "")}>
+                  <div class="larm_content" ${(status == "aktiv" ? "onclick=distressCamera(" + JSON.stringify(item.last_coord) + ',' + JSON.stringify(item.distress_id) + ")" : "")}>
                     <span>${item.username}</span>
                     <h1>${item.distress}</h1>
                   </div>
                   <div class="larm_time">
-                    <span>${(time.length == 0) ? "Nu" : `${time}`}</span>
+                    <span>${time.length == 0 ? "Nu" : time}</span>
                   </div>
                   <div class="larm_status">
                     <span ${(status == "aktiv" ? 'onclick="updateDistressCall(this)"' : '')}>${status}</span>
                   </div>
                 </div>
-                `
+              `
             } else {
               let div = document.querySelector(`div[data-id="${item.distress_id}"]`)
-              if (div.classList.contains('aktiv') && item.completed == true) {
-                  // Update status
-                  div.classList.remove('aktiv')
-                  div.classList.add('klar')
-                  div.querySelector('.larm_status').querySelector('span').innerText = 'klar'
-              }
-              // Does it need an update?
-              // Compare div.larm_contents classlist with item data
 
+              if (div.classList.contains('aktiv') && item.completed == true) {
+                div.classList.remove('aktiv')
+                div.classList.add('klar')
+                div.querySelector('.larm_status').querySelector('span').innerText = 'klar'
+              }
             }
 
+            let p = document.querySelector(`div[data-id="${item.distress_id}"]`)
+            let c = p?.querySelectorAll('span')[1]
 
-
-
-          let p = document.querySelector(`div[data-id="${item.distress_id}"]`)
-          let c = p?.querySelectorAll('span')[1]
-          if (c) { c.innerText = (time.length == 0) ? "Nu" : `${time}` }
-
-
-
-
-        });
-
+            if (c) {
+              c.innerText = time.length == 0 ? "Nu" : time
+            }
+          })
         parent.insertAdjacentHTML('afterbegin', html)
 
 

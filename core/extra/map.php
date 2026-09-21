@@ -381,7 +381,7 @@
             <i class="fa-solid fa-user-secret"></i>
             <h1>Ändra Lösenord</h1>
           </div>
-          <div class="bar setting" onclick="">
+          <div class="bar setting" onclick="location.reload()">
             <i class="fa-solid fa-arrows-rotate"></i>
             <h1>Ladda om</h1>
           </div>

@@ -747,9 +747,7 @@ const newDrawUsers = (data) => {
         const timeOffAllowance = 30000;
         const timeDifference = Math.floor(Date.now() / 1000) - item.last_known;
         const hideClass = timeDifference < timeOffAllowance ? "" : "fms-hidden";
-        console.log(hideClass)
         const userfl = `${item.username.split(' ')[0][0]}${item.username.split(' ')[1][0]}`
-        console.log(userfl)
         const icon = L.divIcon({
             className: `gps-user-dot ${hideClass}`,
             html: `
