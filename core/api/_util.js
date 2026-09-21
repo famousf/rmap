@@ -56,3 +56,45 @@ const blendWithWhite = (color, factor) => {
 const passwordResetReturn = (e) => {
   document.getElementById('ldle3a').remove()
 }
+
+
+const smoothPanZoom = (map, start, end, options = {}) => {
+  const {
+    startZoom = 16,
+    endZoom = 13,
+    steps = 30,
+    intervalMs = 300
+  } = options;
+
+  let currentStep = 0;
+  let lat = start.lat;
+  let lng = start.lng;
+  let zoom = startZoom;
+
+  const latStep = (end.lat - start.lat) / steps;
+  const lngStep = (end.lng - start.lng) / steps;
+  const zoomStep = (startZoom - endZoom) / steps;
+
+  map.setView([lat, lng], zoom, {
+    animate: true,
+    pan: { duration: 0.5 }
+  });
+
+  const anim = setInterval(() => {
+    if (currentStep >= steps) {
+      clearInterval(anim);
+      return;
+    }
+
+    lat += latStep;
+    lng += lngStep;
+    zoom -= zoomStep;
+
+    map.setView([lat, lng], zoom, {
+      animate: true,
+      pan: { duration: 0.5 }
+    });
+
+    currentStep++;
+  }, intervalMs);
+}

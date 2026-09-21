@@ -1,3 +1,5 @@
+
+console.log(supabase)
 const handleLoginErrors = (error) => {
   console.log(error)
   let parent = document.getElementsByClassName('auth-screen')[0]
@@ -12,7 +14,7 @@ const handleLoginErrors = (error) => {
 
 }
 const registerAuth = async (email, password) => {
-  const { data, error } = await supabase.auth.signUp({
+  const { data, error } = await client.auth.signUp({
     email: email,
     password: password
   });
@@ -27,7 +29,7 @@ const registerAuth = async (email, password) => {
 }
 const verifyUser = async (userId) => {
   // Check if first time logging in, to 'confirm them'
-  const {data, error} = await supabase
+  const {data, error} = await client
     .from('users')
     .select('*')
     .eq('id', userId)
@@ -41,7 +43,7 @@ const verifyUser = async (userId) => {
     }
 }
 const verifyOrg = async (uid, number) => {
-  const {data, error} = await supabase
+  const {data, error} = await client
     .from('users')
     .select('*')
     .eq('id', uid)
@@ -60,7 +62,7 @@ const verifyOrg = async (uid, number) => {
     }
 }
 const confirmTos = async (data) => {
-  const {error} = await supabase
+  const {error} = await client
     .from('users')
     .update({accepted_tos:true})
     .eq('id', data.id)
@@ -73,7 +75,7 @@ const confirmTos = async (data) => {
 }
 const syncToken = async (userData) => {
   console.log("Syncing: ", userData)
-  const {data, error} = await supabase
+  const {data, error} = await client
     .from('users')
     .insert({
       id: userData.id,
@@ -92,9 +94,10 @@ const syncToken = async (userData) => {
     }
 }
 const authAccount = async (email, password, orgNumber) => {
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
+  console.log(email, password)
+  const { data, error } = await client.auth.signInWithPassword({
+    email: email,
+    password: password,
   });
 
   if (error) {
@@ -116,19 +119,21 @@ const authAccount = async (email, password, orgNumber) => {
           if (isVerified.accepted_tos != null || isVerified.accepted_tos) {
               localStorage.setItem('at', JSON.stringify([`${data.user.id}`,`${data.session.access_token}`]))
               localStorage.setItem('user_info', JSON.stringify(isVerified))
-              window.location.href = '/map/'
+              window.location.href = '/rmap/'
           } else {
               // Request accepting ToS
               console.log("accept tos please")
               console.log(data)
+              document.getElementById('rb_white').classList.add('hide')
               document.getElementsByClassName('tos')[0].classList.add('show')
+              document.getElementsByClassName('auth-pick-user')[0].classList.add('hide')
               document.getElementById('tos_button').addEventListener('click', (e) => {
                   if (e.target.id == "tos_button") {
                       confirmTos(isVerified).then(r => {
                           if (r) {
                             localStorage.setItem('at', JSON.stringify([`${data.user.id}`,`${data.session.access_token}`]))
                             localStorage.setItem('user_info', JSON.stringify(isVerified))
-                            window.location.href = '/map/'
+                            window.location.href = '/rmap/'
                           }
                       })
                   }
@@ -142,7 +147,9 @@ const authAccount = async (email, password, orgNumber) => {
   }
 }
 const initalizeAuthMain = async () => {
+  console.log("init auth")
   let accessToken = JSON.parse(localStorage.getItem('at'))
+  console.log(accessToken)
   if (!accessToken) {
       // Prompt user to login
       if (window.location.search != "?login=false") { window.location.search = "?login=false" }
@@ -156,7 +163,7 @@ const initalizeAuthMain = async () => {
 const signInUser = async (element) => {
   let email = document.getElementById('email').value
   let password = document.getElementById('password').value
-  let orgNumber = document.getElementById('orgNumber').value
+  let orgNumber = 550 //document.getElementById('orgNumber').value
   /*
   switch (0) {
     case email.length:
@@ -179,7 +186,8 @@ initalizeAuthMain()
 
 //
 const signOutUser = async (element) => {
-  const {error} = await supabase.auth.signOut()
+  const {error} = await client.auth.signOut()
+  console.log("logout")
   if (!error) {
       localStorage.removeItem('at')
       localStorage.removeItem('affiliation')

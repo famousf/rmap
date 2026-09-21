@@ -1,9 +1,6 @@
 /*
   Define default variables to be changed later
 */
-const SUPABASE_URL = 'https://fhivxtszdqyyjffnxqbr.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZoaXZ4dHN6ZHF5eWpmZm54cWJyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjkwMjE2NTEsImV4cCI6MjA0NDU5NzY1MX0.J1w5t2ihCjNSAzdXM98wfv3PdsntR-T6M4NOD3_srjo';
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 let clientPosition = null
 let previousLatLng = null
 let userMarker = null

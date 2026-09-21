@@ -37,7 +37,7 @@ const drawUserProfile = () => {
   }
 }
 const setAffiliationData = async (org) => {
-    const {data, error} = await supabase
+    const {data, error} = await client
       .from('organisation')
       .select('*')
       .eq('org_number', org)
@@ -54,7 +54,7 @@ const setAffiliationData = async (org) => {
 }
 const fetchUserLinks = async () => {
   if (USERID) {
-      const {data, error} = await supabase
+      const {data, error} = await client
         .from('users')
         .select('*')
         .eq('id', USERID)
@@ -74,7 +74,7 @@ const init_fetchUserMaps = async () => {
   let org = parseInt(result.org_number)
             setAffiliationData(org)
   let cities = result.maps
-  const {data, error} = await supabase
+  const {data, error} = await client
     .from('maps')
     .select('*')
     .eq('org_number', org)
@@ -84,20 +84,23 @@ const init_fetchUserMaps = async () => {
         return null
   } else {
 
+
         // Loop data from mapstable
         for (i = 0; i < data.length; i++) {
             // Loop users cities
             for(x = 0; x < cities.length; x++) {
-                if (data[i].name == cities[x]) {
+                if (data[i].area == cities[x]) {
                     // Add this to global variable
+                    console.log(data[i].area, cities[x])
                     MAPS_DATA.push(data[i].data)
+
                 }
             }
         }
         // Send maps_data to the right function
         // MAPS_DATA <-
         // to handle drawing
-
+        console.log(MAPS_DATA)
         return MAPS_DATA
   }
 }

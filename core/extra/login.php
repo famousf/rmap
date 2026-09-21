@@ -17,6 +17,10 @@
     </div>
   </div>
 -->
+  <video autoplay muted loop playsinline class="video-background">
+    <source src="your-video.webm" type="video/webm">
+      Your browser does not support the video tag.
+  </video>
   <div class="auth-sig">
     <h1>... Signera</h1>
     <span>För att motverka otillåten åtkomst, ange 'koden'</span>

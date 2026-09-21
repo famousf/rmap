@@ -2,7 +2,11 @@
   Misc functions to handle customized events such as getLineWeight, displayLatLngClick.
   - These functions are ran inside other functions to prevent reusing too much code
 */
-const map = L.map('map')
+const lineReg = new Map()
+const map = L.map("map", {
+  preferCanvas: true
+});
+const locationMarkers = new Map()
 const warningType = {
   stairs: {
     text: "<h1>Källartrappa alt. trappa</h1>",
@@ -66,23 +70,54 @@ const tileLayers = () => {
   	attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
   });
 
+    const OpenStreetMap_France = L.tileLayer('https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png', {
+  	maxZoom: 20,
+  	attribution: '&copy; OpenStreetMap France | &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  });
+    const OpenStreetMap_Mapnik = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  	maxZoom: 19,
+  	attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  });
+  var OpenStreetMap_CAT = L.tileLayer('https://tile.openstreetmap.bzh/ca/{z}/{x}/{y}.png', {
+  	maxZoom: 19,
+  	attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles courtesy of <a href="https://www.openstreetmap.cat" target="_blank">Breton OpenStreetMap Team</a>',
+    className: "map-tiles"
+  });
+
+  var ny = L.tileLayer('https://tile.openstreetmap.bzh/ca/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles courtesy of <a href="https://www.openstreetmap.cat" target="_blank">Breton OpenStreetMap Team</a>',
+  });
+
+  var Stadia_AlidadeSmoothDark = L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.{ext}', {
+	minZoom: 0,
+	maxZoom: 20,
+	attribution: '&copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+	ext: 'png'
+});
+
     // Add OpenStreetMap as the default map layer
     let baseLayers = {
       "Open streets map": openStreetMap_DE,
       "open topo map": openTopoMap,
       "tf landscape": thunderforest_Landscape,
       "tf outdoors": thunderforest_Outdoors, // Satellite map layer
-      "jawg matrix": jawg_Matrix,
+      "jawg matrix": OpenStreetMap_CAT,
       "Sattelit": esri_WorldImagery,
-      "Eniro": eniroMap
+      "Eniro": eniroMap,
+      "ny": ny,
+      "new dark": Stadia_AlidadeSmoothDark
     };
 
     const getStoredLayer = () => {
       const savedLayerName = localStorage.getItem('layer')
-      return baseLayers[savedLayerName] || thunderforest_Outdoors
+      console.log("*** --- SAVED LAYER", savedLayerName)
+      return baseLayers[savedLayerName] || OpenStreetMap_CAT
     }
     //
     const storedLayer = getStoredLayer()
+
+    console.log("______", storedLayer)
     storedLayer.addTo(map);
 
     // Layer control object to switch between map styles
@@ -90,8 +125,14 @@ const tileLayers = () => {
     // Add the control to the map to switch between layers
     L.control.layers(baseLayers).addTo(map);
     // Geolocation - Get the user's current location and place a marker
+
 }
+
 const compareTwoUnixDates = (startTimestamp, endTimestamp) => {
+
+  startTimestamp = (startTimestamp.toString().length == 13) ? Math.floor(startTimestamp / 1000) : startTimestamp
+  endTimestamp = (endTimestamp?.toString().length == 13) ? Math.floor(endTimestamp / 1000) : endTimestamp
+
   // Calculate the difference in seconds
   const differenceInSeconds = endTimestamp - startTimestamp;
 
@@ -104,6 +145,7 @@ const compareTwoUnixDates = (startTimestamp, endTimestamp) => {
   if (minutes > 0) result += `${minutes}m`;
 
   return result.trim();
+
 }
 const formatStringDate = (input) => {
     const day = input.slice(0, 2);
@@ -217,6 +259,7 @@ const localCookies = () => {
   // Store stuff here;
   // . Last picked tilelayer (style)
   // . Last position
+
   let storedTile = localStorage.getItem('tile')
   let storedZoom = localStorage.getItem('zoom')
   let storedLayer = localStorage.getItem('layer')
@@ -224,11 +267,16 @@ const localCookies = () => {
       // Exists
       storedTile = JSON.parse(storedTile)
       storedZoom = parseInt(storedZoom)
+      console.log(storedZoom, storedTile)
       map.setView(storedTile, storedZoom)
   } else {
       // does not
       map.setView([58.70780, 13.82166], 14) // Center of Mariestad
   }
+
+
+
+
   map.on('moveend', () => {
     // We stopped moving, store new coordinates in 'tile'
     let coords = [map.getCenter().lat, map.getCenter().lng]
@@ -243,6 +291,7 @@ const localCookies = () => {
           if (!flagFromSetView) {
               userIsFollowing = !userIsFollowing
               document.getElementById("centerGps").classList.remove("highlighted")
+              document.querySelector('#userGPStrackDot').classList.remove('activated')
           }
       }
     }
@@ -316,7 +365,7 @@ const updateMultipleusers = (data) => {
                 if (user.id == object.uid) {
                   //console.log(user.id, object.uid, object.username, user.last_known)
                   // Update these markers with new coordinates
-                  let dateSub = Math.floor(Date.now() / 1000) - user?.last_known
+                  let dateSub = Math.floor(Date.now() / 1000000) - user?.last_known
                   if (dateSub < 600) {
                         //console.log("Tracking", user.username)
                         // Coordinates have updated since last time
@@ -397,8 +446,9 @@ const drawMultipleUsers = (data) => {
       // Reduce username to initials
       // Create a brand new marker, this is the ONLOAD function
       let dateSub = Math.floor(Date.now() / 1000) - user.last_known
-      let hideStatus = (dateSub < 300) ? "" : "fms-hidden"
-      gpsMarker = L.marker(user.last_coord, { icon: L.divIcon({
+      let hideStatus = (dateSub < 3000) ? "" : "fms-hidden"
+      let userLastCoord = user.last_coord ?? [58.0323039, 12.8089764]
+      gpsMarker = L.marker(userLastCoord, { icon: L.divIcon({
         html: `${userfix.f + userfix.l}`, // FontAwesome icon
         iconSize: [18, 36], // Size of the icon
         className: `GPS-user-tracker ${hideStatus}`,
@@ -411,7 +461,7 @@ const drawMultipleUsers = (data) => {
       uid: user.id,
       username: user.username,
       last_known: user.last_known,
-      last_coord: user.last_coord,
+      last_coord: userLastCoord,
       marker: gpsMarker
     })
 
@@ -420,14 +470,14 @@ const drawMultipleUsers = (data) => {
   });
 
 }
-/* ======== Multi / Single ======== */
-const drawLines = () => {
+const drawLines_done = () => {
   // Loop through points and create polylines for each group
   const colorObj = {
-    "big": "#ca5757",
-    "small": "#fe9700",
-    "small_2": "#fe9700"
+    "big": "green",
+    "small": "green",
+    "small_2": "green"
   }
+
     const objectGroup = L.layerGroup()
     MAPS_DATA.forEach((item, i) => {
 
@@ -460,43 +510,361 @@ const drawLines = () => {
   });
   objectGroup.addTo(map)
 }
-const drawBlocks = () => {
-  // Example coordinates for a polygon (5-6 points)
-  // Loop through points and create polylines for each group
-  const objectGroup = L.layerGroup()
-  MAPS_DATA.forEach((item, i) => {
-    let key = Object.keys(item)[0]
-    compounds = item[key].compounds
 
-    Object.entries(compounds).forEach((data, index) => {
-          blocks = data[1].data_blocks
-          if (blocks) {
-            Object.entries(blocks).forEach((block, i) => {
-              let custClass = (map.getZoom() < 16) ? "fms-hidden" : ""
-              const lines = block[1].coords
-              const sessionClassName = `${data[1].desc.split(' ').join('')}-blocks`
-              const polygon = L.polygon(lines, {
-                fillOpacity: 0.35,  // Transparency level of the fill
-                className: `fms-blocks ${block[1].work_type} ${custClass} ${sessionClassName}`
-              }).addTo(objectGroup);
 
-              if (GLOBAL_PARAMETER.length > 0 && GLOBAL_PARAMETER == '?m=editor') {
-                  // User is in editor / debugg mode
-                  polygon.bindPopup(`data_blocks #:${i}`)
-              }
-            });
-          }
-    })
-  });
-  objectGroup.addTo(map)
+
+
+/* ======== Multi / Single ======== */
+
+
+const drawLines = () => {
+
+  const LINE_STYLE = {
+    big: {
+      color: "#df2e20",
+      weight: 7,
+      opacity: 0.9
+    },
+    small: {
+      color: "#fe9700",
+      weight: 5,
+      opacity: 0.85
+    },
+    small_2: {
+      color: "#fe9700",
+      weight: 5,
+      opacity: 0.85
+    }
+  };
+
+  const objectGroup = L.layerGroup();
+  const zoom = map.getZoom();
+  const isHidden = zoom < 16;
+
+  // clear registry if redrawing
+  lineReg.clear();
+
+  for (let i = 0; i < MAPS_DATA.length; i++) {
+    const item = MAPS_DATA[i];
+    const key = Object.keys(item)[0];
+    const compounds = item[key]?.compounds;
+
+    if (!compounds) continue;
+
+    for (const compKey in compounds) {
+      const compound = compounds[compKey];
+      const blocks = compound?.data_lines;
+
+      if (!blocks) continue;
+
+      for (const blockKey in blocks) {
+        const block = blocks[blockKey];
+
+        const styleBase =
+          LINE_STYLE[block.type] || LINE_STYLE.small;
+
+        const id = `${compKey}-data_lines-${blockKey}-${block.type}`;
+        //console.log(compound.desc)
+        // =========================
+        // 🔥 CORE LINE (interactive)
+        // =========================
+        const core = L.polyline(block.coords, {
+          ...styleBase,
+          lineCap: "round",
+          lineJoin: "round",
+          smoothFactor: 1.2,
+          interactive: true,
+          className: isHidden
+          ? "fms-line fms-hidden fms-line-main"
+          : "fms-line fms-line-main"
+        });
+
+        const glowOuter = L.polyline(block.coords, {
+          color: styleBase.color,
+          weight: styleBase.weight + 10,
+          opacity: 0.08,
+          lineCap: "round",
+          lineJoin: "round",
+          smoothFactor: 1.2,
+          interactive: false
+        });
+
+        const glowMid = L.polyline(block.coords, {
+          color: styleBase.color,
+          weight: styleBase.weight + 5,
+          opacity: 0.18,
+          lineCap: "round",
+          lineJoin: "round",
+          smoothFactor: 1.2,
+          interactive: false
+        });
+
+        // add to map
+        glowOuter.addTo(objectGroup);
+        glowMid.addTo(objectGroup);
+        core.addTo(objectGroup);
+
+        // =========================
+        // metadata
+        // =========================
+        const bundle = {
+          id,
+          type: block.type,
+          work_type: block.work_type,
+          coords: block.coords,
+
+          core,
+          glowMid,
+          glowOuter
+        };
+
+        core._meta = bundle;
+
+        // =========================
+        // registry
+        // =========================
+        lineReg.set(id, {
+          id,
+          meta: {
+            area: compound.desc,
+            type: "line"
+          },
+
+          core,
+          glowMid,
+          glowOuter
+        });
+
+        // editor debug
+        if (GLOBAL_PARAMETER === "?m=editor") {
+          core.bindPopup(`data_line: ${id}`);
+        }
+
+      //  console.log("DRAWN:", id);
+      }
+    }
+  }
+
+  objectGroup.addTo(map);
+
+  return objectGroup;
+
+};
+
+
+
+function animateMarker(name, newLat, newLng, duration = 1000) {
+    const obj = locationMarkers.get(name);
+    if (!obj) return;
+
+    if (obj.animationId) {
+        cancelAnimationFrame(obj.animationId);
+    }
+
+    const marker = obj.marker;
+
+    const start = marker.getLatLng();
+
+    const startLat = start.lat;
+    const startLng = start.lng;
+
+    const startTime = performance.now();
+
+    function frame(now) {
+        let t = (now - startTime) / duration;
+
+        if (t > 1) t = 1;
+
+        // Smooth easing
+        t = t * t * (3 - 2 * t);
+
+        const lat = startLat + (newLat - startLat) * t;
+        const lng = startLng + (newLng - startLng) * t;
+
+        marker.setLatLng([lat, lng]);
+
+        if (t < 1) {
+            obj.animationId = requestAnimationFrame(frame);
+        }
+    }
+
+    obj.animationId = requestAnimationFrame(frame);
 }
+/*
+  Coming from init_fetchUserMaps() in /_assign.js
+
+*/
+/*
+const users = [
+  {
+    name: "Ludwig Eriksson",
+    lat: 57.7089,
+    lng: 11.9746
+  },
+  {
+    name: "Anna Svensson",
+    lat: 57.706729553476805,
+    lng: 11.97413742542267
+  }
+];
+
+let index = 1;
+
+setInterval(() => {
+    if (index >= annaPath.length) return;
+
+    const [lat, lng] = annaPath[index];
+
+    animateMarker("Anna Svensson", lat, lng, 1000);
+
+    index++;
+}, 1000);
+const annaPath = [
+    [57.706729553476805, 11.97413742542267],
+    [57.706571925510474, 11.973059177398683],
+    [57.706440090684424, 11.972176730632784],
+    [57.706428626763845, 11.97210967540741],
+    [57.706514606079864, 11.972085535526277],
+    [57.70670232687709, 11.971983611583711],
+    [57.70698605570074, 11.971844136714935],
+    [57.70701758098834, 11.971828043460848],
+    [57.70703334362188, 11.97197288274765],
+    [57.70711502261292, 11.972474455833437],
+    [57.707136517053634, 11.972560286521913],
+    [57.70718810365929, 11.97253614664078],
+    [57.70724112314961, 11.97250932455063],
+    [57.70727551412887, 11.972528100013735]
+];
+*/
+const newDrawUsers = (data) => {
+    const uid = USER_INFO.id;
+
+    data.forEach((item) => {
+
+        if (uid === item.id) return;
+        if (!item.last_coord) return;
+
+        const timeOffAllowance = 30000;
+        const timeDifference = Math.floor(Date.now() / 1000) - item.last_known;
+        const hideClass = timeDifference < timeOffAllowance ? "" : "fms-hidden";
+        console.log(hideClass)
+        const userfl = `${item.username.split(' ')[0][0]}${item.username.split(' ')[1][0]}`
+        console.log(userfl)
+        const icon = L.divIcon({
+            className: `gps-user-dot ${hideClass}`,
+            html: `
+            <div class="gpsNode">
+            <span>${userfl}</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="3em" height="3em" viewBox="0 0 24 24">
+                    <path d="M0 0h24v24H0z" fill="transparent" />
+                    <path class="cir" fill="#fb4d4e" stroke="#ff8384" stroke-width="1.5" d="M12 2c4.87 0 9 4.033 9 8.926c0 4.97-4.197 8.459-8.073 10.83a1.89 1.89 0 0 1-1.854 0C7.203 19.363 3 15.915 3 10.927C3 6.033 7.13 2 12 2Z" />
+                  </svg>
+                </div>`,
+            iconSize: [36, 36],
+            iconAnchor: [36, 36]
+        });
+
+        const marker = L.marker(item.last_coord, {
+            icon: icon
+        }).addTo(map);
+
+        marker.bindTooltip(item.username);
+
+        locationMarkers.set(item.username, {
+            marker,
+            animationId: null
+        });
+
+    });
+
+    console.log("newDrawUsers", data);
+};
+/*  Handles drawing your own GPS avatar */
+const drawSelf = (data) => {
+  console.log(data)
+}
+
+const drawBlocks = () => {
+  const objectGroup = L.layerGroup();
+
+  const zoom = map.getZoom();
+  const isHidden = zoom < 16;
+
+  // optional: clear previous blocks if redrawing
+  if (!window.blockReg) window.blockReg = new Map();
+  window.blockReg.clear();
+
+  for (let i = 0; i < MAPS_DATA.length; i++) {
+    const item = MAPS_DATA[i];
+    const key = Object.keys(item)[0];
+    const compounds = item[key]?.compounds;
+
+    if (!compounds) continue;
+
+    for (const compKey in compounds) {
+      const compound = compounds[compKey];
+      const blocks = compound?.data_blocks;
+
+      if (!blocks) continue;
+
+      for (const blockKey in blocks) {
+        const block = blocks[blockKey];
+
+        const coords = block.coords;
+
+        const id = `${compKey}-data_blocks-${blockKey}`;
+
+        const polygon = L.polygon(coords, {
+          fillOpacity: 0.35,
+          opacity: 0.9,
+          weight: 2,
+          className: isHidden
+            ? "fms-blocks fms-hidden"
+            : "fms-blocks"
+        });
+
+        polygon.addTo(objectGroup);
+
+        // =========================
+        // metadata (IMPORTANT)
+        // =========================
+        polygon._meta = {
+          id,
+          type: "blocks",
+          area: compound.desc,
+          coords
+        };
+
+        // =========================
+        // registry
+        // =========================
+        window.blockReg.set(id, {
+          id,
+          polygon,
+          meta: polygon._meta
+        });
+
+        // editor debug
+        if (GLOBAL_PARAMETER === "?m=editor") {
+          polygon.bindPopup(`data_blocks: ${id}`);
+        }
+
+      //console.log("BLOCK:", polygon._meta);
+      }
+    }
+  }
+
+  objectGroup.addTo(map);
+
+  return objectGroup;
+};
 const drawHazardBlocks = () => {
 
   // Example coordinates for a polygon (5-6 points)
   // Loop through points and create polylines for each group
   const objectGroup = L.layerGroup()
   MAPS_DATA.forEach((item, i) => {
-
+    console.log(item)
     let key = Object.keys(item)[0]
     compounds = item[key].compounds
 
@@ -523,44 +891,70 @@ const drawHazardBlocks = () => {
   objectGroup.addTo(map)
 }
 const drawWarnings = () => {
+  const MIN_ZOOM_FOR_WARNINGS = 15;
 
-  // Here we handle the warnings on the map
-  // Could be a gate, no entry, word-in-progress et
-  const objectGroup = L.layerGroup()
-  MAPS_DATA.forEach((item, i) => {
-
-    let key = Object.keys(item)[0]
-    compounds = item[key].compounds
-
-    Object.entries(compounds).forEach((data, index) => {
-          blocks = data[1].data_warning
-          console.log(data)
-          if (blocks) {
-            Object.entries(blocks).forEach((block, i) => {
-              let custClass = (map.getZoom() < 16) ? "fms-hidden" : ""
-              const sessionClassName = `${data[1].desc.split(' ').join('')}-stairs`
-              const typeIndex = block[1].type
-              const icon = L.divIcon({
-                  html: warningType[typeIndex].icon, // FontAwesome icon
-                  iconSize: [24, 24], // Size of the icon
-                  className: `fms-${typeIndex} ${custClass} ${sessionClassName}`,
-                  popupAnchor: [0, -12] // Position of the popup
-              });
-              // Add a marker with the custom icon and a popup
-              const marker = L.marker(block[1].coords, { icon: icon }).addTo(objectGroup);
-              if (GLOBAL_PARAMETER.length > 0 && GLOBAL_PARAMETER == '?m=editor') {
-                  // User is in editor / debugg mode
-                  marker.bindPopup(warningType[typeIndex].text + ` #${i}`)
-              } else {
-                  marker.bindPopup(warningType[typeIndex].text)
-              }
-
-            });
-          }
-    })
+  // Create the marker cluster group
+  const markerClusterGroup = L.markerClusterGroup({
+    disableClusteringAtZoom: 16 // or 20, depending on your preference
   });
-  objectGroup.addTo(map)
-}
+  // Build and add markers
+  MAPS_DATA.forEach((item) => {
+    let key = Object.keys(item)[0];
+    const compounds = item[key].compounds;
+
+    Object.entries(compounds).forEach((data) => {
+      const blocks = data[1].data_warning;
+      if (blocks) {
+        Object.entries(blocks).forEach((block, i) => {
+          const coords = block[1].coords;
+
+          if (
+            !coords ||
+            (Array.isArray(coords) && (coords[0] == null || coords[1] == null)) ||
+            (!Array.isArray(coords) && (!coords.lat || !coords.lng))
+          ) {
+            console.warn("Invalid coordinates for block:", block);
+            return;
+          }
+
+          const custClass = (map.getZoom() < 16) ? "fms-hidden" : "";
+          const sessionClassName = `${data[1].desc.split(' ').join('')}-stairs`;
+          const typeIndex = block[1].type;
+
+          const icon = L.divIcon({
+            html: warningType[typeIndex].icon,
+            iconSize: [24, 24],
+            className: `fms-${typeIndex} ${custClass} ${sessionClassName}`,
+            popupAnchor: [0, -12]
+          });
+
+
+          const marker = L.marker(coords, { icon });
+          const popupText = GLOBAL_PARAMETER === '?m=editor'
+            ? warningType[typeIndex].text + ` #${i}`
+            : warningType[typeIndex].text;
+
+          marker.bindPopup(popupText);
+          markerClusterGroup.addLayer(marker);
+        });
+      }
+    });
+  });
+
+  // Only add if we're within zoom threshold
+  if (map.getZoom() >= MIN_ZOOM_FOR_WARNINGS) {
+    markerClusterGroup.addTo(map);
+  }
+
+  // Attach zoom listener once
+  map.off("zoomend.warningToggle").on("zoomend.warningToggle", () => {
+    if (map.getZoom() < MIN_ZOOM_FOR_WARNINGS) {
+      if (map.hasLayer(markerClusterGroup)) map.removeLayer(markerClusterGroup);
+    } else {
+      if (!map.hasLayer(markerClusterGroup)) map.addLayer(markerClusterGroup);
+    }
+  });
+};
 const drawWarnings_opt = () => {
   // Ensure map container exists
   const container = document.querySelector("#map");
@@ -652,7 +1046,7 @@ const drawPerimiter = () => {
             const sessionClassName = `area-${data[1].desc.split(' ').join('')}`
             const icon = L.divIcon({
               className: "polygon-label",
-              html: `<div class='area-label ${custClass} ${sessionClassName}'>${data[1].desc}<span class="indiv_status hidden">100%</span></div>`,
+              html: "",
               iconSize: [150, 150],
               iconAnchor: [40, 15]  // Center the icon
             });
@@ -754,6 +1148,20 @@ map.on('zoomend', () => {
   let arealabel = document.getElementsByClassName('polygon-label')
   let statusHolders = document.getElementsByClassName('fms-statusDiv')
 
+  // Change areaName to transp. bg if zoom is too great, then show them on high zoom
+
+  console.log(zoom)
+
+  if (zoom >= 16) {
+    for (i = 0; i < statusHolders.length; i++){
+      statusHolders[i].classList.remove('fms-area-transp')
+    }
+  } else {
+    for (i = 0; i < statusHolders.length; i++){
+      statusHolders[i].classList.add('fms-area-transp')
+    }
+  }
+
   if (zoom <= 11) {
     // Hide city button
     for (i = 0; i < citylabel.length; i++) {
@@ -772,15 +1180,7 @@ map.on('zoomend', () => {
     }
   }
 
-  if (zoom >= 16) {
-    for (i = 0; i < statusHolders.length; i++){
-      statusHolders[i].classList.remove('fms-hidden')
-    }
-  } else {
-    for (i = 0; i < statusHolders.length; i++){
-      statusHolders[i].classList.add('fms-hidden')
-    }
-  }
+
 
 
 })
@@ -873,39 +1273,82 @@ const updateUserLocation = (position) => {
     // Update the map's view to the new location (optional: add smooth transitions)
     // If the marker exists, update its position, otherwise create a new marker
     // Log the updated position to the console
-    if (accuracy < 20) {
-        // Get avg position from last 5 positions
-        avgPositions.push([lat, lng])
+    console.log("POOOOOSITION", position)
+    if (accuracy > 0) {
+        // Get average position from the last 5 positions
+        avgPositions.push([lat, lng]);
+
         if (avgPositions.length > 5) {
-            avgPositions.shift()
+            avgPositions.shift();
         }
 
-        const avgLat = avgPositions.reduce((sum, pos) => sum + pos[0], 0) / avgPositions.length
-        const avgLng = avgPositions.reduce((sum, pos) => sum + pos[1], 0) / avgPositions.length
-        const smoothPos = [avgLat, avgLng]
+        // Calculate average latitude and longitude
+        const avgLat =
+            avgPositions.reduce((sum, pos) => sum + pos[0], 0) /
+            avgPositions.length;
+
+        const avgLng =
+            avgPositions.reduce((sum, pos) => sum + pos[1], 0) /
+            avgPositions.length;
+
+        const smoothPos = [avgLat, avgLng];
+
+        // Update or create user's marker
         if (userMarker) {
-          userMarker.setLatLng(smoothPos);
+            userMarker.setLatLng(smoothPos);
         } else {
-          userMarker = L.marker(smoothPos, { icon: L.divIcon({
-            html: '<i class="fa-regular fa-circle-dot"></i>', // FontAwesome icon
-            iconSize: [24, 24], // Size of the icon
-            className: "GPS-tracker",
-            popupAnchor: [12, 12] // Position of the popup
-          })}).addTo(map);
+            userMarker = L.marker(smoothPos, {
+                icon: L.divIcon({
+                    html: `
+                    <svg xmlns="http://www.w3.org/2000/svg" width="2.3em" height="2.3em" viewBox="0 0 24 24" id="userGPStrackDot">
+                    	<path d="M0 0h24v24H0z" fill="none" />
+                    	<path class="big_round_crosshair" fill="none" stroke="#cc0001" stroke-dasharray="54" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4c4.42 0 8 3.58 8 8c0 4.42 -3.58 8 -8 8c-4.42 0 -8 -3.58 -8 -8c0 -4.42 3.58 -8 8 -8Z">
+                    		<animate fill="freeze" attributeName="stroke-dashoffset" dur="0.6s" values="54;0" />
+                    	</path>
+                      <circle class="small_crosshair" cx="12" cy="12" fill="none">
+                          <animate
+                              id="crosshairAnimation"
+                              attributeName="r"
+                              begin="indefinite"
+                              dur="0.2s"
+                              to="4"
+                              fill="freeze"
+                          />
+                      </circle>
+                    	<path class="small_dots_crosshair" fill="none" stroke="#fb4d4e" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v-2M20 12h2M12 20v2M4 12h-2" opacity="0">
+                    		<set fill="freeze" attributeName="opacity" begin="0.7s" to="1" />
+                    		<animate fill="freeze" attributeName="d" begin="0.7s" dur="0.2s" values="M12 4v0M20 12h0M12 20v0M4 12h0;M12 4v-2M20 12h2M12 20v2M4 12h-2" />
+                    		<animateTransform attributeName="transform" begin="0.7s" dur="30s" repeatCount="indefinite" type="rotate" values="0 12 12;360 12 12" />
+                    	</path>
+                    </svg>
+                    `,
+                    iconSize: [24, 24],
+                    className: "GPS-tracker",
+                    popupAnchor: [12, 12]
+                })
+            }).addTo(map);
         }
-        // Check if following mode is active and update map view accordingly
+
+        // Follow the user's SMOOTHED position
         if (userIsFollowing) {
-          map.panTo(newLatLng, map.getZoom(), { animate: true, duration: 1 });
+            map.panTo(smoothPos, map.getZoom(), {
+                animate: true,
+                duration: 1
+            });
         }
-        if (document.getElementsByClassName('GPS-tracker')[0]) {
-          document.getElementsByClassName('GPS-tracker')[0].classList.remove('gps-hidden')
+
+        // Show GPS marker
+        const gpsTracker = document.getElementsByClassName('GPS-tracker')[0];
+
+        if (gpsTracker) {
+            gpsTracker.classList.remove('gps-hidden');
         }
     }
 
 
-    // Update supabase Database with new Date.now and coordinates
-    const updateSupaDb = async () => {
-        const {data, error} = await supabase
+    // Update client Database with new Date.now and coordinates
+    const updateSupaDb_OLD = async () => {
+        const {data, error} = await client
           .from('users')
           .update({
             last_known: Math.floor(Date.now() / 1000),
@@ -918,11 +1361,146 @@ const updateUserLocation = (position) => {
           //console.log("Updated Succesfully, ", username.toLowerCase())
         }
     }
-    updateSupaDb()
+
+    const updateSupaDb = async () => {
+      // Get all trail data
+      const {data:userData, error:userError} = await client
+        .from('session')
+        .select('*')
+        .eq('session_id', SESSIONDATA[0].session_id)
+        .single()
+
+        // Set users new position with timestamp
+        userData.user_positions[USER_INFO.id][Math.floor(Date.now())] = clientPosition
+        SESSIONDATA[0] = userData
+
+        // Update session with new data
+        const {data:updateData, error:updateError} = await client
+          .from('session')
+          .update({
+            user_positions:userData.user_positions
+          })
+          .eq('session_id', SESSIONDATA[0].session_id)
+
+    }
+    const drawTrail_old = () => {
+      let userData = SESSIONDATA[0].user_positions[USER_INFO.id];
+      let entries = Object.entries(userData);
+
+      const coordinates = entries
+        .sort((a, b) => Number(a[0]) - Number(b[0]))
+        .map(([_, coord]) => coord);
+
+      const total = coordinates.length;
+
+      for (let i = 1; i < total; i++) {
+        const t = i / (total - 1);
+
+        const r = Math.floor(120 + 135 * t);
+        const color = `rgb(${r}, 0, 0)`;
+
+        const segment = [
+          coordinates[i - 1],
+          coordinates[i]
+        ];
+
+        L.polyline(segment, {
+          color: "red",
+          weight: 16,
+          opacity: 0.08,
+          lineCap: "round",
+          lineJoin: "round"
+        }).addTo(map);
+
+        L.polyline(segment, {
+          color,
+          weight: 8,
+          opacity: 1,
+          lineCap: "round",
+          lineJoin: "round"
+        }).addTo(map);
+      }
+    };
+    const trailReg = new Map();
+    let trailGroup = null;
+
+    const drawTrail = () => {
+      const userData = SESSIONDATA[0].user_positions[USER_INFO.id];
+      if (!userData) return;
+
+      // Remove previous trail
+      if (trailGroup) {
+        map.removeLayer(trailGroup);
+      }
+
+      trailReg.clear();
+      trailGroup = L.layerGroup();
+
+      const coordinates = Object.entries(userData)
+        .sort((a, b) => Number(a[0]) - Number(b[0]))
+        .map(([, coord]) => coord);
+
+      const total = coordinates.length;
+
+      for (let i = 1; i < total; i++) {
+        const t = i / (total - 1);
+
+        const r = Math.floor(120 + 135 * t);
+        const color = `rgb(${r},0,0)`;
+
+        const segment = [
+          coordinates[i - 1],
+          coordinates[i]
+        ];
+
+        // Glow
+        const glow = L.polyline(segment, {
+          color,
+          weight: 16,
+          opacity: 0.08,
+          lineCap: "round",
+          lineJoin: "round",
+          smoothFactor: 1.2,
+          interactive: false
+        });
+
+        // Core
+        const core = L.polyline(segment, {
+          color,
+          weight: 8,
+          opacity: 1,
+          lineCap: "round",
+          lineJoin: "round",
+          smoothFactor: 1.2,
+          interactive: false
+        });
+
+        glow.addTo(trailGroup);
+        core.addTo(trailGroup);
+
+        trailReg.set(i, {
+          glow,
+          core,
+          meta: {
+            index: i,
+            progress: t
+          }
+        });
+      }
+
+      trailGroup.addTo(map);
+    };
+    if (typeof SESSIONDATA !== 'undefined') {
+
+      updateSupaDb()
+      //drawTrail()
+
+    }
+    //updateSupaDb()
 }
 const navigatorInit = (_boolean) => {
   // Watch for geolocation updates
-
+  console.log("NAVIGATOR INIT????????????")
   if (!boolean) {
       navigator.geolocation.clearWatch(watcherId)
       isTracking = false
@@ -968,10 +1546,13 @@ const trackLocationView = () => {
             // If toggled to following, immediately center the map to the current location
             if (userIsFollowing && userMarker) {
                 button.classList.add('highlighted')
+                document.querySelector('#userGPStrackDot').classList.add('activated')
+                document.querySelector('#crosshairAnimation').beginElement()
                 map.setView(userMarker.getLatLng(), map.getZoom(), { animate: true, duration: 1 });
                 flagFromSetView = true
             } else {
                 button.classList.remove('highlighted')
+                document.querySelector('#userGPStrackDot').classList.remove('activated')
                 flagFromSetView = false
             }
             if( buttonIndex > 1) { buttonIndex = 0 }
@@ -982,7 +1563,63 @@ const trackLocationView = () => {
 /*
   Handles "info" button and hamburger menu toggling (on/off)
 */
+const mapZoomInput = (e) => {
+  if (e.id == "plus") { map.setZoom(map.getZoom() + 1) }
+  if (e.id == "minus") { map.setZoom(map.getZoom() - 1) }
+}
 const toggleTopMenu = () => {
+  const domList = {
+
+  }
+
+  let larmIndex = 0
+  let larmButton = document.getElementById('distressIcon')
+      larmButton.addEventListener('click', (e) => {
+        if (document.querySelector('.fms_layers').classList.contains('fms-override-show')) {
+          // Hide layer box & btn
+          document.getElementsByClassName('fms_layers')[0].classList.remove('fms-override-show') // box
+          document.getElementById('hamb-layer').classList.remove('highlighted') // btn
+        }
+
+
+        if (larmIndex == 0) {
+
+          document.getElementsByClassName('fms_alarm')[0].classList.remove('hidden')
+          larmButton.classList.add('toggle')
+
+
+        } else {
+          document.getElementsByClassName('fms_alarm')[0].classList.add('hidden')
+          larmButton.classList.remove('toggle')
+        }
+        larmIndex++
+        if (larmIndex > 1) { larmIndex = 0 }
+      })
+
+
+  let layerIndex = 0
+  let layerButton = document.getElementById('hamb-layer')
+      layerButton.addEventListener('click', (e) => {
+        if (!document.querySelector('.fms_alarm').classList.contains('hidden')) {
+          // Hide distress box & btn
+          document.getElementsByClassName('fms_alarm')[0].classList.add('hidden') // box
+          document.getElementById('distressIcon').classList.remove('toggle') // btn
+        }
+
+
+        if (layerIndex == 0) {
+
+          document.getElementsByClassName('fms_layers')[0].classList.add('fms-override-show')
+          layerButton.classList.add('highlighted')
+        } else {
+          document.getElementsByClassName('fms_layers')[0].classList.remove('fms-override-show')
+          layerButton.classList.remove('highlighted')
+        }
+        layerIndex++
+        if (layerIndex > 1) { layerIndex = 0 }
+      })
+
+
   let infoIndex = 0
   let infoButton = document.getElementById('top-left-info')
       infoButton.addEventListener('click', (e) => {
@@ -998,15 +1635,32 @@ const toggleTopMenu = () => {
   let hamIndex = 0
   let hamburger = document.getElementById('hamb-menu')
       hamburger.addEventListener('click', (e) => {
-        if (hamIndex == 0) {
-            document.getElementById('fms-menu').classList.add('fms-override-show')
-            document.getElementById('hamb-menu').classList.add('hamb-visible')
-        } else {
-            document.getElementById('fms-menu').classList.remove('fms-override-show')
-            document.getElementById('hamb-menu').classList.remove('hamb-visible')
-        }
-        hamIndex++
-        if (hamIndex > 1) { hamIndex = 0 }
+          document.getElementById('fms-menu').classList.add('fms-override-show')
+          document.getElementById('hamb-menu').classList.add('hamb-visible')
+      })
+
+      let expIndex = 0
+      if (document.getElementById('experimental-layer')) {
+        let expButton = document.getElementById('experimental-layer')
+        expButton.addEventListener('click', (e) => {
+          if (expIndex == 0) {
+            document.getElementsByClassName('fms_scenario')[0].classList.add('fms-override-show')
+            expButton.classList.add('highlighted')
+          } else {
+            document.getElementsByClassName('fms_scenario')[0].classList.remove('fms-override-show')
+            expButton.classList.remove('highlighted')
+          }
+          expIndex++
+          if (expIndex > 1) { expIndex = 0 }
+        })
+
+      }
+
+  let back = document.getElementById('hamb-back')
+      back.addEventListener('click', (e) => {
+          console.log(e)
+          document.getElementById('fms-menu').classList.remove('fms-override-show')
+          document.getElementById('hamb-menu').classList.remove('hamb-visible')
       })
 }
 
@@ -1078,7 +1732,7 @@ const gpsFetchStorage = async (updateBool) => {
   //console.log(`gpsFetchStorage ${updateBool}`)
   org_number = JSON.parse(localStorage.getItem('affiliation')).org_number
   current_city = JSON.parse(localStorage.getItem('user_info')).maps[0]
-  const { data, error } = await supabase
+  const { data, error } = await client
     .from('users')
     .select('*')
     .eq('org_number', org_number)
@@ -1092,11 +1746,14 @@ const gpsFetchStorage = async (updateBool) => {
     //console.log(`gpsFetchStorage ${updateBool} - Select data`)
     //console.log(data)
     if (!updateBool) {
+      // No update boolean given, just draw them out
       //console.log("drawMultipleUsers")
-      drawMultipleUsers(data)
+      newDrawUsers(data)
+      //drawMultipleUsers(data)
     } else {
       //console.log("updateMultipleusers")
-      updateMultipleusers(data)
+      // Update existing users (add new if needed)
+      //updateMultipleusers(data)
     }
 
   }
@@ -1128,10 +1785,11 @@ const screenLock = async () => {
 }
 
 const checkForSesssion = async (interval) => {
+  //console.log(interval)
   let org = USER_INFO.org_number
   let city = USER_INFO.maps[0]
   const searchVariable = parseInt(formatDate())
-  const { data, error } = await supabase
+  const { data, error } = await client
   .from('session')  // Replace 'users' with your table name
   .select('*')   // Get all columns
   .eq('session_id', searchVariable)
@@ -1144,22 +1802,27 @@ const checkForSesssion = async (interval) => {
   } else {
     // Display users in the HTML
     if (data.length > 0) {
-        let html = `
-        <div class="session-confetti">
-          <div class="sc-content">
-            <h1>Ny Session</h1>
-            <p>En ny session har skapats av: '${data[0].created_by}'.<br>Vänligen gå till den nya sessionen istället.</p><br>
-            <a href="?s=${searchVariable}">
-              <button type="button" name="button">Ta mig dit!</button>
-            </a>
-          </div>
-          <div class="sc-blur"></div>
-        </div>
-        `
-        toggleLoadingDiv(t = false)
-        let holder = document.getElementsByTagName('body')
-        holder[0].insertAdjacentHTML('beforeend', html)
-        clearInterval(interval)
+          if (!localStorage.getItem(data[0].session_id)) {
+              // Show prompt
+              let html = `
+                    <div class="session-confetti">
+                    <div class="sc-content">
+                    <h1>Ny Session</h1>
+                    <p>En ny session har skapats av: '${data[0].created_by}'.<br>Vänligen gå till den nya sessionen istället.</p><br>
+                    <a href="?s=${searchVariable}">
+                    <button type="button" name="button">Ta mig dit!</button>
+                    </a>
+                    </div>
+                    <div class="sc-blur"></div>
+                    </div>
+              `
+              toggleLoadingDiv(t = false)
+              let holder = document.getElementsByTagName('body')
+              holder[0].insertAdjacentHTML('beforeend', html)
+              // Cancel Interval
+              clearInterval(interval)
+          }
+
     }
   }
 }
@@ -1169,7 +1832,7 @@ const exportReportButton = (e) => {
 }
 const toggleReportWindow = async (e) => {
   org_number = JSON.parse(localStorage.getItem('user_info')).org_number
-  const {data, error} = await supabase
+  const {data, error} = await client
     .from('session')
     .select('*')
     .eq('org_number', org_number)
@@ -1177,7 +1840,7 @@ const toggleReportWindow = async (e) => {
 
   if (error) {console.log("error fetching reports"); return false}
   let htmlData = ""
-  console.log(data)
+  //console.log(data)
 
   Object.entries(data).forEach((item, i) => {
       let id = item[1].session_id.toString()
@@ -1188,7 +1851,7 @@ const toggleReportWindow = async (e) => {
       let day = id.slice(0, 2)
       let month = id.slice(2, 4)
       let year = id.slice(4, 8)
-      let rowHtml = `<option value="${item[1].session_id}">${day}/${month}/${year}</option>`
+      let rowHtml = `<option value="${item[1].session_id}">${new Date(item[1].session_id.slice(0, 4), item[1].session_id.slice(4, 6) - 1, item[1].session_id.slice(6, 8)).toLocaleDateString('sv-SE', { day: 'numeric', month: 'long', year: 'numeric' })}</option>`
       htmlData += rowHtml
   });
 
@@ -1205,6 +1868,7 @@ const toggleReportWindow = async (e) => {
   }
   let html = `
   <div class="auth-screen reports" id="ldle3a">
+  <i class="fa-solid fa-arrow-left" onclick="passwordResetReturn(this)"></i>
     <div class="auth-pick-user">
       <h1>... Välj rapport</h1>
       <span>Välj datumet för rapportern som ska exporteras.</span>
@@ -1225,7 +1889,7 @@ const changePassword = async (e) => {
   if (input.length <= 6) {
       handleErrors({msg: ["För kort lösenord..", false]})
   } else {
-      const {data, error} = await supabase.auth.updateUser({
+      const {data, error} = await client.auth.updateUser({
         password: input
       })
 
@@ -1234,6 +1898,7 @@ const changePassword = async (e) => {
       } else {
         console.log("Updated password!: ", input)
         handleErrors( {msg: ["Ditt lösenord är ändrat!", true]} )
+        signOutUser(true)
       }
   }
 }
@@ -1242,7 +1907,7 @@ const toggleUserCredentials = async (e) => {
   // Their first password is a random one
   let html = `
   <div class="auth-screen reports" id="ldle3a">
-    <i class="fa-solid fa-circle-arrow-left" onclick="passwordResetReturn(this)"></i>
+    <i class="fa-solid fa-arrow-left" onclick="passwordResetReturn(this)"></i>
     <div class="auth-pick-user change">
       <h1>... Ändra lösenord</h1>
       <span>Var nog att välja ett svårt lösenord</span>
@@ -1255,13 +1920,17 @@ const toggleUserCredentials = async (e) => {
   let body = document.getElementsByTagName('body')[0]
   body.insertAdjacentHTML('beforeend', html)
 }
-const createNewSesssion = async (e) => {  // Updated - NOT FOR MULTIPLE
-  // User wants to create a new session
+
+
+const createNewSesssion = async (e) => {
+  // Updated - NOT FOR MULTIPLE
+    // User wants to create a new session
   // Make sure there is not one already made.
   toggleLoadingDiv(t = true)
   let mapPick = null
   let org_number = USER_INFO.org_number
   let username = USER_INFO?.username
+  let all_users = {}
   if (USER_INFO.maps.length > 1) {
       // Prompt user to pick one alternative.
 
@@ -1269,21 +1938,32 @@ const createNewSesssion = async (e) => {  // Updated - NOT FOR MULTIPLE
     mapPick = USER_INFO.maps[0]
   }
 
-  const {data: baseMap, error: baseError} = await supabase
+  const {data: userData, error: userError} = await client
+    .from('users')
+    .select('*')
+    .eq('org_number', USER_INFO?.org_number)
+
+    userData.forEach((user) => {
+        all_users[user.id] = {}
+    });
+
+
+
+  const {data: baseMap, error: baseError} = await client
     .from('maps')
     .select('*')
     .eq('org_number', org_number)
-    .eq('name', mapPick)
+    .eq('uri_name', mapPick)
     .single()
 
     if (baseError) { handleErrors(baseError); toggleLoadingDiv(t = false) }
     if (baseMap) {
-        const {data: existingRow, error: existingError} = await supabase
+        const {data: existingRow, error: existingError} = await client
           .from('session')
           .select('*')
           .eq('org_number', org_number)
           .eq('city', mapPick)
-          .eq('session_id', parseInt(formatDate()))
+          .eq('session_id', new Date().toISOString().slice(0, 10).replaceAll('-', ''))
 
           if (existingError) {
               handleErrors(existingError)
@@ -1292,19 +1972,20 @@ const createNewSesssion = async (e) => {  // Updated - NOT FOR MULTIPLE
           }
 
           if (existingRow.length > 0) {
-              handleErrors({existingRow: "Session already exists"})
+              handleErrors({msg: "Session already exists"})
               toggleLoadingDiv(t = false)
               return
           } else {
-              const {error: insertError} = await supabase
+              const {error: insertError} = await client
                 .from('session')
                 .insert({
                   data: baseMap.session_data,
                   org_number: org_number,
                   city: mapPick,
-                  session_id: parseInt(formatDate()),
+                  session_id: new Date().toISOString().slice(0, 10).replaceAll('-', ''),
                   created_at: Math.floor(Date.now() / 1000),
-                  created_by: username
+                  created_by: username,
+                  user_positions: all_users
                 })
 
                 if (insertError) {
@@ -1317,13 +1998,14 @@ const createNewSesssion = async (e) => {  // Updated - NOT FOR MULTIPLE
                 location.reload()
           }
     }
-} // Updated - NOT FOR MULTIPLE
-
+}
+// Updated - NOT FOR MULTIPLE
 
 const fetchLastSessions = async () => {
+
   let org = USER_INFO.org_number
   let city = USER_INFO.maps[0]
-  const {data, error} = await supabase
+  const {data, error} = await client
     .from('session')
     .select('*')
     .eq('org_number', org)
@@ -1354,7 +2036,7 @@ const fetchLastSessions = async () => {
         let html = `
         <a href="?s=${item[1].session_id}" class="_prev-session-bar">
           <div class="session-bar" id="sd-${item[1].session_id}">
-              <div id="sb-date">${formatStringDate(JSON.stringify(item[1].session_id))}</div>
+              <div id="sb-date">${new Date(item[1].session_id.slice(0, 4), item[1].session_id.slice(4, 6) - 1, item[1].session_id.slice(6, 8)).toLocaleDateString('sv-SE', { day: 'numeric', month: 'long', year: 'numeric' })}</div>
               <div id="sb-status" class="${cstatus}">${status}</div>
               <div id="sb-time">${formatUnixToTime(startTime)} - ${endTime}</div>
           </div>
@@ -1365,7 +2047,54 @@ const fetchLastSessions = async () => {
       });
 
     }
-} // Updated - NOT FOR MULTIPLE
+}
+// Updated - NOT FOR MULTIPLE
+
+const momentChange = (e) => {
+  let param = e.id
+  location.search = location.search + `&moment=${param}`
+}
+const scenChange = (e) => {
+  let param = e.id
+  location.search = `?experimental=${param}`
+}
+const secenarioFetch = async (item) => {
+  console.log(item)
+  const {data, error} = await client
+    .from('special')
+    .select('*')
+    .eq('name', item)
+    .limit(1)
+
+    if (error) {
+        console.log(error)
+    }
+
+    if (data) {
+
+      if (data[0].html) {
+          let parent = document.getElementsByClassName('layer_select')[0]
+              parent.insertAdjacentHTML('beforeend', data[0].html)
+
+
+      }
+    }
+
+}
+const scenarioUI = async () => {
+  let special = USER_INFO.special
+  console.log(special)
+  special.forEach((item, i) => {
+        secenarioFetch(item)
+  });
+
+}
+
+
+const changeTileLayer = (e) => {
+  localStorage.setItem('layer', e.dataset.layer)
+  location.reload()
+}
 
 const initMap = () => {
   /*
@@ -1378,23 +2107,33 @@ const initMap = () => {
         click on the map, then set a perimiter, hazard or draw a new line and give it a description
   */
   initSettings()                // Sets default values if localStorage is not set
+  console.log("init")
   tileLayers()                  // Draws the map(tile)
   localCookies()                // i.e lastknown position, tile settings, zoom
   setSettingsDom()              // Sets the DOM with the correct switches
-
-  drawHazardBlocks()            // Draw dangerous/heads-up areas
-  drawBlocks()                  // Draw polygons to represent larger areas
   drawLines()                   // Draw lines that represent i.e roads
+  drawBlocks()                  // Draw polygons to represent larger areas
+  drawHazardBlocks()            // Draw dangerous/heads-up areas
   drawWarnings()                // Draws fontawesome icons as warnings or 'heads-up'
-  drawPerimiter()               // Draws resident perimiter
+  //drawPerimiter()               // Draws resident perimiter
   drawCompounds()               // Draws the "blocks" with the description
 
-  //checkForSesssion(null)            // Looks for a new session created
+  /*
+
+    for contrast themees
+
+  */
+  document.body.dataset.layer = localStorage.getItem('layer') || 'ny'
+
+
+  checkForSesssion(null)            // Looks for a new session created
+
   if (window.location.search.length < 5) {
     let sessionInt = setInterval(() => {
       checkForSesssion(sessionInt)
     }, 2500)
   }
+
 
   fetchLastSessions()           // Displays last sessions in "menu"
 
@@ -1405,6 +2144,7 @@ const initMap = () => {
 
   trackLocationView()           // Handles clicks on "centering" button
   navigatorInit()               // Initializes GPS for self
+  //scenarioUI()                  // Handles custom scenarios navigation
 
 
 }

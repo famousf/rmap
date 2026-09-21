@@ -1,11 +1,12 @@
 {
-  "name": "Snö",
+  "name": "Ludwigs Snöapp",
   "short_name": "Snö",
   "description": "Digital routing and planning used in snowprevention",
-  "start_url": "/map/index.php",
+  "start_url": "https://riksbyggen.netle.se/index.php",
+  "scope": "https://riksbyggen.netle.se/",
   "display": "standalone",
-  "background_color": "#ca5757",
-  "theme_color": "#ca5757",
+  "background_color": "#171c21",
+  "theme_color": "#171c21",
   "orientation": "portrait",
   "icons": [
     {

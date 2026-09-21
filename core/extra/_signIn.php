@@ -1,4 +1,8 @@
 <div class="auth-screen" id="ldle3a">
+  <video autoplay muted loop playsinline class="video-background">
+      <source src="img/media/vidbg.webm" type="video/webm">
+          Your browser does not support the video tag.
+  </video>
   <div class="auth-pick-user">
     <h1>... Logga in</h1>
     <div class="auth-form">
@@ -7,22 +11,22 @@
 
       <span>Lösenord</span>
       <input type="password" name="password" id="password">
-
+      <!--
       <span>Organisation</span>
       <input type="text" name="orgNumber" id="orgNumber">
-
+-->
 
       <button type="submit" name="loginButton" onclick="signInUser(this)">Logga in</button>
     </div>
+    <img id="rb_white" src="img/logo.svg" alt="">
   </div>
-  <img id="rb_white" src="img/logo.svg" alt="">
 
   <div class="tos">
     <h2>Användarvillkor</h1>
     <div class="scrollable-tos">
       <h1>1. Allmänt</h1>
       <span>1.1. Netle.se ägs och drivs av Ludwig Clas Stefan Eriksson</span>
-      <span>1.2. Tjänsten är tillgänglig för alla användare i Sverige utan krav på åldersgräns eller betalning.</span>
+      <span>1.2. Tjänsten är tillgänglig för alla användare i Sverige med access utan krav på åldersgräns eller betalning.</span>
       <span>1.3. Genom att logga in och använda Tjänsten samtycker du till dessa Villkor och förbinder dig att följa dem.</span>
       <h1>2. Användaruppgifter och datasäkerhet</h1>
       <span>2.1. Vid registrering och användning av Tjänsten samlar vi in och behandlar personuppgifter enligt EU:s allmänna dataskyddsförordning (GDPR). Alla uppgifter, inklusive lösenord, krypteras enligt branschstandarder för att säkerställa högsta möjliga säkerhet och skydda din integritet.</span>
@@ -43,9 +47,20 @@
       <h1>7. Ändringar av Villkor</h1>
       <span>7.1. Netle.se förbehåller sig rätten att närsomhelst uppdatera eller ändra dessa Villkor. Eventuella ändringar publiceras på Netle.se och träder i kraft omedelbart.</span>
       <span>7.2. Genom att fortsätta använda Tjänsten efter att ändringar har trätt i kraft samtycker du till de uppdaterade Villkoren.</span>
-      <h1>8. Kontakt</h1>
+      <h1>8. Data som sparas</h1>
+      <span>8.1 Konto- och användaruppgifter</span>
+      <span>För att skapa och administrera ett användarkonto sparas användarens namn och jobbmejladress. Lösenord hanteras av Supabase Auth och lagras inte i klartext. Lösenorden skyddas genom säker hashning, vilket innebär att det ursprungliga lösenordet inte kan läsas ut från systemet.</span>
+      <span>8.2 Senast registrerade position</span>
+      <span>När appen är aktiv och används i förgrunden registreras användarens geografiska position. En ny position registreras var femte sekund så länge appen är aktiv. Ingen positionsregistrering sker när appen körs i bakgrunden.</span>
+      <span>Systemet sparar endast användarens senast registrerade position. Tidigare positioner skrivs över när en ny position registreras och sparas inte som historik. Det innebär att systemet inte lagrar någon positionshistorik och därför inte kan användas för att i efterhand återskapa eller följa användarens tidigare rutt.</span>
+      <span>8.3 Kördata</span>
+      <span>Vid användning av appen sparas uppgifter om utförda arbetsuppgifter. Kördata kan bland annat innehålla användarens namn, tidpunkt för utförd uppgift, vilken uppgift som har utförts samt vilken förening uppgiften är kopplad till.</span>
+      <span>Uppgifterna lagras strukturerat i systemets databastabeller och används för att registrera, följa upp och administrera utfört arbete.</span>  <br><br>
+      <span><strong>8.4 Transparens</strong></span>
+<span>Projektet är öppet och transparent. Hela projektets källkod och tekniska implementation finns tillgänglig för granskning på GitHub. Detta gör det möjligt att själv undersöka hur appen fungerar, vilken data som hanteras och hur systemets olika delar är implementerade.</span>
+<span>Projektets källkod finns tillgänglig på <a href="https://github.com/famousf/rmap" target="_blank" rel="noopener noreferrer">https://github.com/famousf/rmap</a>.</span>
+      <h1>9. Kontakt</h1>
       <span>Om du har frågor om dessa Villkor eller Tjänsten, vänligen kontakta oss på admin@netle.se.</span>
-      <br><br>
       <div class="tos_holder">
         <button type="button" id="tos_button">Jag accepterar villkoren!</button>
       </div>
