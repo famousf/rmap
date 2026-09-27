@@ -2,6 +2,7 @@
   Misc functions to handle customized events such as getLineWeight, displayLatLngClick.
   - These functions are ran inside other functions to prevent reusing too much code
 */
+let markerClusterGroup = null;
 const lineReg = new Map()
 const map = L.map("map", {
   preferCanvas: true
@@ -690,52 +691,7 @@ function animateMarker(name, newLat, newLng, duration = 1000) {
 
     obj.animationId = requestAnimationFrame(frame);
 }
-/*
-  Coming from init_fetchUserMaps() in /_assign.js
 
-*/
-/*
-const users = [
-  {
-    name: "Ludwig Eriksson",
-    lat: 57.7089,
-    lng: 11.9746
-  },
-  {
-    name: "Anna Svensson",
-    lat: 57.706729553476805,
-    lng: 11.97413742542267
-  }
-];
-
-let index = 1;
-
-setInterval(() => {
-    if (index >= annaPath.length) return;
-
-    const [lat, lng] = annaPath[index];
-
-    animateMarker("Anna Svensson", lat, lng, 1000);
-
-    index++;
-}, 1000);
-const annaPath = [
-    [57.706729553476805, 11.97413742542267],
-    [57.706571925510474, 11.973059177398683],
-    [57.706440090684424, 11.972176730632784],
-    [57.706428626763845, 11.97210967540741],
-    [57.706514606079864, 11.972085535526277],
-    [57.70670232687709, 11.971983611583711],
-    [57.70698605570074, 11.971844136714935],
-    [57.70701758098834, 11.971828043460848],
-    [57.70703334362188, 11.97197288274765],
-    [57.70711502261292, 11.972474455833437],
-    [57.707136517053634, 11.972560286521913],
-    [57.70718810365929, 11.97253614664078],
-    [57.70724112314961, 11.97250932455063],
-    [57.70727551412887, 11.972528100013735]
-];
-*/
 const newDrawUsers = (data) => {
     const uid = USER_INFO.id;
 
@@ -889,70 +845,66 @@ const drawHazardBlocks = () => {
   objectGroup.addTo(map)
 }
 const drawWarnings = () => {
-  const MIN_ZOOM_FOR_WARNINGS = 15;
+  const MIN_ZOOM_FOR_WARNINGS = 16;
 
-  // Create the marker cluster group
-  const markerClusterGroup = L.markerClusterGroup({
-    disableClusteringAtZoom: 16 // or 20, depending on your preference
-  });
   // Build and add markers
   MAPS_DATA.forEach((item) => {
-    let key = Object.keys(item)[0];
+    const key = Object.keys(item)[0];
     const compounds = item[key].compounds;
 
     Object.entries(compounds).forEach((data) => {
       const blocks = data[1].data_warning;
+
       if (blocks) {
         Object.entries(blocks).forEach((block, i) => {
           const coords = block[1].coords;
 
           if (
             !coords ||
-            (Array.isArray(coords) && (coords[0] == null || coords[1] == null)) ||
-            (!Array.isArray(coords) && (!coords.lat || !coords.lng))
+            (Array.isArray(coords) &&
+              (coords[0] == null || coords[1] == null)) ||
+            (!Array.isArray(coords) &&
+              (!coords.lat || !coords.lng))
           ) {
             console.warn("Invalid coordinates for block:", block);
             return;
           }
 
           const custClass = (map.getZoom() < 16) ? "fms-hidden" : "";
-          const sessionClassName = `${data[1].desc.split(' ').join('')}-stairs`;
+          const sessionClassName = `${data[1].desc.split(' ').join('')}-stairs`
           const typeIndex = block[1].type;
+
+          console.log(item);
 
           const icon = L.divIcon({
             html: warningType[typeIndex].icon,
             iconSize: [24, 24],
-            className: `fms-${typeIndex} ${custClass} ${sessionClassName}`,
+            className: `fms-warning-type fms-${typeIndex} ${sessionClassName} ${custClass}`,
             popupAnchor: [0, -12]
           });
 
-
           const marker = L.marker(coords, { icon });
-          const popupText = GLOBAL_PARAMETER === '?m=editor'
-            ? warningType[typeIndex].text + ` #${i}`
-            : warningType[typeIndex].text;
+
+          const popupText =
+            GLOBAL_PARAMETER === '?m=editor'
+              ? warningType[typeIndex].text + ` #${i}`
+              : warningType[typeIndex].text;
 
           marker.bindPopup(popupText);
-          markerClusterGroup.addLayer(marker);
+
+          // Add marker directly to the map
+          marker.addTo(map);
+
+          // Store marker if you need to access it later
+          // e.g. to add/remove session-completed
         });
       }
     });
   });
 
-  // Only add if we're within zoom threshold
-  if (map.getZoom() >= MIN_ZOOM_FOR_WARNINGS) {
-    markerClusterGroup.addTo(map);
-  }
 
-  // Attach zoom listener once
-  map.off("zoomend.warningToggle").on("zoomend.warningToggle", () => {
-    if (map.getZoom() < MIN_ZOOM_FOR_WARNINGS) {
-      if (map.hasLayer(markerClusterGroup)) map.removeLayer(markerClusterGroup);
-    } else {
-      if (!map.hasLayer(markerClusterGroup)) map.addLayer(markerClusterGroup);
-    }
-  });
 };
+
 const drawWarnings_opt = () => {
   // Ensure map container exists
   const container = document.querySelector("#map");
@@ -1132,6 +1084,7 @@ const drawStatusWrapper = () => {
   This was an easy fix to prevent clutter on the screen if you zoom out "too much"
 */
 map.on('zoomend', () => {
+  /*
   let zoom = map.getZoom()
   //console.log(zoom)
   if (zoom >= 16) {
@@ -1179,7 +1132,7 @@ map.on('zoomend', () => {
   }
 
 
-
+*/
 
 })
 /*
@@ -1566,6 +1519,7 @@ const mapZoomInput = (e) => {
   if (e.id == "minus") { map.setZoom(map.getZoom() - 1) }
 }
 const toggleTopMenu = () => {
+
   const domList = {
 
   }
@@ -1993,7 +1947,8 @@ const createNewSesssion = async (e) => {
                 }
                 toggleLoadingDiv(t = false)
                 // Reload page to get new session
-                location.reload()
+                //location.reload()
+                location.search = `?s=${new Date().toISOString().slice(0, 10).replaceAll('-', '')}`
           }
     }
 }
@@ -2111,7 +2066,7 @@ const initMap = () => {
   setSettingsDom()              // Sets the DOM with the correct switches
   drawLines()                   // Draw lines that represent i.e roads
   drawBlocks()                  // Draw polygons to represent larger areas
-  drawHazardBlocks()            // Draw dangerous/heads-up areas
+  //drawHazardBlocks()            // Draw dangerous/heads-up areas
   drawWarnings()                // Draws fontawesome icons as warnings or 'heads-up'
   //drawPerimiter()               // Draws resident perimiter
   drawCompounds()               // Draws the "blocks" with the description

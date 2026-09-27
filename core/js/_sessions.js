@@ -10,6 +10,22 @@ const searchVariable = parseInt(window.location.search.substr(3))
 /* Reactivate the bottom bar */
 document.getElementsByClassName('bmb_flex')[0].classList.add('show')
 
+
+map.on('zoomend', () => {
+  console.log(map.getZoom())
+  if (map.getZoom() >= 16) {
+    // Show icons etc
+    document.querySelectorAll('.fms-statusDiv').forEach((i) => { i.classList.remove('fms-area-transp') });
+    document.querySelectorAll('.fms-warning-type').forEach((i) => { i.classList.remove('fms-hidden') });
+  }
+
+  if (map.getZoom() <= 16) {
+    document.querySelectorAll('.fms-statusDiv').forEach((i) => { i.classList.add('fms-area-transp') });
+    document.querySelectorAll('.fms-warning-type').forEach((i) => { i.classList.add('fms-hidden') });
+
+  }
+})
+
 /* Speed calculations */
 const speedCalc = () => {
   const display = document.getElementById('speedometer')
@@ -55,10 +71,15 @@ const fetchSessions = async () => {
 
     if (error) {
         handleErrors(error)
+    }
+
+    if (data.length > 0) {
+      SESSIONDATA = data
+      SESSIONCITY = data[0].city
+      localStorage.setItem('currentCity', data[0].city)
     } else {
-        SESSIONDATA = data
-        SESSIONCITY = data[0].city
-        localStorage.setItem('currentCity', data[0].city)
+      location.search = '?'
+      alert('Det fanns ingen session med det ID numret.')
     }
 }
 const fetchReportData = async (param) => {
@@ -251,29 +272,6 @@ const createStatusDOM = (coords, areaName, pureName, status, update) => {
             }
         }
 
-        /*         */
-
-        /*
-        let title = item.querySelector('span').innerText.toLowerCase()
-        let button = item.querySelector('button')
-        // Replace current DOM with following §
-
-        // DOM Elements
-        //console.log(title, button, max, current)
-        if (current == max) {
-            // New DOM should be 'greened' out and remove eventListener
-            button.innerText = `Färdig`
-            button.removeAttribute('onclick')
-            //button.classList.add('completed')
-            button.parentElement.classList.add('completed')
-
-        } else {
-            // Just update the progress
-            button.innerText = `Påbörjad`
-        }
-
-        //console.log(areaName, title, status[title], button)
-        */
     });
 
 
@@ -400,6 +398,7 @@ const expandStatusElement = (e) => {
 }
 // ------------ //
 const drawVisialChanges_new = (area, type, progress) => {
+  console.log('drawVisialChanges_new')
   let definition = {
     "vägar": "line",
     "stora ytor": "blocks",
@@ -511,12 +510,12 @@ const reDrawData = async (data, update) => {
 
     console.log("reDrawData", update)
 
+    console.log(data)
     objects = data[0].data
     Object.entries(objects).forEach((item, i) => {
         // Draw status-buttons here
         let areaName = item[0].split(' ').join('')
         let areaStatus = [0,0]
-
         Object.entries(item[1]).forEach((type, i) => {
             if (type[0] != "statusHolder") {
 
@@ -556,7 +555,8 @@ const reDrawData = async (data, update) => {
                         if (v) {
                             let e = document.getElementsByClassName(v)
                             Object.entries(e).forEach((item, i) => {
-                              item[1].classList.add('session-ongoing')
+                          //    console.log('adding class to stairs')
+                                item[1].classList.add('session-ongoing')
                             });
                         }
                     });
@@ -565,9 +565,11 @@ const reDrawData = async (data, update) => {
                     // If only stairs exists
                     let e = document.getElementsByClassName(name)
                     Object.entries(e).forEach((item, i) => {
-                      item[1].classList.add('session-ongoing')
+                      console.log(markerClusterGroup)
+                        item[1].classList.add('session-ongoing')
                     });
                 }
+
             }
             if (type[1].current == type[1].max) {
                 drawVisialChanges_new(item[0], type, 2)
@@ -595,7 +597,7 @@ const reDrawData = async (data, update) => {
                         if (v) {
                             let e = document.getElementsByClassName(v)
                             Object.entries(e).forEach((item, i) => {
-                              item[1].classList.add('session-completed')
+                                item[1].classList.add('session-completed')
                             });
                         }
                     });
@@ -604,7 +606,8 @@ const reDrawData = async (data, update) => {
                     // If only stairs exists
                     let e = document.getElementsByClassName(name)
                     Object.entries(e).forEach((item, i) => {
-                      item[1].classList.add('session-completed')
+                        console.log(markerClusterGroup)
+                        item[1].classList.add('session-completed')
                     });
                 }
 
@@ -904,9 +907,12 @@ const updateDistressVisuals = async () => {
       let parent = span.parentElement
 
       let incompleted = 0
-      data.call_for_help.forEach((item) => {
-        if (!item.completed) { incompleted++ }
-      });
+      console.log(data)
+      if (data.call_for_help) {
+        data.call_for_help.forEach((item) => {
+          if (!item.completed) { incompleted++ }
+        });
+      }
 
 
 
@@ -938,7 +944,7 @@ const updateDistressVisuals = async () => {
 
     // Handles box data
     console.log('***************** add to larm-box')
-    if (data && data.call_for_help.length > 0) {
+    if (data && data.call_for_help?.length > 0) {
         let parent = document.querySelector('.fms_alarm')
         let html = ""
         data.call_for_help
@@ -1003,7 +1009,7 @@ const updateDistressVisuals = async () => {
 sessionsMain().then(data => {
   if (data.length == 0) {
       // No data, tell it to the user
-      window.location.search = '?'
+      location.search = '?'
       alert('Det fanns ingen session med det ID numret.')
   } else {
       // Set flag for this session id

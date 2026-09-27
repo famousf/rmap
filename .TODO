@@ -1,30 +1,39 @@
 # Todo last version
 
-Login
+x Login
   XX Responsive (Inzoomat läge ser dåligt ut)
     XX Bakgrund för långt upp
   XX Inaktivera org, prefix = 550
   XX Röd knapp (CTA)
   XX Netle logga i följd efter login, ej pos absolute
   XX Gör så villkor funkar
-
-Startsida
+x Startsida
   XX Alla föreningar ska ladda tillhörande 550 direkt
   XX På localhost fungerar det, felsök varför de inte fungerar live
     XX vid inlogg landar man på /rmap/
     - _auth.js:125 <- ta bort redirect från window.location så löser de sig
-
-
-Ladda om
+x Ladda om
   XX Funkar ej
-
-Sesssion
+x Sesssion
   XX input feedback på 'vägar/storaytor' etc så man ser att man tryckt
     XX updatedBcurrent session.js
 
-Larm
-  - Alla larm hamnar i göteborg just nu, åtgärda efter korrekt position
-    - Borde fungera?? Testa live!
+  -- Ta bort 'dubbdäck', de får lära sig
+x Larm
+  XX Alla larm hamnar i göteborg just nu, åtgärda efter korrekt position
+    XX Borde fungera?? Testa live!
 
-  - Rework på larmlistan, som är rätt seg och klumpig:
-    - Funkar just nu, rework senare.
+  XX Rework på larmlistan, som är rätt seg och klumpig:
+    XX Funkar just nu, rework senare.
+x Ikoner
+ XX Lista ut vart de styrs ifrån och hur de påverkas av zoom / ladda om
+   * Beror på att clusters skapas när ikonen skapas
+    - sedan döljs eller visas den beroende på loadpage zoom
+    - när den går i cluster och tillbaka, återställs klasserna som vid skapandet
+    - ikonens 'session-completed' klass får den dynamiskt senare, och ej vid skapande.
+      ** Lösning
+        * Återgå till utan cluters (så få ikoner) och dölj på mapzoom och vid skapande bara.
+X Sessions laddar ej vid skapande
+Områdesikoner
+ - Gör så vid utzoomat läge, så ersätts lines och blocks med perimiter kanske?
+ - I perimeter finns areaname som titel
