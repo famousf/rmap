@@ -2,6 +2,7 @@
   Misc functions to handle customized events such as getLineWeight, displayLatLngClick.
   - These functions are ran inside other functions to prevent reusing too much code
 */
+let layerGroups = {}
 let markerClusterGroup = null;
 const lineReg = new Map()
 const map = L.map("map", {
@@ -471,47 +472,6 @@ const drawMultipleUsers = (data) => {
   });
 
 }
-const drawLines_done = () => {
-  // Loop through points and create polylines for each group
-  const colorObj = {
-    "big": "green",
-    "small": "green",
-    "small_2": "green"
-  }
-
-    const objectGroup = L.layerGroup()
-    MAPS_DATA.forEach((item, i) => {
-
-    let key = Object.keys(item)[0]
-
-    compounds = item[key].compounds
-    Object.entries(compounds).forEach((data, index) => {
-          blocks = data[1].data_lines
-
-          if (blocks) {
-            Object.entries(blocks).forEach((block, i) => {
-              let custClass = (map.getZoom() < 16) ? "fms-hidden" : ""
-              let customWidth = (block[1].type === "small") ? 0.8 : 1
-
-              const sessionClassName = `${data[1].desc.split(' ').join('')}-line`
-              const lines = block[1].coords
-              const polyline = L.polyline(lines, {
-                color: colorObj[block[1].type], // Set the color from the group data
-                weight: 7,//getLineWeight(map.getZoom() * customWidth), // Set initial weight
-                className: `fms-line ${block[1].work_type} ${custClass} ${sessionClassName}`
-              }).addTo(objectGroup);
-
-              if (GLOBAL_PARAMETER.length > 0 && GLOBAL_PARAMETER == '?m=editor') {
-                  // User is in editor / debugg mode
-                  polyline.bindPopup(`data_line #:${i}`)
-              }
-            });
-          }
-    })
-  });
-  objectGroup.addTo(map)
-}
-
 
 
 
@@ -538,7 +498,8 @@ const drawLines = () => {
     }
   };
 
-  const objectGroup = L.layerGroup();
+  layerGroups.lines = L.layerGroup()
+  //const objectGroup = L.layerGroup();
   const zoom = map.getZoom();
   const isHidden = zoom < 16;
 
@@ -601,9 +562,9 @@ const drawLines = () => {
         });
 
         // add to map
-        glowOuter.addTo(objectGroup);
-        glowMid.addTo(objectGroup);
-        core.addTo(objectGroup);
+        glowOuter.addTo(layerGroups.lines);
+        glowMid.addTo(layerGroups.lines);
+        core.addTo(layerGroups.lines);
 
         // =========================
         // metadata
@@ -646,9 +607,9 @@ const drawLines = () => {
     }
   }
 
-  objectGroup.addTo(map);
+  layerGroups.lines.addTo(map);
 
-  return objectGroup;
+  return layerGroups.lines;
 
 };
 
@@ -739,7 +700,7 @@ const drawSelf = (data) => {
 }
 
 const drawBlocks = () => {
-  const objectGroup = L.layerGroup();
+  layerGroups.blocks = L.layerGroup();
 
   const zoom = map.getZoom();
   const isHidden = zoom < 16;
@@ -777,7 +738,7 @@ const drawBlocks = () => {
             : "fms-blocks"
         });
 
-        polygon.addTo(objectGroup);
+        polygon.addTo(layerGroups.blocks);
 
         // =========================
         // metadata (IMPORTANT)
@@ -808,9 +769,9 @@ const drawBlocks = () => {
     }
   }
 
-  objectGroup.addTo(map);
+  layerGroups.blocks.addTo(map);
 
-  return objectGroup;
+  return layerGroups.blocks;
 };
 const drawHazardBlocks = () => {
 

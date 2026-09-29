@@ -13,19 +13,30 @@ document.getElementsByClassName('bmb_flex')[0].classList.add('show')
 
 map.on('zoomend', () => {
   console.log(map.getZoom())
-  if (map.getZoom() >= 16) {
+  console.log(layerGroups)
+  if (map.getZoom() > 16) {
+    // 16 - 30 = zoomar in
+
+
     // Show icons etc
     document.querySelectorAll('.fms-statusDiv').forEach((i) => { i.classList.remove('fms-area-transp') });
     document.querySelectorAll('.fms-warning-type').forEach((i) => { i.classList.remove('fms-hidden') });
+
+
+
+
   }
 
-  if (map.getZoom() <= 16) {
+  //
+  else {
+    // 1 - 15
+
     document.querySelectorAll('.fms-statusDiv').forEach((i) => { i.classList.add('fms-area-transp') });
     document.querySelectorAll('.fms-warning-type').forEach((i) => { i.classList.add('fms-hidden') });
 
+
   }
 })
-
 /* Speed calculations */
 const speedCalc = () => {
   const display = document.getElementById('speedometer')
@@ -907,7 +918,6 @@ const updateDistressVisuals = async () => {
       let parent = span.parentElement
 
       let incompleted = 0
-      console.log(data)
       if (data.call_for_help) {
         data.call_for_help.forEach((item) => {
           if (!item.completed) { incompleted++ }
@@ -943,7 +953,6 @@ const updateDistressVisuals = async () => {
 
 
     // Handles box data
-    console.log('***************** add to larm-box')
     if (data && data.call_for_help?.length > 0) {
         let parent = document.querySelector('.fms_alarm')
         let html = ""
