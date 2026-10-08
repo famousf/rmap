@@ -257,6 +257,30 @@
     transform: translateX(46px);
   }
 }
+.circle-text span {
+  color: #fff !important;
+  text-align: center;
+  background: rgba(251, 77, 78, 0.5);
+  backdrop-filter: blur(20px);
+  height: auto;
+  width: auto;
+  padding: 7px 12px;
+  font-weight: 600;
+  font-size: 16px;
+  border-radius: 6px;
+}
+
+body.dev#crosshair #map {
+  cursor: crosshair;
+}
+
+body.dev #map {
+  cursor: grab;
+}
+body.dev .left:hover, body.dev .right:hover, body.dev .right_plus:hover, body.dev .logbox:hover, body.dev #addPoint:hover {
+  cursor: pointer;
+}
+
 body[data-layer="jawg matrix"] #userGPStrackDot .small_crosshair {
   display: none;
 }
@@ -293,6 +317,20 @@ body[data-layer="jawg matrix"] .gpsNode svg path.cir {
   stroke: rgba(251, 77, 78, 0.3);
   fill: rgba(23, 28, 33, 0.95);
 }
+body[data-layer="jawg matrix"] .actionbar {
+  color: #fff;
+}
+body[data-layer="jawg matrix"] .actionbar svg {
+  color: #ff6a6b;
+}
+body[data-layer="jawg matrix"] .actionbar .left, body[data-layer="jawg matrix"] .actionbar .right, body[data-layer="jawg matrix"] .actionbar .right_plus, body[data-layer="jawg matrix"] .actionbar .logbox {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(25px);
+}
+body[data-layer="jawg matrix"] .fms_layers.dev {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(25px);
+}
 body[data-layer="jawg matrix"] .fms_layers {
   background: #171c21;
 }
@@ -308,6 +346,161 @@ body {
 }
 body * {
   font-family: "Afacad Flux";
+}
+body .map-icon, body .map-icon-instance {
+  cursor: grab;
+  width: 24px;
+  height: 18px;
+  text-align: center;
+}
+body .map-icon-instance[data-icon=snow] i {
+  background: rgba(23, 28, 33, 0.85);
+  box-shadow: 0px 0px 10px -3px #171c21;
+  border-radius: 6px;
+  font-size: 1.2em;
+  padding: 8px 8px;
+  color: #afedfa;
+  position: relative;
+}
+body .map-icon-instance[data-icon=snow] i::after {
+  left: 6px;
+  top: 28px;
+  padding: 0px;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 7px solid #6491cf;
+  background-color: transparent;
+}
+body .map-icon-instance[data-icon=stairs] i, body .map-icon-instance[data-icon=door] i {
+  background: #ffb600;
+  box-shadow: 0px 0px 10px -3px #171c21;
+  border-radius: 6px;
+  padding: 8px 7px;
+  color: #171c21;
+  font-size: 1em;
+}
+body .map-icon-instance[data-icon=stairs] i::after, body .map-icon-instance[data-icon=door] i::after {
+  left: 7px;
+  top: 24px;
+  padding: 0px;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 8px solid #fe9700;
+  background-color: transparent;
+}
+body .map-icon-instance[data-icon=trash] i {
+  background: #fb4d4e;
+  box-shadow: 0px 0px 10px -3px #171c21;
+  border-radius: 6px;
+  padding: 8px 8px !important;
+  color: #171c21;
+  font-size: 1.1em;
+}
+body .map-icon-instance[data-icon=trash] i::after {
+  left: 6px;
+  top: 25px;
+  padding: 0px;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 8px solid #ca5757;
+  background-color: transparent;
+}
+body .map-icon-instance[data-icon=barrier] i {
+  background: #fb4d4e;
+  box-shadow: 0px 0px 10px -3px #171c21;
+  border-radius: 6px;
+  padding: 8px 8px !important;
+  color: #171c21;
+  font-size: 1.1em;
+}
+body .map-icon-instance[data-icon=barrier] i::after {
+  left: 6px;
+  top: 25px;
+  padding: 0px;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 8px solid #ca5757;
+  background-color: transparent;
+}
+body .map-icon[data-icon=snow] i {
+  background: rgba(23, 28, 33, 0.85);
+  box-shadow: 0px 0px 10px -3px #171c21;
+  border-radius: 6px;
+  font-size: 1.1em;
+  padding: 8px 9px;
+  color: #afedfa;
+  position: relative;
+  text-align: center;
+}
+body .map-icon[data-icon=snow] i::after {
+  left: 6px;
+  top: 28px;
+  padding: 0px;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 7px solid #6491cf;
+  background-color: transparent;
+}
+body .map-icon[data-icon=stairs] i, body .map-icon[data-icon=door] i {
+  background: #ffb600;
+  box-shadow: 0px 0px 10px -3px #171c21;
+  border-radius: 6px;
+  padding: 8px 7px;
+  color: #171c21;
+  font-size: 1em;
+}
+body .map-icon[data-icon=stairs] i::after, body .map-icon[data-icon=door] i::after {
+  left: 7px;
+  top: 24px;
+  padding: 0px;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 8px solid #fe9700;
+  background-color: transparent;
+}
+body .map-icon[data-icon=trash] {
+  width: 16px;
+}
+body .map-icon[data-icon=trash] i {
+  background: #fb4d4e;
+  box-shadow: 0px 0px 10px -3px #171c21;
+  border-radius: 6px;
+  padding: 8px 8px !important;
+  color: #171c21;
+  font-size: 1em;
+}
+body .map-icon[data-icon=trash] i::after {
+  left: 6px;
+  top: 25px;
+  padding: 0px;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 8px solid #ca5757;
+  background-color: transparent;
+}
+body .map-icon[data-icon=barrier] i {
+  width: 16px;
+  background: #fb4d4e;
+  box-shadow: 0px 0px 10px -3px #171c21;
+  border-radius: 6px;
+  padding: 10px 8px 8px 8px !important;
+  color: #171c21;
+  font-size: 0.85em;
+  height: 15px;
+}
+body .map-icon[data-icon=barrier] i::after {
+  left: 6px;
+  top: 25px;
+  padding: 0px;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 8px solid #ca5757;
+  background-color: transparent;
+}
+body .iconSelectMap {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
 }
 body #userGPStrackDot .small_crosshair {
   display: none;
@@ -468,30 +661,130 @@ body .signalAccuracy span {
 body .signalAccuracy span::after {
   top: 0;
 }
+body .browseArea-picker {
+  position: absolute;
+  top: 15vh;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  width: 400px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(100px);
+  border-radius: 12px;
+  z-index: 999;
+  padding: 20px;
+  box-sizing: border-box;
+}
+body .browseArea-picker h1 {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 20px;
+  text-align: center;
+  padding: 0;
+  margin: 0;
+  margin-bottom: 20px;
+  font-weight: 500;
+}
+body .browseArea-picker .pick-table {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+body .browseArea-picker .pick-table .b {
+  padding: 10px;
+  width: calc(50% - 5px);
+  box-sizing: border-box;
+  border-radius: 6px;
+  transition: all 0.25s ease;
+  cursor: pointer;
+}
+body .browseArea-picker .pick-table .b:hover, body .browseArea-picker .pick-table .b:checked {
+  background: rgba(251, 77, 78, 0.7);
+}
+body .browseArea-picker .pick-table .b span {
+  display: block;
+  width: 100%;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.8);
+  text-align: center;
+}
+body .operationHub {
+  position: absolute;
+  bottom: 140px;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  width: 95%;
+  z-index: 800;
+  max-width: 900px;
+}
+body .operationHub .content {
+  background: #fff;
+  width: 300px;
+  padding: 10px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(100px);
+}
 body .actionbar {
   position: absolute;
   bottom: 20px;
-  max-width: 700px;
+  max-width: 900px;
   width: 95%;
   margin: 0 auto;
   z-index: 800;
   display: flex;
-  gap: 20px;
+  gap: 10px;
   left: 0;
   right: 0;
   margin: 0 auto;
 }
-body .actionbar div {
+body .actionbar .logbox {
+  display: none;
+  position: absolute;
+  bottom: 100px;
+  box-sizing: border-box;
+  width: 183px;
+  padding: 5px;
+  background: #fff;
+  border-radius: 12px;
+}
+body .actionbar .logbox .topstats {
+  width: 100%;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+}
+body .actionbar .logbox .topstats span {
   text-align: center;
+  flex: 0.5;
+}
+body .actionbar .actionbutton {
+  position: static;
+  flex: 1;
+}
+body .actionbar .actionbutton h4 {
+  font-size: 16px;
+  margin: 0;
+  padding: 0;
+}
+body .actionbar .actionbutton h4 span {
+  font-weight: 400;
+  font-size: 12px;
+}
+body .actionbar div {
   justify-content: center;
   align-items: center;
   flex-wrap: nowrap;
   display: flex;
   flex: 1;
-  overflow: hidden;
+  padding: 10px;
 }
 body .actionbar div .ab_toggled {
   background: #fb4d4e;
+  border-radius: 6px;
   color: #fff;
 }
 body .actionbar div .ab_toggled svg {
@@ -514,7 +807,7 @@ body .actionbar div div svg {
 body .actionbar .left {
   background: #fff;
   border-radius: 7px;
-  flex: 2;
+  flex: 3;
 }
 body .actionbar .left div {
   width: 33.3333333333%;
@@ -523,11 +816,19 @@ body .actionbar .left div {
 body .actionbar .right {
   background: #fff;
   border-radius: 12px;
-  flex: 1;
+  flex: 2;
 }
 body .actionbar .right div {
   flex: 50%;
   width: 50%;
+}
+body .actionbar .right_plus {
+  flex: 0.3;
+  border-radius: 12px;
+  background: #fff;
+}
+body .actionbar .right_plus div svg {
+  font-size: 40px;
 }
 body .gps-user-dot {
   color: #fff;
@@ -704,6 +1005,31 @@ body .fms_alarm .larm_wrap div {
   text-align: center;
   flex: 1;
 }
+body .fms_layers.dev.fms-override-show {
+  display: flex;
+}
+body .fms_layers.dev {
+  display: none;
+  width: auto;
+  padding: 15px;
+  bottom: 120px;
+  right: -110px;
+  border-radius: 12px;
+  background: #fff;
+}
+body .fms_layers.dev .layer_select {
+  padding: 0;
+  width: 280px;
+  flex-direction: row;
+  gap: 10px;
+}
+body .fms_layers.dev .layer_select .modal {
+  flex: 1;
+  box-shadow: 0px 5px 10px -4px rgba(23, 28, 33, 0.13);
+}
+body .fms_layers.dev .layer_select .modal .img {
+  background-size: 200px 200px !important;
+}
 body .fms_layers, body .fms_scenario, body .fms_alarm {
   position: absolute;
   display: none;
@@ -776,6 +1102,10 @@ body .fms_layers .layer_select .modal .img.white, body .fms_scenario .layer_sele
 }
 body .fms_layers .layer_select .modal .img.dark, body .fms_scenario .layer_select .modal .img.dark, body .fms_alarm .layer_select .modal .img.dark {
   background-image: url("../../img/media/map-dark.jpg");
+  background-size: 300px 300px;
+}
+body .fms_layers .layer_select .modal .img.sat, body .fms_scenario .layer_select .modal .img.sat, body .fms_alarm .layer_select .modal .img.sat {
+  background-image: url("../../img/media/sat.png");
   background-size: 300px 300px;
 }
 body .fms_layers .layer_select .modal .img.special, body .fms_scenario .layer_select .modal .img.special, body .fms_alarm .layer_select .modal .img.special {
@@ -2300,28 +2630,37 @@ body .fms-menu .menu-content .bar.setting {
   display: flex;
   flex-direction: row;
 }
-body .fms-menu .menu-content .bar.setting i {
+body .fms-menu .menu-content .bar.setting i, body .fms-menu .menu-content .bar.setting svg {
   padding-top: 3px;
-  color: #fb4d4e;
+  color: rgb(208, 68, 69);
   flex: 1;
   min-width: 34px;
   font-size: 1.2em;
   max-width: 34px;
 }
+body .fms-menu .menu-content .bar.setting svg {
+  font-size: 23px;
+  padding: 0;
+  margin: 0;
+  position: relative;
+  right: 6px;
+}
 body .fms-menu .menu-content .bar.setting h1 {
   flex: 8;
   color: rgba(255, 255, 255, 0.8);
+  font-weight: 500;
+  font-size: 16px;
 }
 body .fms-menu .menu-content .bar.red button {
   width: 100%;
-  height: 30px;
+  height: 20px;
   text-align: left;
-  font-weight: 700;
+  font-weight: 500;
   color: rgba(255, 255, 255, 0.8);
   outline: 0;
   border: 0;
   background: none;
-  font-size: 1.1em;
+  font-size: 16px;
   padding: 0;
 }
 body .fms-menu .menu-content .bar {

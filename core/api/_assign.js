@@ -69,22 +69,22 @@ const fetchUserLinks = async () => {
   }
 }
 const init_fetchUserMaps = async () => {
-  //console.log("Init Fetch")
+  console.log("Init Fetch")
   let result = await fetchUserLinks()
   let org = parseInt(result.org_number)
-            setAffiliationData(org)
+           setAffiliationData(org)
   let cities = result.maps
   const {data, error} = await client
     .from('maps')
     .select('*')
-    .eq('org_number', org)
+    .eq('org_number', 550)
+
 
   if (error) {
         handleErrors(error)
         return null
   } else {
-
-
+        console.log(data, error)
         // Loop data from mapstable
         for (i = 0; i < data.length; i++) {
             // Loop users cities
@@ -98,11 +98,41 @@ const init_fetchUserMaps = async () => {
             }
         }
         // Send maps_data to the right function
+        // "PGRST116"
         // MAPS_DATA <-
         // to handle drawing
-        console.log(MAPS_DATA)
-        return MAPS_DATA
+        /*
+
+            Cant fetch data here, if its empty and cannot return a good value;
+            prompt user to logout to fix itself
+
+
+        */
+
+        if (data.length > 0) return MAPS_DATA
+
+        // if user gets here, theres no data
+        console.log("No data, prompt logout")
+        signOutUser([])
+
+
   }
+}
+
+const checkForDev = () => {
+  if (!USER_INFO.is_admin) return
+  html = `
+    <div class="bar setting" onclick="location.search = '?dev=map_dev'">
+    <svg xmlns="http://www.w3.org/2000/svg" width="0.88em" height="1em" viewBox="0 0 448 512">
+      <path d="M0 0h448v512H0z" fill="none" />
+      <path fill="currentColor" d="M120.12 208.29c-3.88-2.9-7.77-4.35-11.65-4.35H91.03v104.47h17.45c3.88 0 7.77-1.45 11.65-4.35s5.82-7.25 5.82-13.06v-69.65c-.01-5.8-1.96-10.16-5.83-13.06M404.1 32H43.9C19.7 32 .06 51.59 0 75.8v360.4C.06 460.41 19.7 480 43.9 480h360.2c24.21 0 43.84-19.59 43.9-43.8V75.8c-.06-24.21-19.7-43.8-43.9-43.8M154.2 291.19c0 18.81-11.61 47.31-48.36 47.25h-46.4V172.98h47.38c35.44 0 47.36 28.46 47.37 47.28zm100.68-88.66H201.6v38.42h32.57v29.57H201.6v38.41h53.29v29.57h-62.18c-11.16.29-20.44-8.53-20.72-19.69V193.7c-.27-11.15 8.56-20.41 19.71-20.69h63.19zm103.64 115.29c-13.2 30.75-36.85 24.63-47.44 0l-38.53-144.8h32.57l29.71 113.72l29.57-113.72h32.58z" />
+    </svg>
+
+      <h1>Redigera & skapa kartor</h1>
+    </div>
+  `
+  document.querySelector('.menu-items-holder').insertAdjacentHTML('afterbegin', html)
+  console.log("User is admin, give extra btn")
 }
 
 init_fetchUserMaps().then(bool => {
@@ -115,6 +145,7 @@ init_fetchUserMaps().then(bool => {
       // Init app
       initMap()
       screenLock()
+      checkForDev()
       gpsFetchStorage(updateBool = false)   // Initial Load (i.e create markers instad of updating)
       if (document.getElementById('f_flag')) {
           document.getElementById('f_flag').setAttribute('data-state', 'true')

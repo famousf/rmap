@@ -497,9 +497,11 @@ const formatDuration = (startTs, endTs) => {
   return `${hours}h ${minutes}m`;
 }
 const drawStatusBar = (data) => {
-  if (data) {
+  if (data || data == 0) {
       if (data > 0) {
         document.querySelector('#workProgress').innerText = `${Math.round(data * 100) / 100}%`
+      } else {
+        document.querySelector('#workProgress').innerText = 'Uppstart'
       }
   }
 

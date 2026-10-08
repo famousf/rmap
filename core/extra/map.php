@@ -367,26 +367,52 @@
         </div>
         -->
         <div class="menu-items-holder">
-
           <div class="bar setting" onclick="createNewSesssion(this)">
-            <i class="fa-solid fa-route"></i>
-            <h1>Skapa Session</h1>
+            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+              <path d="M0 0h24v24H0z" fill="none" />
+              <path fill="currentColor" fill-rule="evenodd" d="M14.035 2.124a2.75 2.75 0 0 0-4.07 0L2.668 10.15a2.75 2.75 0 0 0 0 3.7l7.297 8.026a2.75 2.75 0 0 0 4.07 0l7.297-8.027a2.75 2.75 0 0 0 0-3.7zM12.75 9a.75.75 0 0 0-1.5 0v2.25H9a.75.75 0 0 0 0 1.5h2.25V15a.75.75 0 0 0 1.5 0v-2.25H15a.75.75 0 0 0 0-1.5h-2.25z" clip-rule="evenodd" />
+            </svg>
+            <h1>Skapa session</h1>
           </div>
           <div class="bar setting" onclick="toggleReportWindow(this)">
-            <i class="fa-solid fa-file-export"></i>
-            <h1>Exportera Rapporter</h1>
+            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 48 48">
+              <path d="M0 0h48v48H0z" fill="none" />
+              <defs>
+                <mask id="SVGdw8jicgM">
+                  <g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="4">
+                    <rect width="40" height="32" x="4" y="8" fill="#fff" stroke="#fff" rx="2" />
+                    <path stroke="#000" d="M32 25v7m-8-16v16m-8-12v12" />
+                  </g>
+                </mask>
+              </defs>
+              <path fill="currentColor" d="M0 0h48v48H0z" mask="url(#SVGdw8jicgM)" />
+            </svg>
+            <h1>Exportera rapporter</h1>
           </div>
 
           <div class="bar setting" onclick="toggleUserCredentials(this)">
-            <i class="fa-solid fa-user-secret"></i>
-            <h1>Ändra Lösenord</h1>
+            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+              <path d="M0 0h24v24H0z" fill="none" />
+              <path fill="currentColor" fill-rule="evenodd" d="M3 7c0-1.4 0-2.1.272-2.635a2.5 2.5 0 0 1 1.093-1.093C4.9 3 5.6 3 7 3h10c1.4 0 2.1 0 2.635.272a2.5 2.5 0 0 1 1.092 1.093C21 4.9 21 5.6 21 7v10c0 1.4 0 2.1-.273 2.635a2.5 2.5 0 0 1-1.092 1.092C19.1 21 18.4 21 17 21H7c-1.4 0-2.1 0-2.635-.273a2.5 2.5 0 0 1-1.093-1.092C3 19.1 3 18.4 3 17zm7.83 4a3.001 3.001 0 1 0 0 2H13v1a1 1 0 1 0 2 0v-1h1v1a1 1 0 1 0 2 0v-1.85A1.15 1.15 0 0 0 16.85 11zM9 12a1 1 0 1 0-2 0a1 1 0 0 0 2 0" clip-rule="evenodd" />
+            </svg>
+            <h1>Ändra lösenord</h1>
           </div>
           <div class="bar setting" onclick="location.reload()">
-            <i class="fa-solid fa-arrows-rotate"></i>
-            <h1>Ladda om</h1>
+            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 512 512">
+              <path d="M0 0h512v512H0z" fill="none" />
+              <path fill="currentColor" d="M256 48C141.31 48 48 141.31 48 256s93.31 208 208 208s208-93.31 208-208S370.69 48 256 48m120 190.77h-89l36.88-36.88l-5.6-6.51a87.38 87.38 0 1 0-62.94 148a87.55 87.55 0 0 0 82.42-58.25l5.37-15.13l30.17 10.67l-5.3 15.13a119.4 119.4 0 1 1-112.62-159.18a118.34 118.34 0 0 1 86.36 36.95l.56.62l4.31 5L376 149.81Z" />
+            </svg>
+            <h1>Ladda om applikationen</h1>
           </div>
           <div class="bar red setting">
-            <i class="fa-solid fa-door-open"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+            	<path d="M0 0h24v24H0z" fill="none" />
+            	<g fill="currentColor">
+            		<path d="M13 4.009a1 1 0 1 0-2 0l-.003 8.003a1 1 0 0 0 2 0z" />
+            		<path d="M4 12.992c0-2.21.895-4.21 2.343-5.657l1.414 1.414a6 6 0 1 0 8.485 0l1.415-1.414A8 8 0 1 1 4 12.992" />
+            	</g>
+            </svg>
+
             <button type="submit" name="logout" onclick="signOutUser(this)">Logga ut</button>
           </div>
 

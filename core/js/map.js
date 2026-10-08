@@ -44,10 +44,12 @@ const tileLayers = () => {
       maxZoom: 18,
       attribution: '&copy; <a href="https://www.eniro.se">Eniro</a>'
     });
+
     const openStreetMap_DE = L.tileLayer('https://tile.openstreetmap.de/{z}/{x}/{y}.png', {
     	maxZoom: 18,
     	attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     });
+
     const openTopoMap = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
     	maxZoom: 17,
     	attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
@@ -100,14 +102,14 @@ const tileLayers = () => {
 
     // Add OpenStreetMap as the default map layer
     let baseLayers = {
-      "Open streets map": openStreetMap_DE,
+      "ny": openStreetMap_DE,
       "open topo map": openTopoMap,
       "tf landscape": thunderforest_Landscape,
       "tf outdoors": thunderforest_Outdoors, // Satellite map layer
       "jawg matrix": OpenStreetMap_CAT,
       "Sattelit": esri_WorldImagery,
       "Eniro": eniroMap,
-      "ny": ny,
+      //"ny": ny,
       "new dark": Stadia_AlidadeSmoothDark
     };
 
@@ -438,7 +440,9 @@ const updateMultipleusers = (data) => {
       //drawMultipleUsers(data)
   }
 }
+
 const drawMultipleUsers = (data) => {
+
   let uid = USER_INFO.id
   data.forEach((user, index) => {
     // Loop through new incoming data
@@ -692,7 +696,6 @@ const newDrawUsers = (data) => {
 
     });
 
-    console.log("newDrawUsers", data);
 };
 /*  Handles drawing your own GPS avatar */
 const drawSelf = (data) => {
@@ -835,7 +838,6 @@ const drawWarnings = () => {
           const sessionClassName = `${data[1].desc.split(' ').join('')}-stairs`
           const typeIndex = block[1].type;
 
-          console.log(item);
 
           const icon = L.divIcon({
             html: warningType[typeIndex].icon,
@@ -942,62 +944,26 @@ const drawPerimiter = () => {
     Object.entries(compounds).forEach((data, index) => {
           blocks = data[1].object_perimiter
           let polygon
-          if (blocks) {
-            Object.entries(blocks).forEach((block, i) => {
-              let custClass = (map.getZoom() < 16) ? "" : ""
-              polygon = L.polygon(blocks, {
-                className: `fms-perimiter ${custClass}`,
-                weight: 1,//getLineWeight(map.getZoom() * 2),
-              }).addTo(map);
-
-            });
-            const centroid = getPolygonCentroid(polygon.getLatLngs()[0]);
-            // Create a DivIcon to hold text or an icon
-            let custClass = (map.getZoom() <= 11 || map.getZoom() >= 16) ? "fms-hidden" : ""
-            const sessionClassName = `area-${data[1].desc.split(' ').join('')}`
-            const icon = L.divIcon({
-              className: "polygon-label",
-              html: "",
-              iconSize: [150, 150],
-              iconAnchor: [40, 15]  // Center the icon
-            });
-
-            // Add a marker at the centroid using the DivIcon
-            const marker = L.marker(centroid, { icon: icon }).addTo(objectGroup);
-
-
+          if (blocks && blocks.length > 1) {
             /*
-            ##
-            # Attempt at making a status table that sits outside the perimiter to
-            # simple check wether an action is completed or not - SCRAPPED
-            # (Clunky and/or messy + decreases performance due to rendering)
-            ##
-            */
-            /*
-            if (data[1].notes) {
-                const notesContent = data[1]?.notes
-                custClass = (map.getZoom() < 16) ? "fms-hidden" : ""
-                let notesHtml = ""
-                if (notesContent.text) {
-                  for (i = 0; i < notesContent.text.length; i++) {
-                    notesHtml += `<div class="fst-status">${notesContent.text[i]}</div>`
-                  }
-                }
-                const tablePosition = data[1].notes.coords
-                const statusTable = L.divIcon({
-                  className: "fms-statusTable",
-                  html: `<div class="fst-holder ${custClass}" style="background: #fff">${notesHtml}</div>`,
-                })
-
-                L.marker(tablePosition, {icon:statusTable}).addTo(map)
-
-            }
+            L.polyline([...blocks, blocks[0]], {
+              color: 'white',
+              weight: 3,
+              lineJoin: 'round',
+              lineCap: 'round'
+            }).addTo(map);
             */
 
-
-            marker.on('click', () => {
-                map.setView(centroid, 18, {animate: true, duration: 1})
-            })
+            const bounds = L.latLngBounds(blocks);
+            const center = bounds.getCenter();
+            L.marker(center, {
+              icon: L.divIcon({
+                className: 'circle-text',
+                html: `<span>${data[1].desc}</span>`,
+                iconSize: [150, 10],
+                iconAnchor: [20, 15]
+              })
+            }).addTo(map);
           }
     })
   });
@@ -1185,7 +1151,6 @@ const updateUserLocation = (position) => {
     // Update the map's view to the new location (optional: add smooth transitions)
     // If the marker exists, update its position, otherwise create a new marker
     // Log the updated position to the console
-    console.log("POOOOOSITION", position)
     if (accuracy > 0) {
         // Get average position from the last 5 positions
         avgPositions.push([lat, lng]);
@@ -1293,6 +1258,12 @@ const updateUserLocation = (position) => {
             user_positions:userData.user_positions
           })
           .eq('session_id', SESSIONDATA[0].session_id)
+
+
+
+          if (updateError) return
+
+          USER_INFO.last_coord = clientPosition
 
     }
     const drawTrail_old = () => {
@@ -1412,7 +1383,6 @@ const updateUserLocation = (position) => {
 }
 const navigatorInit = (_boolean) => {
   // Watch for geolocation updates
-  console.log("NAVIGATOR INIT????????????")
   if (!boolean) {
       navigator.geolocation.clearWatch(watcherId)
       isTracking = false
@@ -1487,7 +1457,7 @@ const toggleTopMenu = () => {
 
   let larmIndex = 0
   let larmButton = document.getElementById('distressIcon')
-      larmButton.addEventListener('click', (e) => {
+      larmButton?.addEventListener('click', (e) => {
         if (document.querySelector('.fms_layers').classList.contains('fms-override-show')) {
           // Hide layer box & btn
           document.getElementsByClassName('fms_layers')[0].classList.remove('fms-override-show') // box
@@ -1512,30 +1482,45 @@ const toggleTopMenu = () => {
 
   let layerIndex = 0
   let layerButton = document.getElementById('hamb-layer')
-      layerButton.addEventListener('click', (e) => {
-        if (!document.querySelector('.fms_alarm').classList.contains('hidden')) {
-          // Hide distress box & btn
-          document.getElementsByClassName('fms_alarm')[0].classList.add('hidden') // box
-          document.getElementById('distressIcon').classList.remove('toggle') // btn
-        }
+      layerButton?.addEventListener('click', (e) => {
+        if (!layerButton.classList.contains('right_plus')) {
+          if (!document.querySelector('.fms_alarm').classList.contains('hidden')) {
+            // Hide distress box & btn
+            document.getElementsByClassName('fms_alarm')[0].classList.add('hidden') // box
+            document.getElementById('distressIcon').classList.remove('toggle') // btn
+          }
 
 
-        if (layerIndex == 0) {
+          if (layerIndex == 0) {
 
-          document.getElementsByClassName('fms_layers')[0].classList.add('fms-override-show')
-          layerButton.classList.add('highlighted')
+            document.getElementsByClassName('fms_layers')[0].classList.add('fms-override-show')
+            layerButton.classList.add('highlighted')
+          } else {
+            document.getElementsByClassName('fms_layers')[0].classList.remove('fms-override-show')
+            layerButton.classList.remove('highlighted')
+          }
+          layerIndex++
+          if (layerIndex > 1) { layerIndex = 0 }
         } else {
-          document.getElementsByClassName('fms_layers')[0].classList.remove('fms-override-show')
-          layerButton.classList.remove('highlighted')
+          let container = document.querySelector('#layerDev')
+
+          if (container.classList.contains('fms-override-show')) {
+              container.classList.remove('fms-override-show')
+          } else {
+              container.classList.add('fms-override-show')
+          }
+
+
+
         }
-        layerIndex++
-        if (layerIndex > 1) { layerIndex = 0 }
+
+
       })
 
 
   let infoIndex = 0
   let infoButton = document.getElementById('top-left-info')
-      infoButton.addEventListener('click', (e) => {
+      infoButton?.addEventListener('click', (e) => {
         if (infoIndex == 0) {
             /* Info menu hidden, show it */
             document.getElementById('icon-tooltip').classList.add('fms-override-show')
@@ -1547,7 +1532,7 @@ const toggleTopMenu = () => {
       })
   let hamIndex = 0
   let hamburger = document.getElementById('hamb-menu')
-      hamburger.addEventListener('click', (e) => {
+      hamburger?.addEventListener('click', (e) => {
           document.getElementById('fms-menu').classList.add('fms-override-show')
           document.getElementById('hamb-menu').classList.add('hamb-visible')
       })
@@ -1555,7 +1540,7 @@ const toggleTopMenu = () => {
       let expIndex = 0
       if (document.getElementById('experimental-layer')) {
         let expButton = document.getElementById('experimental-layer')
-        expButton.addEventListener('click', (e) => {
+        expButton?.addEventListener('click', (e) => {
           if (expIndex == 0) {
             document.getElementsByClassName('fms_scenario')[0].classList.add('fms-override-show')
             expButton.classList.add('highlighted')
@@ -1570,8 +1555,7 @@ const toggleTopMenu = () => {
       }
 
   let back = document.getElementById('hamb-back')
-      back.addEventListener('click', (e) => {
-          console.log(e)
+      back?.addEventListener('click', (e) => {
           document.getElementById('fms-menu').classList.remove('fms-override-show')
           document.getElementById('hamb-menu').classList.remove('hamb-visible')
       })
@@ -1701,7 +1685,8 @@ const checkForSesssion = async (interval) => {
   //console.log(interval)
   let org = USER_INFO.org_number
   let city = USER_INFO.maps[0]
-  const searchVariable = parseInt(formatDate())
+  const searchVariable = new Date().toISOString().slice(0, 10).replaceAll('-', '')
+  console.log(searchVariable, " -- SV")
   const { data, error } = await client
   .from('session')  // Replace 'users' with your table name
   .select('*')   // Get all columns
@@ -1713,9 +1698,11 @@ const checkForSesssion = async (interval) => {
   if (error) {
     console.error("Error fetching users:", error);
   } else {
+    console.log("CHECK SESSION")
     // Display users in the HTML
     if (data.length > 0) {
           if (!localStorage.getItem(data[0].session_id)) {
+              console.log("FOUND NEW SESSION")
               // Show prompt
               let html = `
                     <div class="session-confetti">
@@ -2025,12 +2012,18 @@ const initMap = () => {
   tileLayers()                  // Draws the map(tile)
   localCookies()                // i.e lastknown position, tile settings, zoom
   setSettingsDom()              // Sets the DOM with the correct switches
-  drawLines()                   // Draw lines that represent i.e roads
-  drawBlocks()                  // Draw polygons to represent larger areas
-  //drawHazardBlocks()            // Draw dangerous/heads-up areas
-  drawWarnings()                // Draws fontawesome icons as warnings or 'heads-up'
-  //drawPerimiter()               // Draws resident perimiter
-  drawCompounds()               // Draws the "blocks" with the description
+
+  if (!location.search.includes('map_dev')) {
+    drawLines()                   // Draw lines that represent i.e roads
+    drawBlocks()                  // Draw polygons to represent larger areas
+    //drawHazardBlocks()            // Draw dangerous/heads-up areas
+    drawWarnings()                // Draws fontawesome icons as warnings or 'heads-up'
+    drawCompounds()               // Draws the "blocks" with the description
+  } else {
+    //drawPerimiter()               // Draws resident perimiter
+
+  }
+
 
   /*
 

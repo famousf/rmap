@@ -37,3 +37,25 @@ X Sessions laddar ej vid skapande
 Områdesikoner
  - Gör så vid utzoomat läge, så ersätts lines och blocks med perimiter kanske?
  - I perimeter finns areaname som titel
+
+
+
+Ta bort gps grejen helt
+
+Varje område visar på något sätt hur många som befinner sig inom arbetsområdet, möjligtvis att det står typ;
+(2)(L)(J) så man kan se, men ingen övrig gps spårning
+
+
+nu funktion och databas
+
+funktion bör konstant övervaka om använder åker in i ett arbetsområde och då direkt lägga sig själv som aktiv;
+en tabell för alla användare som ansluter sig med;
+
+uuid,
+namn,
+datum,
+arbetsområde,
+
+funktion:
+uppdatera användaren med ny data var 10:e sekund kanske och på pageload,
+skev funktion som lägger datan i utkant på norra sidan av området som ser lite mysigt ut,
