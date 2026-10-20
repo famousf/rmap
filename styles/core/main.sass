@@ -259,6 +259,18 @@ body
   margin: 0
   background: #171c21
   overflow: hidden
+  .hide
+    display: none!Important
+  .landingPaged
+    position: fixed
+    top: 0
+    left: 0
+    width: 100vw
+    height: 100vh
+    display: none
+    z-index: 999
+    background: linear-gradient(rgba(#000, 0.8), rgba(#000, 0.7))
+    backdrop-filter: blur(4px)
   *
     font-family: 'Afacad Flux'
   .map-icon, .map-icon-instance
@@ -405,6 +417,15 @@ body
     display: flex
     flex-direction: row
     gap: 16px
+    position: absolute
+    z-index: 999
+    padding: 15px 27px 27px 15px
+    border-radius: 6px
+    bottom: 140px
+    left: 42%
+    background: rgba(#000, 0.2)
+    border: 1px solid rgba($red, 0.3)
+    backdrop-filter: blur(10px)
   #userGPStrackDot
     .small_crosshair
       display: none
@@ -601,10 +622,30 @@ body
       border-radius: 12px
       background: rgba(#000, 0.2)
       backdrop-filter: blur(100px)
+      .entries-wrapper
+        .line
+          svg
+            color: #ff6a6b
+        .block
+          svg
+            color: #3382f0
+        .op-line
+          color: rgba(#fff, 0.75)
+          font-size: 12px
+          font-weight: 400
+          padding: 0px
+          cursor: pointer
+          span
+            position: relative
+            top: -4px
+            left: 2px
+          svg
+            font-size: 1.3em
+
   .actionbar
     position: absolute
     bottom: 20px
-    max-width: 900px
+    max-width: 1900px
     width: 95%
     margin: 0 auto
     z-index: 800
@@ -613,6 +654,97 @@ body
     left: 0
     right: 0
     margin: 0 auto
+    flex-wrap: wrap
+    .show-hide
+      flex: 1 1 100%
+      justify-content: flex-end
+      align-items: flex-end
+      padding: 0
+      max-width: 100%
+      .savedActions
+        padding: 0
+        align-items: flex-end
+        max-width: 70%
+        .close-btn.up
+          svg
+            transform: rotate(0deg)
+        .close-btn
+          background: rgba(#fff, .15)
+          padding: 6px 6px 4px 6px
+          border-radius: 3px
+          text-align: center
+          margin-bottom: 3px
+          backdrop-filter: blur(100px)
+          svg
+            transform: rotate(180deg)
+            font-size: 12px
+            color: rgba(#fb4d4e, 1)
+        .json_format.up
+          display: block
+          width: 40%
+          &::after
+            display: none
+          pre
+            display: block
+        .json_format
+          display: block
+          width: 30%
+          background: rgba(#fff, 0.15)
+          backdrop-filter: blur(140px)
+          border-radius: 6px
+          box-sizing: border-box
+          padding: 5px
+          &::after
+            display: block
+            width: 100%
+            text-align: center
+            color: rgba(#fff, 0.8)
+            font-size: 14px
+            font-weight: 600
+            content: 'JSON'
+          pre
+            display: none
+            margin: 0
+            width: 100%
+            height: 100%
+            max-height: 300px
+            overflow: scroll
+            padding: 5px
+            white-space: pre
+            &::-webkit-scrollbar
+              width: 3px
+              height: 3px
+            &::-webkit-scrollbar-track
+              background: transparent
+            &::-webkit-scrollbar-thumb
+              background: #fb4d4e
+            code
+              font-family: monospace
+      .item-wrap
+        display: flex
+        flex-direction: row
+        width: 30%
+        max-width: 30%
+        padding: 0
+        background: rgba(#fff, 0.15)
+        border-radius: 6px
+        overflow: hidden
+        div
+          cursor: pointer
+          span
+            font-weight: 700
+            color: rgba(#fff, 0.55)
+            &::after
+              content: 'Döljs'
+              font-weight: 300
+              display: block
+              text-align: center
+        div.on
+          background: #fb4d4e
+          span
+            color: rgba(#fff, 1)
+            &::after
+              content: 'Visas'
     .logbox
       display: none
       position: absolute
@@ -645,10 +777,9 @@ body
     div
       justify-content: center
       align-items: center
-      flex-wrap: nowrap
       display: flex
-      flex: 1
       padding: 10px
+      flex: 1
       .ab_toggled
         background: $red
         border-radius: 6px
@@ -670,6 +801,20 @@ body
       background: #fff
       border-radius: 7px
       flex: 3
+      .iconSelectMap
+        flex-direction: row
+        width: auto
+        flex: 1
+        padding: 0
+        gap: 10px
+        padding: 15px 12px
+        right: 0
+        margin: 0 auto
+        bottom: 105px
+        max-width: 200px
+        position: absolute
+        .map-icon
+          padding: 0
       div
         width: calc(1/3*100%)
         flex: calc(1/3*100%)
@@ -844,7 +989,7 @@ body
     width: auto
     padding: 15px
     bottom: 120px
-    right: -110px
+    right: 0px
     border-radius: 12px
     background: #fff
     .layer_select

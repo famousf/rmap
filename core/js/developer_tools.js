@@ -1,4 +1,5 @@
 let ACTIONBAR_TOGGLE
+let SPECIAL_TOGGLE
 let CURRENT_DEV_POS
 let selfMarker = null
 // Drwaing globals
@@ -32,19 +33,79 @@ document.getElementById("confirmChanges").addEventListener('click', (e) => {
         });
       }
 
-      const cl = [COMPLETED, segmentsTotal,measure, ACTIONBAR_TOGGLE];
+      // Special workaround for small lines
 
-      let compiledList = JSON.parse(
-        localStorage.getItem('compiledListDev') || '[]'
-      );
+      //const cl = [COMPLETED, segmentsTotal,measure, ACTIONBAR_TOGGLE];
 
-      compiledList.push(cl);
+      console.log(COMPLETED)
+      // Get localstorage first,
+      // if theres a key for pickblock, push it into that
+      // else, create a new one
+      let storage = JSON.parse(localStorage.getItem('klientSelect'))
+      let arr = []
+      switch (ACTIONBAR_TOGGLE) {
+          case "pickIcon":
+            arr = Object.values(storage.data_warning)
+            // Looop completed to add all new items
+            console.log(COMPLETED)
+            COMPLETED.forEach((item) => {
+              console.log(item)
+                arr.push(item)
+            });
+            storage.data_warning = arr
+            localStorage.setItem('klientSelect', JSON.stringify(storage))
+            break
+          case "pickLine":
+            let lines = storage.data_lines ?? {};
+            nextKey = Object.keys(lines).length;
+            lines[nextKey] = {
+                type: SPECIAL_TOGGLE === 'small' ? 'small' : 'big',
+                coords: COMPLETED,
+                work_type: "both"
+            };
+            storage.data_lines = lines;
+            localStorage.setItem("klientSelect", JSON.stringify(storage));
+            break
+          case "pickBlock":
+            console.log(COMPLETED)
+            let blocks = storage.data_blocks ?? {}
+            nextKey = Object.keys(blocks).length
+            blocks[nextKey] = {
+              work_type: "both",
+              coords: COMPLETED
+            }
+            storage.data_blocks = blocks
+            localStorage.setItem('klientSelect', JSON.stringify(storage))
+            break
+      }
 
-      localStorage.setItem(
-        'compiledListDev',
-        JSON.stringify(compiledList)
-      );
 
+      // get storage again, find it in the database, and just replace it with the new one
+
+      updateMapsDatabase(storage).then(d => {
+          console.log('')
+          klient = storage.desc
+          target = d[0].data.mariestad.compounds
+          const key = Object.entries(target).find(
+            ([key, value]) => value.desc === klient
+          )?.[0]
+
+          d[0].data.mariestad.compounds[key] = storage
+          console.log("pre: ", d)
+
+
+          upsertMapsDb(d[0].data).then(ret => {
+            if (ret){
+              console.log(d, ret)
+              console.log("Updated!!")
+            }
+          })
+        })
+
+
+
+
+      location.reload()
 
 
       clearPreviousData()
@@ -58,6 +119,39 @@ document.getElementById("confirmChanges").addEventListener('click', (e) => {
 
 
 })
+const upsertMapsDb = async (target) => {
+  console.log('Target:', target);
+
+  const { data, error } = await client
+    .from('maps')
+    .update({ data: target })
+    .eq('org_number', 550)
+    .select('org_number, data');
+
+  console.log('UPDATE RESULT:', { data, error });
+
+  if (error) {
+    console.error('Update error:', error);
+    return false;
+  }
+
+  const { data: check, error: checkError } = await client
+    .from('maps')
+    .select('org_number, data')
+    .eq('org_number', 550);
+
+  console.log('DATABASE CHECK:', { check, checkError });
+
+  return true;
+};
+const updateMapsDatabase = async (storage) => {
+  const {data, error} = await client
+    .from('maps')
+    .select('*')
+    .eq('org_number', 550)
+
+    if (data) return data
+}
 document.getElementById("browseArea").addEventListener('click', async () => {
 
     const populate = await populateClientArea()
@@ -102,12 +196,14 @@ const populateClientArea = async () => {
     return ''
 }
 const updateOperationHub = () => {
-  ls = JSON.parse(localStorage.getItem('compiledListDev'))
-  if (ls) {
-
-      let wrapper = document.querySelector('.operationHub').querySelector('.entries-wrapper')
-      console.log(wrapper)
-
+  const storage = JSON.parse(localStorage.getItem('compiledListDev'))
+  const parent = document.querySelector('.json_format')
+  if (storage) {
+      let html = `<pre><code>${JSON.stringify(storage, null, 2)}</code></pre>`
+    parent.innerHTML = ''
+    parent.insertAdjacentHTML('beforeend', html)
+  } else {
+    parent.innerHTML = ''
   }
 }
 
@@ -138,6 +234,13 @@ const updateSelectedClient = (compound) => {
   let coords = ls.object_perimiter
   map.setView(getCenter(coords), 17)
 
+  // Temporarly remove object_perimiter
+  let areaNames = document.querySelectorAll('.circle-text')
+  areaNames.forEach((item) => {
+    item.classList.add('hide')
+  });
+
+
 
 }
 const updatePreviousLine = () => {
@@ -166,6 +269,17 @@ const createOperationHub = () => {
   }
 
 }
+
+const updateCurrentKlientSelected = () => {
+  if (localStorage.getItem('klientSelect')) {
+    klient = JSON.parse(localStorage.getItem('klientSelect'))
+    if (klient.desc.length > 0) {
+      document.querySelector('.side-button').innerHTML = `<h4><span>Vald kund</span>${klient.desc}</h4>`
+      document.querySelector('.browseArea-picker')?.remove()
+    }
+
+  }
+}
   /* */
 const devMap_drawUI = () => {
     /*
@@ -179,22 +293,88 @@ const devMap_drawUI = () => {
 
       - Show what of the 3 is currently toggled (dont let user do anything without it)
     */
-
+  updateOperationHub()
+  updateCurrentKlientSelected()
   document.addEventListener('click', (e) => {
       const toggle = e.target.closest('.actionbar_toggle_item');
-      if (!toggle) return;
+      if (toggle) {
+        // Remove current toggle
+        document.querySelector('.ab_toggled')?.classList.remove('ab_toggled');
 
-      // Remove current toggle
-      document.querySelector('.ab_toggled')?.classList.remove('ab_toggled');
+        // Add new toggle
+        toggle.classList.add('ab_toggled');
 
-      // Add new toggle
-      toggle.classList.add('ab_toggled');
+        if (toggle.id == "pickIcon") {
+            document.querySelector('.iconSelectMap').classList.remove('hide')
+        } else {
+            document.querySelector('.iconSelectMap').classList.add('hide')
+        }
 
-      ACTIONBAR_TOGGLE = toggle.id;
 
-      // Toggle work-type
-      util.start(toggle.dataset.type)
-      console.log(ACTIONBAR_TOGGLE)
+
+
+        ACTIONBAR_TOGGLE = toggle.id;
+        SPECIAL_TOGGLE = toggle.dataset.spec
+
+        // Toggle work-type
+        util.start(toggle.dataset.type)
+      }
+
+      const closeBtn = e.target.closest('.close-btn')
+      if (closeBtn) {
+          if (closeBtn.classList.contains('up')) {
+              // Push it down
+              closeBtn.classList.remove('up')
+              document.querySelector('.json_format').classList.remove('up')
+          } else {
+              // Push it up
+              document.querySelector('.json_format').classList.add('up')
+              closeBtn.classList.add('up')
+          }
+      }
+
+
+      const showhide = e.target.closest('.item')
+      if (showhide) {
+        switch (showhide.id) {
+          case "lines":
+            if (showhide.classList.contains('on')) {
+              // Disable lines
+
+              map.removeLayer(layerGroups.lines)
+              showhide.classList.remove('on')
+            } else {
+              map.addLayer(layerGroups.lines)
+              showhide.classList.add('on')
+            }
+            break
+          case "blocks":
+            if (showhide.classList.contains('on')) {
+              // Disable lines
+
+              map.removeLayer(layerGroups.blocks)
+              showhide.classList.remove('on')
+            } else {
+              map.addLayer(layerGroups.blocks)
+              showhide.classList.add('on')
+            }
+            break
+          case "icons":
+            if (showhide.classList.contains('on')) {
+              // Disable lines
+
+              map.removeLayer(layerGroups.warnings)
+              showhide.classList.remove('on')
+            } else {
+              map.addLayer(layerGroups.warnings)
+              showhide.classList.add('on')
+            }
+            break
+
+
+        }
+      }
+
   });
 
   // Hide useless stuff
@@ -830,7 +1010,6 @@ const util = {
             () => {
 
                 if (!DRAWING) return;
-
                 this.createIcon(
                     iconElement.dataset.icon,
                     map.getCenter(),
@@ -1077,7 +1256,7 @@ const util = {
 
         if (completed) {
 
-            this.updateCompletedIcons();
+            this.updateCompletedIcons()
 
         }
 
@@ -1129,22 +1308,17 @@ const util = {
                     const position =
                         marker.getLatLng();
 
-
                     return {
 
-                        icon:
-                            marker.iconType,
-
-                        lat:
-                            position.lat,
-
-                        lng:
-                            position.lng
+                        type: marker.iconType,
+                        coords: [position.lat, position.lng]
 
                     };
 
                 }
             );
+
+
 
     };
 
@@ -1163,7 +1337,8 @@ const util = {
 
         clearPreviousData();
         this.stopHandlers();
-
+        localStorage.removeItem('compiledListDev')
+        updateOperationHub()
         this.mode = null;
     }
 };

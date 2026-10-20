@@ -344,6 +344,20 @@ body {
   background: #171c21;
   overflow: hidden;
 }
+body .hide {
+  display: none !important;
+}
+body .landingPaged {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: none;
+  z-index: 999;
+  background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.7));
+  backdrop-filter: blur(4px);
+}
 body * {
   font-family: "Afacad Flux";
 }
@@ -501,6 +515,15 @@ body .iconSelectMap {
   display: flex;
   flex-direction: row;
   gap: 16px;
+  position: absolute;
+  z-index: 999;
+  padding: 15px 27px 27px 15px;
+  border-radius: 6px;
+  bottom: 140px;
+  left: 42%;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(251, 77, 78, 0.3);
+  backdrop-filter: blur(10px);
 }
 body #userGPStrackDot .small_crosshair {
   display: none;
@@ -726,10 +749,31 @@ body .operationHub .content {
   background: rgba(0, 0, 0, 0.2);
   backdrop-filter: blur(100px);
 }
+body .operationHub .content .entries-wrapper .line svg {
+  color: #ff6a6b;
+}
+body .operationHub .content .entries-wrapper .block svg {
+  color: #3382f0;
+}
+body .operationHub .content .entries-wrapper .op-line {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 12px;
+  font-weight: 400;
+  padding: 0px;
+  cursor: pointer;
+}
+body .operationHub .content .entries-wrapper .op-line span {
+  position: relative;
+  top: -4px;
+  left: 2px;
+}
+body .operationHub .content .entries-wrapper .op-line svg {
+  font-size: 1.3em;
+}
 body .actionbar {
   position: absolute;
   bottom: 20px;
-  max-width: 900px;
+  max-width: 1900px;
   width: 95%;
   margin: 0 auto;
   z-index: 800;
@@ -738,6 +782,118 @@ body .actionbar {
   left: 0;
   right: 0;
   margin: 0 auto;
+  flex-wrap: wrap;
+}
+body .actionbar .show-hide {
+  flex: 1 1 100%;
+  justify-content: flex-end;
+  align-items: flex-end;
+  padding: 0;
+  max-width: 100%;
+}
+body .actionbar .show-hide .savedActions {
+  padding: 0;
+  align-items: flex-end;
+  max-width: 70%;
+}
+body .actionbar .show-hide .savedActions .close-btn.up svg {
+  transform: rotate(0deg);
+}
+body .actionbar .show-hide .savedActions .close-btn {
+  background: rgba(255, 255, 255, 0.15);
+  padding: 6px 6px 4px 6px;
+  border-radius: 3px;
+  text-align: center;
+  margin-bottom: 3px;
+  backdrop-filter: blur(100px);
+}
+body .actionbar .show-hide .savedActions .close-btn svg {
+  transform: rotate(180deg);
+  font-size: 12px;
+  color: #fb4d4e;
+}
+body .actionbar .show-hide .savedActions .json_format.up {
+  display: block;
+  width: 40%;
+}
+body .actionbar .show-hide .savedActions .json_format.up::after {
+  display: none;
+}
+body .actionbar .show-hide .savedActions .json_format.up pre {
+  display: block;
+}
+body .actionbar .show-hide .savedActions .json_format {
+  display: block;
+  width: 30%;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(140px);
+  border-radius: 6px;
+  box-sizing: border-box;
+  padding: 5px;
+}
+body .actionbar .show-hide .savedActions .json_format::after {
+  display: block;
+  width: 100%;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 14px;
+  font-weight: 600;
+  content: "JSON";
+}
+body .actionbar .show-hide .savedActions .json_format pre {
+  display: none;
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  max-height: 300px;
+  overflow: scroll;
+  padding: 5px;
+  white-space: pre;
+}
+body .actionbar .show-hide .savedActions .json_format pre::-webkit-scrollbar {
+  width: 3px;
+  height: 3px;
+}
+body .actionbar .show-hide .savedActions .json_format pre::-webkit-scrollbar-track {
+  background: transparent;
+}
+body .actionbar .show-hide .savedActions .json_format pre::-webkit-scrollbar-thumb {
+  background: #fb4d4e;
+}
+body .actionbar .show-hide .savedActions .json_format pre code {
+  font-family: monospace;
+}
+body .actionbar .show-hide .item-wrap {
+  display: flex;
+  flex-direction: row;
+  width: 30%;
+  max-width: 30%;
+  padding: 0;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  overflow: hidden;
+}
+body .actionbar .show-hide .item-wrap div {
+  cursor: pointer;
+}
+body .actionbar .show-hide .item-wrap div span {
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.55);
+}
+body .actionbar .show-hide .item-wrap div span::after {
+  content: "Döljs";
+  font-weight: 300;
+  display: block;
+  text-align: center;
+}
+body .actionbar .show-hide .item-wrap div.on {
+  background: #fb4d4e;
+}
+body .actionbar .show-hide .item-wrap div.on span {
+  color: white;
+}
+body .actionbar .show-hide .item-wrap div.on span::after {
+  content: "Visas";
 }
 body .actionbar .logbox {
   display: none;
@@ -777,10 +933,9 @@ body .actionbar .actionbutton h4 span {
 body .actionbar div {
   justify-content: center;
   align-items: center;
-  flex-wrap: nowrap;
   display: flex;
-  flex: 1;
   padding: 10px;
+  flex: 1;
 }
 body .actionbar div .ab_toggled {
   background: #fb4d4e;
@@ -808,6 +963,22 @@ body .actionbar .left {
   background: #fff;
   border-radius: 7px;
   flex: 3;
+}
+body .actionbar .left .iconSelectMap {
+  flex-direction: row;
+  width: auto;
+  flex: 1;
+  padding: 0;
+  gap: 10px;
+  padding: 15px 12px;
+  right: 0;
+  margin: 0 auto;
+  bottom: 105px;
+  max-width: 200px;
+  position: absolute;
+}
+body .actionbar .left .iconSelectMap .map-icon {
+  padding: 0;
 }
 body .actionbar .left div {
   width: 33.3333333333%;
@@ -1013,7 +1184,7 @@ body .fms_layers.dev {
   width: auto;
   padding: 15px;
   bottom: 120px;
-  right: -110px;
+  right: 0px;
   border-radius: 12px;
   background: #fff;
 }

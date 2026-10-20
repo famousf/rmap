@@ -67,7 +67,7 @@ const tileLayers = () => {
     const jawg_Matrix = L.tileLayer('https://tile.jawg.io/jawg-matrix/{z}/{x}/{y}{r}.png?access-token={accessToken}', {
     	attribution: '<a href="https://jawg.io" title="Tiles Courtesy of Jawg Maps" target="_blank">&copy; <b>Jawg</b>Maps</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     	minZoom: 0,
-    	maxZoom: 22,
+    	maxZoom: 24,
     	accessToken: 'rpjouPxUJLrvkOIc8BcXcrf6FRCRPf0sZTVGOZRgPiuXFtC2cVp6VTCfmS9Tgqky'
     });
     const esri_WorldImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
@@ -615,6 +615,106 @@ const drawLines = () => {
 
   return layerGroups.lines;
 
+}
+
+const drawLines_dev = () => {
+  const LINE_STYLE = {
+    big: {
+      color: "#df2e20",
+      weight: 7,
+      opacity: 0.9
+    },
+    small: {
+      color: "#fe9700",
+      weight: 5,
+      opacity: 0.85
+    },
+    small_2: {
+      color: "#fe9700",
+      weight: 5,
+      opacity: 0.85
+    }
+  };
+
+  // Create the layer group only once
+  if (!layerGroups.lines) {
+    layerGroups.lines = L.layerGroup();
+  }
+
+  const group = layerGroups.lines;
+  const zoom = map.getZoom();
+  const isHidden = zoom < 16;
+
+  // Clear existing layers before redrawing
+  group.clearLayers();
+  lineReg.clear();
+
+  for (const item of MAPS_DATA) {
+    const key = Object.keys(item)[0];
+    const compounds = item[key]?.compounds;
+
+
+    if (!compounds) continue;
+
+    for (const compKey in compounds) {
+      const compound = compounds[compKey];
+      const blocks = compound?.data_lines;
+      if (!blocks) continue;
+
+      for (const blockKey in blocks) {
+        const block = blocks[blockKey];
+
+        if (!block.coords) continue;
+
+        const styleBase =
+          LINE_STYLE[block.type] || LINE_STYLE.small;
+
+        const id =
+          `${compKey}-data_lines-${blockKey}-${block.type}`;
+        const core = L.polyline(block.coords, {
+          ...styleBase,
+          lineCap: "round",
+          lineJoin: "round",
+          smoothFactor: 1.2,
+          interactive: true,
+          className: isHidden
+            ? "fms-line fms-hidden fms-line-main"
+            : "fms-line fms-line-main"
+        });
+
+        core.addTo(group);
+
+        const bundle = {
+          id,
+          type: block.type,
+          work_type: block.work_type,
+          coords: block.coords,
+          core
+        };
+
+        core._meta = bundle;
+
+        lineReg.set(id, {
+          id,
+          meta: {
+            area: compound.desc,
+            type: "line"
+          },
+          core
+        });
+
+        if (
+          GLOBAL_PARAMETER === "?m=editor" ||
+          GLOBAL_PARAMETER === "?dev=map_dev"
+        ) {
+          core.bindPopup(`data_line: ${blockKey}`);
+        }
+      }
+    }
+  }
+
+  // Do not automatically add the group to the map.
+  return group;
 };
 
 
@@ -776,6 +876,88 @@ const drawBlocks = () => {
 
   return layerGroups.blocks;
 };
+
+const drawBlocks_dev = () => {
+  // Create the layer group only once
+  if (!layerGroups.blocks) {
+    layerGroups.blocks = L.layerGroup();
+  }
+
+  const group = layerGroups.blocks;
+
+  const zoom = map.getZoom();
+  const isHidden = zoom < 16;
+
+  // Initialize registry if necessary
+  if (!window.blockReg) {
+    window.blockReg = new Map();
+  }
+
+  // Clear existing layers before redrawing
+  group.clearLayers();
+  window.blockReg.clear();
+
+  for (const item of MAPS_DATA) {
+    const key = Object.keys(item)[0];
+    const compounds = item[key]?.compounds;
+
+    if (!compounds) continue;
+
+    for (const compKey in compounds) {
+      const compound = compounds[compKey];
+      const blocks = compound?.data_blocks;
+
+      if (!blocks) continue;
+
+      for (const blockKey in blocks) {
+        const block = blocks[blockKey];
+        const coords = block.coords;
+
+        if (!coords) continue;
+
+        const id = `${compKey}-data_blocks-${blockKey}`;
+
+        const polygon = L.polygon(coords, {
+          fillOpacity: 0.35,
+          opacity: 0.9,
+          weight: 2,
+          className: isHidden
+            ? "fms-blocks fms-hidden"
+            : "fms-blocks"
+        });
+
+        polygon.addTo(group);
+
+        // Metadata
+        polygon._meta = {
+          id,
+          type: "blocks",
+          area: compound.desc,
+          coords
+        };
+
+        // Registry
+        window.blockReg.set(id, {
+          id,
+          polygon,
+          meta: polygon._meta
+        });
+
+        // Editor debug
+        if (
+          GLOBAL_PARAMETER === "?m=editor" ||
+          GLOBAL_PARAMETER === "?dev=map_dev"
+        ) {
+          polygon.bindPopup(`data_blocks: ${blockKey}`);
+        }
+      }
+    }
+  }
+
+  // Do not automatically add the group to the map
+  return group;
+};
+
 const drawHazardBlocks = () => {
 
   // Example coordinates for a polygon (5-6 points)
@@ -867,6 +1049,99 @@ const drawWarnings = () => {
 
 
 };
+
+const drawWarnings_dev = () => {
+  const MIN_ZOOM_FOR_WARNINGS = 16;
+
+  // Create the layer group only once
+  if (!layerGroups.warnings) {
+    layerGroups.warnings = L.layerGroup();
+  }
+
+  const group = layerGroups.warnings;
+  const isHidden = map.getZoom() < MIN_ZOOM_FOR_WARNINGS;
+
+  // Clear existing markers before redrawing
+  group.clearLayers();
+
+  MAPS_DATA.forEach((item) => {
+    const key = Object.keys(item)[0];
+    const compounds = item[key]?.compounds;
+
+    if (!compounds) return;
+
+    Object.entries(compounds).forEach(([compKey, compound]) => {
+      const blocks = compound?.data_warning;
+
+      if (!blocks) return;
+
+      Object.entries(blocks).forEach(([blockKey, block], i) => {
+        const coords = block.coords;
+
+        // Validate coordinates
+        if (
+          !coords ||
+          (Array.isArray(coords) &&
+            (coords[0] == null || coords[1] == null)) ||
+          (!Array.isArray(coords) &&
+            (coords.lat == null || coords.lng == null))
+        ) {
+          console.warn("Invalid coordinates for warning:", block);
+          return;
+        }
+
+        const typeIndex = block.type;
+        const warningConfig = warningType[typeIndex];
+
+        if (!warningConfig) {
+          console.warn("Unknown warning type:", typeIndex);
+          return;
+        }
+
+        const custClass = isHidden ? "fms-hidden" : "";
+        const sessionClassName =
+          `${compound.desc.split(" ").join("")}-stairs`;
+
+        const icon = L.divIcon({
+          html: warningConfig.icon,
+          iconSize: [24, 24],
+          className:
+            `fms-warning-type fms-${typeIndex} ` +
+            `${sessionClassName} ${custClass}`,
+          popupAnchor: [0, -12]
+        });
+
+        const marker = L.marker(coords, { icon });
+
+        const id = `${compKey}-data_warning-${blockKey}-${typeIndex}`;
+
+        const popupText =
+          GLOBAL_PARAMETER === "?m=editor" || GLOBAL_PARAMETER === "?dev=map_dev"
+            ? `${warningConfig.text} I listan: #${i}`
+            : warningConfig.text;
+
+        marker.bindPopup(popupText);
+
+        // Metadata
+        marker._meta = {
+          id,
+          type: "warning",
+          warningType: typeIndex,
+          area: compound.desc,
+          coords
+        };
+
+        // Add marker to the layer group, not directly to the map
+        marker.addTo(group);
+      });
+    });
+  });
+
+  // Do not automatically add the group to the map
+  return group;
+};
+
+
 
 const drawWarnings_opt = () => {
   // Ensure map container exists
@@ -2020,8 +2295,13 @@ const initMap = () => {
     drawWarnings()                // Draws fontawesome icons as warnings or 'heads-up'
     drawCompounds()               // Draws the "blocks" with the description
   } else {
-    //drawPerimiter()               // Draws resident perimiter
-
+    drawPerimiter()               // Draws resident perimiter
+    let lines = drawLines_dev()
+    let blocks = drawBlocks_dev()
+    let warnings = drawWarnings_dev()
+    layerGroups.warnings.addTo(map)
+    layerGroups.blocks.addTo(map)
+    layerGroups.lines.addTo(map)
   }
 
 
