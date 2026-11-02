@@ -231,43 +231,45 @@ const createStatusDOM = (coords, areaName, pureName, status, update) => {
     //console.log("Update UI for:", areaName)
     children.forEach((item, i) => {
 
+        if (!item.classList.contains('clientText')) {
+          // NEW UPDATE UI
+          let wrap = item.querySelector('span') // Span ELEMENT containing vägar/handskottning etc
+          console.log(item, wrap)
+          let name = wrap.innerText.toLowerCase() // the spans text value
+          console.log(areaName, status, status[name])
+          let type = status[name]
+          let max = status[name].max
+          let current = status[name].current
+
+          let currentStatus = wrap.parentElement.classList
 
 
-        // NEW UPDATE UI
-        let wrap = item.querySelector('span') // Span ELEMENT containing vägar/handskottning etc
-        let name = wrap.innerText.toLowerCase() // the spans text value
+          totalMax += status[name].max
+          totalCur += status[name].current
+        //console.log(currentStatus)
 
-        let type = status[name]
-        let max = status[name].max
-        let current = status[name].current
+          if (current == max) {
+              if (!item.classList.contains('completed')) {
 
-        let currentStatus = wrap.parentElement.classList
+                  item.classList.remove('started')
+                  item.classList.add('completed')
+                  //console.log("Update  to completed", item.id)
+                  // Set areaname to completed
+              }
+          }
+
+          if (current == 1) {
+              if (!item.classList.contains('started')) {
+
+                  item.classList.add('started')
+                  item.classList.remove(name.replace(/ /g, ''))
+                  //console.log("Update to started", item.id)
 
 
-        totalMax += status[name].max
-        totalCur += status[name].current
-      //console.log(currentStatus)
-
-        if (current == max) {
-            if (!item.classList.contains('completed')) {
-
-                item.classList.remove('started')
-                item.classList.add('completed')
-                //console.log("Update  to completed", item.id)
-                // Set areaname to completed
-            }
+              }
+          }
         }
 
-        if (current == 1) {
-            if (!item.classList.contains('started')) {
-
-                item.classList.add('started')
-                item.classList.remove(name.replace(/ /g, ''))
-                //console.log("Update to started", item.id)
-
-
-            }
-        }
 
     });
 
@@ -364,7 +366,7 @@ const createStatusDOM = (coords, areaName, pureName, status, update) => {
     if (status.clientText) {
         status.clientText.forEach((item, i) => {
             clientText += `
-              <div class="clientText ${item.type}">${imagePick[item.type]} <span>${item.text}</span></div>
+              <div class="clientText ${item.type}">${imagePick[item.type]} <p>${item.text}</p></div>
             `
         });
 
