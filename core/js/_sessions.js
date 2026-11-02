@@ -14,28 +14,15 @@ document.getElementsByClassName('bmb_flex')[0].classList.add('show')
 map.on('zoomend', () => {
   console.log(map.getZoom())
   console.log(layerGroups)
-  if (map.getZoom() > 16) {
-    // 16 - 30 = zoomar in
 
-
+  if (map.getZoom() > 15) {
     // Show icons etc
-    document.querySelectorAll('.fms-statusDiv').forEach((i) => { i.classList.remove('fms-area-transp') });
-    document.querySelectorAll('.fms-warning-type').forEach((i) => { i.classList.remove('fms-hidden') });
-
-
-
-
+    document.querySelectorAll('.fms-statusDiv').forEach((i) => { i.classList.remove('fms-area-transp') })
   }
-
-  //
   else {
-    // 1 - 15
-
-    document.querySelectorAll('.fms-statusDiv').forEach((i) => { i.classList.add('fms-area-transp') });
-    document.querySelectorAll('.fms-warning-type').forEach((i) => { i.classList.add('fms-hidden') });
-
-
+    document.querySelectorAll('.fms-statusDiv').forEach((i) => { i.classList.add('fms-area-transp') })
   }
+
 })
 /* Speed calculations */
 const speedCalc = () => {
@@ -195,7 +182,6 @@ const updateDbCurrent = (e) => {
   console.log("updateDbCurrent")
   // Visual changes for the button itself
   e.classList.add('async-loader')
-
   e = e.querySelector('button')
   let type = e.id
   let where = e.parentNode.id
@@ -217,7 +203,7 @@ const updateDbCurrent = (e) => {
           data[0].report[username][where][type][workType] = Math.floor(Date.now() / 1000)
 
 
-          updateNewData(data[0].data, data[0].report)
+          updateNewData(data[0].data, data[0].report, e) // e = button thats been pressed
           // Cancel button animation
       }
 
@@ -309,9 +295,10 @@ const createStatusDOM = (coords, areaName, pureName, status, update) => {
     // Create new drawing of data
     let max = 0
     let current = 0
+    let setAnchor = [150, 0]
     let buttons = ""
     Object.entries(status).forEach((item, i) => {
-      if (item[0] != "statusHolder") {
+      if (item[0] != "statusHolder" && item[0] != "statusAnchor" && item[0] != "clientText") {
 
         max += item[1].max
         current += item[1].current
@@ -359,14 +346,40 @@ const createStatusDOM = (coords, areaName, pureName, status, update) => {
 
     }
 
+    let imagePick = {
+      "warning": `<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+  <path d="M0 0h24v24H0z" fill="none" />
+  <g fill="none">
+    <path fill="currentColor" d="M9.14 3.59C10.5 2.22 11.16 1.53 12 1.53s1.51.69 2.86 2.06l2.75 2.8l2.8 2.75c1.37 1.35 2.06 2.02 2.06 2.86s-.69 1.51-2.06 2.86l-2.8 2.75l-2.75 2.8c-1.35 1.37-2.02 2.06-2.86 2.06s-1.51-.69-2.86-2.06l-2.75-2.8l-2.8-2.75C2.22 13.5 1.53 12.84 1.53 12s.69-1.51 2.06-2.86l2.8-2.75z" opacity=".2" />
+    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7.71 4.8C9.73 2.74 10.74 1.7 12 1.7s2.27 1.04 4.29 3.1l1.44 1.47l1.47 1.44c2.06 2.02 3.1 3.03 3.1 4.29s-1.04 2.27-3.1 4.29l-1.47 1.44l-1.45 1.47c-2.01 2.06-3.02 3.1-4.28 3.1s-2.27-1.04-4.29-3.1l-1.44-1.47l-1.47-1.44C2.74 14.27 1.7 13.26 1.7 12s1.04-2.27 3.1-4.29l1.47-1.44zM12 6.94v5.6" />
+    <path fill="currentColor" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12.58 16.47a.58.58 0 1 1-1.16 0a.58.58 0 0 1 1.16 0" />
+  </g>
+</svg>`,
+      "headsup": `<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+<path d="M0 0h24v24H0z" fill="none" />
+<path fill="currentColor" fill-rule="evenodd" d="M12 1C5.925 1 1 5.925 1 12s4.925 11 11 11s11-4.925 11-11S18.075 1 12 1m-.5 5a1 1 0 1 0 0 2h.5a1 1 0 1 0 0-2zM10 10a1 1 0 1 0 0 2h1v3h-1a1 1 0 1 0 0 2h4a1 1 0 1 0 0-2h-1v-4a1 1 0 0 0-1-1z" clip-rule="evenodd" />
+</svg>`
+    }
+    let clientText = ''
+    if (status.clientText) {
+        status.clientText.forEach((item, i) => {
+            clientText += `
+              <div class="clientText ${item.type}">${imagePick[item.type]} <span>${item.text}</span></div>
+            `
+        });
+
+    }
+
+    let preAnchor = (status.statusAnchor) ? status.statusAnchor : [150, 0]
     const statusDiv = L.divIcon({
       className: `fms-statusDiv ${custClass}`,
       html: `<div class="fms-stChild obj-${areaName}">
               ${progressHtml}
               <h1 onclick="expandStatusElement(this)" class="${progressTrigger}">${pureName} ${(currentProgress < 100 && currentProgress > 0) ? ' | ' +currentProgress + '%' : ''}</h1>
               ${buttons}
+              ${clientText}
             </div>`,
-      iconAnchor: [150, 0]
+      iconAnchor: preAnchor
     })
 
     L.marker(coords, {icon:statusDiv}).addTo(map)
@@ -697,7 +710,7 @@ const calculateStats = () => {
             <div class="sc-content">
               <h1>Bra jobbat!</h1>
               <p>Alla moment verkar vara klarmarkerade!<br><strong>Ring dina kollegor för att säkerställa.</strong></p>
-              <img src="img/shak.gif" alt="">
+
               <button type="button" name="button" onclick="clearCompletedCheck(this)">Jag åker inte bara hem!</button>
             </div>
             <div class="sc-blur"></div>

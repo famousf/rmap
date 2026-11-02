@@ -257,11 +257,15 @@
     transform: translateX(46px);
   }
 }
+.circle-text.hidden {
+  display: none !important;
+}
+
 .circle-text span {
   color: #fff !important;
   text-align: center;
   background: rgba(251, 77, 78, 0.5);
-  backdrop-filter: blur(20px);
+  backdrop-filter: blur(50px);
   height: auto;
   width: auto;
   padding: 7px 12px;
@@ -344,6 +348,10 @@ body {
   background: #171c21;
   overflow: hidden;
 }
+body .fms-warning-type {
+  width: auto !important;
+  height: auto !important;
+}
 body .hide {
   display: none !important;
 }
@@ -363,8 +371,6 @@ body * {
 }
 body .map-icon, body .map-icon-instance {
   cursor: grab;
-  width: 24px;
-  height: 18px;
   text-align: center;
 }
 body .map-icon-instance[data-icon=snow] i {
@@ -1153,6 +1159,9 @@ body .fms_alarm .larm_wrap .larm_time span {
   font-weight: 400;
   color: rgba(0, 0, 0, 0.8);
 }
+body .fms_alarm .larm_wrap .larm_status {
+  cursor: pointer;
+}
 body .fms_alarm .larm_wrap .larm_status span {
   text-transform: capitalize;
   font-size: 15px;
@@ -1162,6 +1171,7 @@ body .fms_alarm .larm_wrap .larm_status span {
 body .fms_alarm .larm_wrap .larm_content {
   flex: 2;
   text-align: left;
+  cursor: pointer;
 }
 body .fms_alarm .larm_wrap .larm_content span {
   font-size: 14px;
@@ -2246,6 +2256,50 @@ body .fms-statusDiv span#progression {
   margin-left: 0;
   background: rgba(23, 28, 33, 0.85);
 }
+body .fms-statusDiv div div.clientText.headsup {
+  border: 2px solid rgba(254, 163, 28, 0.25);
+  background: rgba(66, 49, 24, 0.8);
+}
+body .fms-statusDiv div div.clientText.headsup svg {
+  color: rgb(254, 163, 28);
+  background: #423118;
+}
+body .fms-statusDiv div div.clientText.warning {
+  background: rgba(76, 42, 39, 0.8);
+  border: 2px solid rgba(251, 77, 78, 0.2);
+}
+body .fms-statusDiv div div.clientText.warning svg {
+  color: #fb4d4e;
+  background: rgba(76, 42, 39, 0.8509803922);
+}
+body .fms-statusDiv div div.clientText {
+  padding: 10px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  position: relative;
+}
+body .fms-statusDiv div div.clientText svg {
+  position: absolute;
+  font-size: 1.3em;
+  padding: 1px;
+  padding-top: 2px;
+  left: -15px;
+  top: 7px;
+  border: 2px solid rgba(0, 0, 0, 0.15);
+  border-radius: 50%;
+  text-align: center;
+  align-items: center;
+}
+body .fms-statusDiv div div.clientText svg path {
+  transform: scale(0.95);
+}
+body .fms-statusDiv div div.clientText span {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 13px;
+  text-transform: none;
+  text-align: left;
+}
 body .fms-statusDiv div div.started {
   background: rgba(236, 208, 29, 0.85);
   border: 2px solid rgba(23, 28, 33, 0.15);
@@ -2267,6 +2321,8 @@ body .fms-statusDiv div div.visible {
 }
 body .fms-statusDiv div div.async-loader {
   position: relative;
+  pointer-events: none;
+  cursor: not-allowed;
 }
 body .fms-statusDiv div div.async-loader span {
   opacity: 0;
@@ -2412,6 +2468,16 @@ body .leaflet-popup-content-wrapper {
   border-radius: 6px;
   font-weight: 500;
   font-size: 0.9em;
+}
+body .leaflet-popup-content button {
+  border: 0;
+  background: #fb4d4e;
+  border-radius: 3px;
+  width: 100%;
+  margin-top: 5px;
+  text-align: center;
+  padding: 3px 0;
+  font-weight: 600;
 }
 body .leaflet-popup-content h1 {
   font-size: 1.4em;
@@ -3139,7 +3205,7 @@ body .auth-screen .tos {
 }
 body .auth-screen .tos h2 {
   display: block;
-  padding: 5%;
+  padding: 5% 5% 0 5%;
   font-size: 2em;
   margin: 0;
 }

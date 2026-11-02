@@ -1,7 +1,7 @@
 {
-  "name": "Ludwigs Snöapp",
-  "short_name": "Snö",
-  "description": "Digital routing and planning used in snowprevention",
+  "name": "Snödrift",
+  "short_name": "Snödrift",
+  "description": "Digitala snörutter och planering",
   "start_url": "https://riksbyggen.netle.se/index.php",
   "scope": "https://riksbyggen.netle.se/",
   "display": "standalone",

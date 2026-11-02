@@ -189,12 +189,14 @@ $lightRed: rgba(147,67,67,1)
     transform: translateX(0)
   to
     transform: translateX(46px)
+.circle-text.hidden
+  display: none!important
 .circle-text
   span
     color: #fff!important
     text-align: center
     background: rgba($red, 0.5)
-    backdrop-filter: blur(20px)
+    backdrop-filter: blur(50px)
     height: auto
     width: auto
     padding: 7px 12px
@@ -259,6 +261,9 @@ body
   margin: 0
   background: #171c21
   overflow: hidden
+  .fms-warning-type
+    width: auto!important
+    height: auto!Important
   .hide
     display: none!Important
   .landingPaged
@@ -275,8 +280,6 @@ body
     font-family: 'Afacad Flux'
   .map-icon, .map-icon-instance
     cursor: grab
-    width: 24px
-    height: 18px
     text-align: center
   .map-icon-instance[data-icon="snow"]
     i
@@ -964,6 +967,7 @@ body
           font-weight: 400
           color: rgba(#000, 0.8)
       .larm_status
+        cursor: pointer
         span
           text-transform: capitalize
           font-size: 15px
@@ -972,6 +976,7 @@ body
       .larm_content
         flex: 2
         text-align: left
+        cursor: pointer
         span
           font-size: 14px
           text-transform: capitalize
@@ -1906,12 +1911,49 @@ body
     z-index: 999!important
     display: flex
     align-items: center
+
     span#progression
       display: inline
       justify-content: center
       margin-left: 0
       background: rgba(#171c21, 0.85)
     div
+      div.clientText.headsup
+        border: 2px solid rgba(254, 163, 28, 0.25)
+        background: rgba(#423118, 0.8)
+        svg
+          color: rgba(254, 163, 28, 1)
+          background: #423118
+      div.clientText.warning
+        background: rgba(#4c2a27d9, 0.8)
+        border: 2px solid rgba($red, 0.2)
+        svg
+          color: $red
+          background: #4c2a27d9
+      div.clientText
+        padding: 10px
+        color: #fff
+        font-size: 13px
+        font-weight: 600
+        position: relative
+        svg
+          position: absolute
+          font-size: 1.3em
+          padding: 1px
+          padding-top: 2px
+          left: -15px
+          top: 7px
+          border: 2px solid rgba(#000, 0.15)
+          border-radius: 50%
+          text-align: center
+          align-items: center
+          path
+            transform: scale(0.95)
+        span
+          color: rgba(#fff, 0.9)
+          font-size: 13px
+          text-transform: none
+          text-align: left
       div.started
         background: rgba(#ecd01d, .85)
         border: 2px solid rgba(#171c21, .15)
@@ -1928,6 +1970,8 @@ body
         align-items: center
       div.async-loader
         position: relative
+        pointer-events: none
+        cursor: not-allowed
         span
           opacity: 0
         &::after
@@ -2055,6 +2099,15 @@ body
     font-weight: 500
     font-size: .9em
   .leaflet-popup-content
+    button
+      border: 0
+      background: $red
+      border-radius: 3px
+      width: 100%
+      margin-top: 5px
+      text-align: center
+      padding: 3px 0
+      font-weight: 600
     h1
       font-size: 1.4em
       margin: 0
@@ -2687,7 +2740,7 @@ body
       display: none
       h2
         display: block
-        padding: 5%
+        padding: 5% 5% 0 5%
         font-size: 2em
         margin: 0
       .scrollable-tos

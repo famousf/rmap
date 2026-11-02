@@ -22,8 +22,17 @@ let ICON_MOUSEMOVE_HANDLER = null;
 let CLIENTDATA = []
 
 document.getElementById("confirmChanges").addEventListener('click', (e) => {
+
     // Complete an object / drwaing, sends it to the list
     if(typeof COMPLETED != 'undefined') {
+      // Start teh spinner
+
+      document.querySelector('#confirmChanges').innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+    <path d="M0 0h24v24H0z" fill="none" />
+    <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3c4.97 0 9 4.03 9 9">
+      <animateTransform attributeName="transform" dur="1.5s" repeatCount="indefinite" type="rotate" values="0 12 12;360 12 12" />
+    </path>
+    </svg><span>Sparar...</span>`
       const type = ACTIONBAR_TOGGLE === "pickBlock" ? "blocks" : ACTIONBAR_TOGGLE === "pickLine" ? "lines" : "icons"
       const measure = ACTIONBAR_TOGGLE === "pickBlock" ? "m³" : ACTIONBAR_TOGGLE === "pickLine" ? "m" : ""
       let segmentsTotal = 0
@@ -68,7 +77,7 @@ document.getElementById("confirmChanges").addEventListener('click', (e) => {
             break
           case "pickBlock":
             console.log(COMPLETED)
-            let blocks = storage.data_blocks ?? {}
+            let blocks = storage.data_blocks ?? {};
             nextKey = Object.keys(blocks).length
             blocks[nextKey] = {
               work_type: "both",
@@ -84,8 +93,8 @@ document.getElementById("confirmChanges").addEventListener('click', (e) => {
 
       updateMapsDatabase(storage).then(d => {
           console.log('')
-          klient = storage.desc
-          target = d[0].data.mariestad.compounds
+          klient = storage.desc // granaten
+          target = d[0].data.mariestad.compounds // 0 => desc:granaten, 1 => desc:bråten
           const key = Object.entries(target).find(
             ([key, value]) => value.desc === klient
           )?.[0]
@@ -98,6 +107,8 @@ document.getElementById("confirmChanges").addEventListener('click', (e) => {
             if (ret){
               console.log(d, ret)
               console.log("Updated!!")
+              localStorage.setItem('klientSelect', JSON.stringify(storage))
+              location.reload()
             }
           })
         })
@@ -105,7 +116,6 @@ document.getElementById("confirmChanges").addEventListener('click', (e) => {
 
 
 
-      location.reload()
 
 
       clearPreviousData()
@@ -119,6 +129,7 @@ document.getElementById("confirmChanges").addEventListener('click', (e) => {
 
 
 })
+
 const upsertMapsDb = async (target) => {
   console.log('Target:', target);
 
@@ -232,7 +243,7 @@ const updateSelectedClient = (compound) => {
   }
 
   let coords = ls.object_perimiter
-  map.setView(getCenter(coords), 17)
+  map.setView(getCenter(coords), 18)
 
   // Temporarly remove object_perimiter
   let areaNames = document.querySelectorAll('.circle-text')
@@ -383,7 +394,6 @@ const devMap_drawUI = () => {
 
   // Change cursor to thin crosshair
   document.body.classList.add('dev')
-
 }
 /* */
 const drawSignalAccuracy = (position) => {
@@ -485,8 +495,13 @@ const clearPreviousData = () => {
     DRAWING = true;
 }
 //selfPosition()
-devMap_drawUI()
 
+map.on('zoomend', () => {
+  updateAreaText()
+
+})
+
+devMap_drawUI()
 
 
 
@@ -1212,9 +1227,9 @@ const util = {
                     </div>
                 `,
 
-                iconSize: null,
+                iconSize: [24,24],
 
-                iconAnchor: null
+                iconAnchor: [12,12]
 
             });
 

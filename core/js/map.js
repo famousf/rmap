@@ -131,7 +131,18 @@ const tileLayers = () => {
     // Geolocation - Get the user's current location and place a marker
 
 }
+const updateAreaText = () => {
+  const z = map.getZoom()
 
+  document.querySelectorAll('.circle-text').forEach((item ) => {
+    item.classList.toggle('fms-hidden', z >= 16)
+  })
+
+  document.querySelectorAll('.fms-warning-type').forEach((item) => {
+    item.classList.toggle('fms-hidden', z <= 17)
+  })
+
+}
 const compareTwoUnixDates = (startTimestamp, endTimestamp) => {
 
   startTimestamp = (startTimestamp.toString().length == 13) ? Math.floor(startTimestamp / 1000) : startTimestamp
@@ -707,7 +718,7 @@ const drawLines_dev = () => {
           GLOBAL_PARAMETER === "?m=editor" ||
           GLOBAL_PARAMETER === "?dev=map_dev"
         ) {
-          core.bindPopup(`data_line: ${blockKey}`);
+          core.bindPopup(`data_line: ${blockKey}<br><button onclick="removeEntryMaps('${id}')">Ta bort</button>`);
         }
       }
     }
@@ -717,7 +728,42 @@ const drawLines_dev = () => {
   return group;
 };
 
+const removeEntryMaps = (string) => {
+  string = string.split('-')
+  let compound = string[0] // 12
+  let type = string[1]     // data_lines
+  let index = string[2]    // 5
+  // Find it in localStorage
+  // Update localStorage
+  // Use localStorage to update database, both are now synced perfect
+  let storage = JSON.parse(localStorage.getItem('klientSelect'))
+  if (storage) {
 
+      item = storage[type][index]
+      console.log(storage[type])
+      delete storage[type][index]
+      console.log(storage[type])
+      storage[type] = Object.fromEntries(
+        Object.values(storage[type]).map((value, index) => [index, value])
+      )
+      console.log(storage[type])
+
+      updateMapsDatabase(storage).then(data => {
+        data[0].data.mariestad.compounds[compound] = storage
+        upsertMapsDb(data[0].data).then(ret => {
+          if (ret) {
+            console.log("Wooo deleted and updated!")
+            localStorage.setItem('klientSelect', JSON.stringify(storage))
+            location.reload()
+          }
+        })
+      })
+
+
+
+  }
+
+}
 
 function animateMarker(name, newLat, newLng, duration = 1000) {
     const obj = locationMarkers.get(name);
@@ -948,7 +994,7 @@ const drawBlocks_dev = () => {
           GLOBAL_PARAMETER === "?m=editor" ||
           GLOBAL_PARAMETER === "?dev=map_dev"
         ) {
-          polygon.bindPopup(`data_blocks: ${blockKey}`);
+          polygon.bindPopup(`data_blocks: ${blockKey}<br><button onclick="removeEntryMaps('${id}')">Ta bort</button>`)
         }
       }
     }
@@ -1117,8 +1163,8 @@ const drawWarnings_dev = () => {
 
         const popupText =
           GLOBAL_PARAMETER === "?m=editor" || GLOBAL_PARAMETER === "?dev=map_dev"
-            ? `${warningConfig.text} I listan: #${i}`
-            : warningConfig.text;
+            ? `data_blocks: ${blockKey}<br><button onclick="removeEntryMaps('${id}')">Ta bort</button>`
+            : warningConfig.text
 
         marker.bindPopup(popupText);
 
@@ -1220,14 +1266,6 @@ const drawPerimiter = () => {
           blocks = data[1].object_perimiter
           let polygon
           if (blocks && blocks.length > 1) {
-            /*
-            L.polyline([...blocks, blocks[0]], {
-              color: 'white',
-              weight: 3,
-              lineJoin: 'round',
-              lineCap: 'round'
-            }).addTo(map);
-            */
 
             const bounds = L.latLngBounds(blocks);
             const center = bounds.getCenter();
@@ -1243,6 +1281,7 @@ const drawPerimiter = () => {
     })
   });
   objectGroup.addTo(map)
+  updateAreaText()
 }
 const drawCompounds = () => {
 
@@ -1286,55 +1325,14 @@ const drawStatusWrapper = () => {
   This was an easy fix to prevent clutter on the screen if you zoom out "too much"
 */
 map.on('zoomend', () => {
-  /*
-  let zoom = map.getZoom()
-  //console.log(zoom)
-  if (zoom >= 16) {
-    showForZoom(false)
+  console.log(map.getZoom())
+  if (map.getZoom() > 15) {
+    document.querySelectorAll('.fms-warning-type').forEach((i) => {i.classList.remove('fms-hidden')});
+    document.querySelectorAll('.circle-text').forEach((i) => {i.classList.add('fms-hidden')})
   } else {
-    // Hide small objects
-    hideForZoom(false)
+    document.querySelectorAll('.circle-text').forEach((i) => {i.classList.remove('fms-hidden')})
+    document.querySelectorAll('.fms-warning-type').forEach((i) => {i.classList.add('fms-hidden')});
   }
-
-
-  let citylabel = document.getElementsByClassName('city-label')
-  let arealabel = document.getElementsByClassName('polygon-label')
-  let statusHolders = document.getElementsByClassName('fms-statusDiv')
-
-  // Change areaName to transp. bg if zoom is too great, then show them on high zoom
-
-  console.log(zoom)
-
-  if (zoom >= 16) {
-    for (i = 0; i < statusHolders.length; i++){
-      statusHolders[i].classList.remove('fms-area-transp')
-    }
-  } else {
-    for (i = 0; i < statusHolders.length; i++){
-      statusHolders[i].classList.add('fms-area-transp')
-    }
-  }
-
-  if (zoom <= 11) {
-    // Hide city button
-    for (i = 0; i < citylabel.length; i++) {
-      citylabel[i].classList.remove('fms-hidden')
-    }
-    for (i = 0; i < arealabel.length; i++){
-      arealabel[i].classList.add('fms-hidden')
-    }
-  } else if (zoom >= 12){
-    // Show city button
-    for (i = 0; i < citylabel.length; i++) {
-      citylabel[i].classList.add('fms-hidden')
-    }
-    for (i = 0; i < arealabel.length; i++){
-      arealabel[i].classList.remove('fms-hidden')
-    }
-  }
-
-
-*/
 
 })
 /*
@@ -1901,7 +1899,6 @@ const setSettingsDom = () => {
   Handles updating, fetching and displaying of gps coordinates
 */
 const gpsFetchStorage = async (updateBool) => {
-  //console.log(`gpsFetchStorage ${updateBool}`)
   org_number = JSON.parse(localStorage.getItem('affiliation')).org_number
   current_city = JSON.parse(localStorage.getItem('user_info')).maps[0]
   const { data, error } = await client
@@ -1915,12 +1912,11 @@ const gpsFetchStorage = async (updateBool) => {
     console.error("Error fetching users:", error);
   } else {
     // Display users in the HTML
-    //console.log(`gpsFetchStorage ${updateBool} - Select data`)
     //console.log(data)
     if (!updateBool) {
       // No update boolean given, just draw them out
       //console.log("drawMultipleUsers")
-      newDrawUsers(data)
+      //newDrawUsers(data)
       //drawMultipleUsers(data)
     } else {
       //console.log("updateMultipleusers")
@@ -2294,6 +2290,7 @@ const initMap = () => {
     //drawHazardBlocks()            // Draw dangerous/heads-up areas
     drawWarnings()                // Draws fontawesome icons as warnings or 'heads-up'
     drawCompounds()               // Draws the "blocks" with the description
+    drawPerimiter()
   } else {
     drawPerimiter()               // Draws resident perimiter
     let lines = drawLines_dev()
